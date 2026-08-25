@@ -5,7 +5,7 @@ python-multipart>=0.0.20,<1
 pillow>=10.4,<12
 numpy>=1.26,<3
 diffusers @ git+https://github.com/huggingface/diffusers.git@06e0f2a81caaa6eaf4381e25cef07b0819582160
-transformers>=4.57,<6
+transformers>=5.0,<6
 accelerate>=1.10,<2
 safetensors>=0.5,<1
-huggingface-hub>=0.28,<1
+huggingface-hub>=1.23,<2
