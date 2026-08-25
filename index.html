@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f2eb" />
+    <title>오늘옷 — 내 옷장으로 고르는 오늘의 코디</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="오늘옷 홈">
+        <span class="brand-mark">옷</span><span>오늘옷</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view="today">홈</button>
+        <button class="nav-link" data-view="wardrobe">내 옷장 <span id="wardrobeCount">100</span></button>
+        <button class="nav-link" data-view="discover">코디 추천</button>
+      </nav>
+      <div class="top-actions">
+        <button class="weather-pill" id="weatherButton" aria-label="Weather details">
+          <span class="weather-icon">☂</span><span>22° · 서울</span>
+        </button>
+        <button class="icon-button" id="openPreferences" aria-label="Style preferences">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M14 7a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM4 17h2m4 0h10M6 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/></svg>
+        </button>
+        <button class="avatar" id="profileAvatar" aria-label="내 아바타">수</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view active" id="todayView">
+        <div class="today-heading">
+          <div>
+            <p class="eyebrow">8월 25일 화요일</p>
+            <h1>수님, 오늘은<br /><em>이렇게 입어볼까요?</em></h1>
+            <p class="lede">비가 살짝 오는 날이에요. 내 옷장과 취향을 함께 반영했어요.</p>
+          </div>
+          <button class="quiet-button" id="refreshLook"><span>↻</span> 다른 코디 보기</button>
+        </div>
+
+        <div class="today-grid">
+          <article class="look-card">
+            <div class="look-meta">
+              <div>
+                <span class="label">오늘의 맞춤 코디</span>
+                <h2 id="lookTitle">비 오는 날, 단정한 꾸안꾸</h2>
+              </div>
+              <div class="match-score"><span id="matchScore">94</span><small>% 잘 맞아요</small></div>
+            </div>
+
+            <div class="outfit-canvas" id="outfitCanvas" aria-live="polite"></div>
+
+            <div class="look-footer">
+              <div class="reason-list" id="reasonList">
+                <span>☂ 비 오는 날</span><span>◌ 좋아하는 무채색</span><span>♧ 출근부터 저녁까지</span>
+              </div>
+              <div class="look-actions">
+                <button class="round-action" id="skipLook" aria-label="다른 코디 보기">×</button>
+                <button class="wear-button" id="wearLook"><span>오늘 이대로 입기</span><span>→</span></button>
+                <button class="round-action" id="saveLook" aria-label="코디 저장">♡</button>
+              </div>
+            </div>
+          </article>
+
+          <aside class="side-stack">
+            <article class="weather-card">
+              <div class="weather-top">
+                <div><span class="label">서울 · 지금</span><strong>22°</strong></div>
+                <div class="rain-glyph">☂</div>
+              </div>
+              <p>오전 11시까지 약한 비<br />최고 25° · 최저 19°</p>
+              <div class="weather-bars" aria-label="Hourly rain forecast">
+                <div><span style="--h: 52%"></span><small>9</small></div><div><span style="--h: 68%"></span><small>10</small></div><div><span style="--h: 41%"></span><small>11</small></div><div><span style="--h: 15%"></span><small>12</small></div><div><span style="--h: 8%"></span><small>1</small></div><div><span style="--h: 18%"></span><small>2</small></div>
+              </div>
+              <div class="weather-note">얇은 겉옷과 젖어도 괜찮은 신발을 챙겨보세요.</div>
+            </article>
+
+            <article class="signal-card">
+              <div class="card-heading"><span class="label">내 취향 요약</span><span>오늘 업데이트</span></div>
+              <div class="signal-copy"><strong id="tasteSummary">단정한 꾸안꾸</strong><span id="tasteDetail">편안하지만 흐트러지지 않게</span></div>
+              <div class="signal-tags" id="signalTags"><span>미니멀</span><span>편안함</span><span>무채색</span></div>
+              <button class="text-link" id="tuneTaste">내 취향 다시 고르기 <span>→</span></button>
+            </article>
+          </aside>
+        </div>
+
+        <section class="rotation-section">
+          <div class="section-heading">
+            <div><span class="label">이런 코디도 잘 어울려요</span><h3>내 옷으로 입어볼 수 있어요</h3></div>
+            <button class="text-link" data-go="discover">코디 더 보기 <span>→</span></button>
+          </div>
+          <div class="rotation-grid" id="rotationGrid"></div>
+        </section>
+      </section>
+
+      <section class="view" id="wardrobeView">
+        <div class="page-heading">
+          <div><p class="eyebrow">내 옷장</p><h1>가지고 있는 옷을<br /><em>한눈에 모아봤어요.</em></h1><p class="lede">사진을 올리면 오늘 입을 수 있는 조합을 찾아드려요.</p></div>
+          <button class="primary-button" id="uploadButton">+ 옷 사진 추가하기</button>
+        </div>
+        <div class="wardrobe-toolbar">
+          <div class="filter-row" id="categoryFilters"></div>
+          <label class="search-box"><span>⌕</span><input id="wardrobeSearch" type="search" placeholder="내 옷장에서 검색" /></label>
+        </div>
+        <div class="wardrobe-grid" id="wardrobeGrid"></div>
+        <button class="load-button" id="loadMore">옷 더 보기</button>
+      </section>
+
+      <section class="view" id="discoverView">
+        <div class="page-heading discover-heading">
+          <div><p class="eyebrow">내 옷장 맞춤 추천</p><h1>새로 사지 않아도<br /><em>입을 수 있는 코디예요.</em></h1><p class="lede">참고 코디와 가장 비슷한 내 옷을 찾아서 조합했어요.</p></div>
+          <div class="saved-count"><span id="savedCount">0</span><small>저장한 코디</small></div>
+        </div>
+        <div class="closet-analysis" id="closetAnalysis">
+          <div class="analysis-icon">✓</div>
+          <div><strong>내 옷장 분석 완료</strong><p>현재 옷장에 있는 옷으로 바로 입을 수 있는 코디부터 보여드려요.</p></div>
+          <div class="analysis-stats"><span><b id="analysisPieces">100</b>개 옷</span><span><b id="analysisLooks">24</b>개 추천</span></div>
+        </div>
+        <div class="mood-strip" id="moodFilters"></div>
+        <div class="discover-grid" id="discoverGrid"></div>
+        <div class="source-note">
+          <span>사진 출처 안내</span>
+          <p>데모에 사용한 100장은 무신사 남성 상품 랭킹의 상품 이미지예요. 브랜드·상품명·순위·원문 링크는 <a href="assets/lookbook-sources.json" target="_blank">레이블 및 출처 목록</a>에서 확인할 수 있어요.</p>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="preferenceDialog" class="preference-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <div class="dialog-progress"><span id="progressOne" class="active"></span><span id="progressTwo"></span><span id="progressThree"></span><span id="progressFour"></span></div>
+      <section class="preference-step active" data-step="1">
+        <p class="eyebrow">반가워요!</p>
+        <h2>먼저 누구의 옷장을<br /><em>만들어볼까요?</em></h2>
+        <p>성별에 따라 더 잘 맞는 스타일을 먼저 보여드릴게요.</p>
+        <div class="gender-choice-grid" id="genderChoices"></div>
+        <div class="dialog-footer"><span>나중에 언제든 바꿀 수 있어요</span><button class="primary-button" id="nextGender" disabled>다음</button></div>
+      </section>
+      <section class="preference-step" data-step="2">
+        <p class="eyebrow">내 체형 아바타</p>
+        <h2>내 몸에 가까운 아바타를<br /><em>먼저 만들어볼게요.</em></h2>
+        <p>기본 정보만으로도 만들 수 있고, 상세 치수를 넣으면 체형 표현이 더 자연스러워져요.</p>
+        <div class="body-profile-layout">
+          <div class="body-form">
+            <div class="body-basic-grid">
+              <label><span>키 <small>필수</small></span><div><input id="bodyHeight" type="number" min="130" max="210" value="165" /><b>cm</b></div></label>
+              <label><span>몸무게 <small>필수</small></span><div><input id="bodyWeight" type="number" min="35" max="180" value="55" /><b>kg</b></div></label>
+              <label class="wide-field"><span>나와 가까운 체형</span><select id="bodyShape"><option>보통</option><option>마른 체형</option><option>탄탄한 체형</option><option>상체가 발달한 체형</option><option>하체가 발달한 체형</option><option>통통한 체형</option></select></label>
+            </div>
+            <details class="measurement-details">
+              <summary>상세 치수도 입력할게요 <span>선택</span></summary>
+              <div class="detail-measurements">
+                <label>어깨너비 <input id="bodyShoulder" type="number" placeholder="예: 40" /><span>cm</span></label>
+                <label>가슴둘레 <input id="bodyChest" type="number" placeholder="예: 86" /><span>cm</span></label>
+                <label>허리둘레 <input id="bodyWaist" type="number" placeholder="예: 70" /><span>cm</span></label>
+                <label>엉덩이둘레 <input id="bodyHip" type="number" placeholder="예: 94" /><span>cm</span></label>
+                <label>인심길이 <input id="bodyInseam" type="number" placeholder="예: 76" /><span>cm</span></label>
+              </div>
+            </details>
+            <p class="measurement-notice">측정값을 시각적으로 근사한 이미지로 실제 체형이나 의류 사이즈를 보증하지 않아요.</p>
+          </div>
+          <div class="avatar-generator-card" id="avatarGeneratorCard">
+            <div class="avatar-preview" id="avatarPreview"><span>내 아바타가<br />여기에 만들어져요</span></div>
+            <button class="primary-button" id="generateAvatar">✦ 아바타 생성하기</button>
+            <small id="avatarEngineStatus">GPU 백엔드 연결 확인 전</small>
+          </div>
+        </div>
+        <div class="dialog-footer"><button class="quiet-button" id="backToGender">← 이전</button><span>상세 치수는 나중에도 수정할 수 있어요</span><button class="primary-button" id="nextBody">다음</button></div>
+      </section>
+      <section class="preference-step" data-step="3">
+        <p class="eyebrow">내 취향 찾기</p>
+        <h2>평소에 어떤 스타일을<br /><em>자주 입나요?</em></h2>
+        <p>마음에 드는 스타일을 3개 이상 골라주세요.</p>
+        <div class="style-choice-grid" id="styleChoices"></div>
+        <div class="dialog-footer"><button class="quiet-button" id="backGender">← 이전</button><span id="selectionCount">0개 선택</span><button class="primary-button" id="nextPreferences" disabled>다음</button></div>
+      </section>
+      <section class="preference-step" data-step="4">
+        <p class="eyebrow">마지막이에요</p>
+        <h2>옷을 고를 때<br /><em>무엇이 가장 중요한가요?</em></h2>
+        <p>여러 개 골라도 괜찮아요. 추천할 때 꼭 반영할게요.</p>
+        <div class="priority-list" id="priorityChoices"></div>
+        <div class="dialog-footer"><button class="quiet-button" id="backPreferences">← 이전</button><button class="primary-button" id="finishPreferences">내 맞춤 코디 시작하기</button></div>
+      </section>
+    </dialog>
+
+    <dialog id="uploadDialog" class="upload-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <p class="eyebrow">내 옷장에 추가</p><h2>가지고 있는 옷을<br /><em>사진으로 올려주세요.</em></h2>
+      <label class="drop-zone" id="dropZone">
+        <input id="fileInput" type="file" accept="image/*" multiple />
+        <span class="upload-icon">↥</span><strong>옷 사진을 여기에 놓아주세요</strong><small>또는 눌러서 사진 선택 · JPG, PNG, WEBP</small>
+      </label>
+      <div class="upload-preview" id="uploadPreview"></div>
+      <div class="dialog-footer"><span>한 장에 옷 하나씩 찍으면 더 정확해요</span><button class="primary-button" id="addUploads" disabled>내 옷장에 추가</button></div>
+    </dialog>
+
+    <dialog id="itemMatchDialog" class="item-match-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <div class="match-dialog-heading">
+        <p class="eyebrow">이 옷, 이렇게 입어보세요</p>
+        <h2><span id="selectedItemName">화이트 코튼 셔츠</span>로 만든<br /><em>베스트 매치예요.</em></h2>
+        <p id="selectedItemHint">내 취향과 오늘 날씨까지 함께 반영했어요.</p>
+      </div>
+      <div class="match-dialog-body">
+        <article class="selected-item-panel" id="selectedItemPanel"></article>
+        <div class="best-match-list" id="bestMatchList"></div>
+      </div>
+      <div class="dialog-footer match-dialog-footer">
+        <span>추천이 마음에 들지 않으면 다른 조합을 볼 수 있어요.</span>
+        <button class="quiet-button" id="regenerateMatches">↻ 다른 조합 보기</button>
+      </div>
+    </dialog>
+
+    <dialog id="avatarTryonDialog" class="avatar-tryon-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <div class="tryon-heading"><p class="eyebrow">AI 가상 착장</p><h2>내 아바타가<br /><em>직접 입어봤어요.</em></h2><p id="tryonStatusText">선택한 옷의 질감과 형태를 분석하고 있어요.</p></div>
+      <div class="tryon-stage" id="tryonStage"><div class="generation-loader"><span></span><strong>GPU로 착장 생성 중</strong><small>Colab L4에서 고해상도 착장을 만들고 있어요</small></div></div>
+      <div class="tryon-garments" id="tryonGarments"></div>
+      <div class="dialog-footer"><span id="tryonEngineLabel">FASHN VTON v1.5 · 576×864 · BF16</span><button class="primary-button" data-close-dialog>완료</button></div>
+    </dialog>
+
+    <dialog id="weatherDialog" class="mini-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button><span class="label">오늘 서울 날씨</span><h3>약한 비, 22°</h3><p>오늘옷은 통풍이 잘 되는 얇은 겉옷과 젖어도 괜찮은 신발을 추천해요.</p>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="selection-tray" id="selectionTray">
+      <div><strong>아바타에 입혀볼 옷</strong><span id="selectionTrayCount">0/4개 선택</span></div>
+      <div class="selection-thumbs" id="selectionThumbs"></div>
+      <button class="primary-button" id="trySelectedGarments">선택한 옷 입혀보기 ✦</button>
+      <button class="tray-close" id="clearGarmentSelection" aria-label="선택 초기화">×</button>
+    </div>
+    <script src="config.js"></script>
+    <script src="assets/lookbook-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
