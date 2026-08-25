@@ -18,7 +18,7 @@ const priorityOptions = [
   ["↗", "새로운 조합 시도", "평소보다 한 걸음 새로운 코디"]
 ];
 const rankingWardrobe = Array.isArray(window.MUSINSA_RANKING) ? window.MUSINSA_RANKING : [];
-if (rankingWardrobe.length !== 100) throw new Error(`무신사 랭킹 데이터가 100개 필요합니다. 현재 ${rankingWardrobe.length}개입니다.`);
+if (rankingWardrobe.length !== 200) throw new Error(`무신사 랭킹 데이터가 200개 필요합니다. 현재 ${rankingWardrobe.length}개입니다.`);
 const influencerLooks = Array.isArray(window.WEARWELL_INFLUENCER_LOOKS) ? window.WEARWELL_INFLUENCER_LOOKS : [];
 let wardrobe = rankingWardrobe.map(item => ({ ...item, analysis: window.WearwellVLM.seedGarmentAnalysis(item) }));
 const photo = number => wardrobe[((number - 1) % wardrobe.length + wardrobe.length) % wardrobe.length].image;
@@ -774,7 +774,7 @@ function renderWardrobe() {
   $("#wardrobeGrid").innerHTML = filtered.slice(0, visibleWardrobe).map(item => `
     <article class="wardrobe-item" data-item-id="${escapeHtml(item.id)}" role="button" tabindex="0" aria-label="${escapeHtml(item.name)} 활용 코디 보기">
       <div class="wardrobe-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.color)} ${escapeHtml(item.name)}" loading="lazy" />${item.userAdded ? '<span class="wardrobe-status">내 사진</span>' : ""}<span class="analysis-badge ${item.analysis?.engine === VLM_ANALYSIS_ENGINE ? "qwen" : ""}">${item.analysis?.engine === VLM_ANALYSIS_ENGINE ? "Qwen 분석" : "특징 저장됨"}</span><button class="item-menu" aria-label="옷 정보 더 보기">···</button><button class="garment-select-button ${selectedGarmentIds.has(item.id) ? "selected" : ""}" data-select-garment="${escapeHtml(item.id)}">${selectedGarmentIds.has(item.id) ? "✓ 선택됨" : "+ 아바타에 입기"}</button></div>
-      <div class="wardrobe-info"><strong>${item.brand ? `${escapeHtml(item.brand)} · ` : ""}${escapeHtml(item.name)}</strong><span>${item.sourceRank ? `랭킹 ${escapeHtml(item.sourceRank)}위 · ` : ""}${escapeHtml(item.color)} · ${escapeHtml(item.category)}${item.worn ? ` · ${escapeHtml(item.worn)}번 입음` : ""}</span></div>
+      <div class="wardrobe-info"><strong>${item.brand ? `${escapeHtml(item.brand)} · ` : ""}${escapeHtml(item.name)}</strong><span>${item.sourceRank ? `랭킹 ${escapeHtml(item.sourceRank)}위 · ` : ""}${escapeHtml(item.color)} · ${escapeHtml(item.category)} · ${escapeHtml(item.subcategory || item.analysis?.subcategory || "기본")}${item.worn ? ` · ${escapeHtml(item.worn)}번 입음` : ""}</span></div>
     </article>`).join("");
   $("#loadMore").hidden = visibleWardrobe >= filtered.length;
   $("#wardrobeCount").textContent = filtered.length;

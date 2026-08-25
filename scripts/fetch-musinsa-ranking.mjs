@@ -1,20 +1,26 @@
-import { mkdir, mkdtemp, readdir, rename, rm, unlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rename, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const assetsRoot = path.join(projectRoot, "assets");
 const targetRoot = path.join(assetsRoot, "lookbook");
+const metadataPath = path.join(assetsRoot, "lookbook-sources.json");
 const rankingPage = "https://www.musinsa.com/main/musinsa/ranking";
 const rankingApi = "https://api.musinsa.com/api2/hm/web/v5/pans/ranking/sections/199";
 const rankingSources = [
-  { code: "", label: "전체" },
-  { code: "001000", label: "상의" },
-  { code: "002000", label: "아우터" },
-  { code: "003000", label: "하의" },
-  { code: "103000", label: "신발" },
-  { code: "004000", label: "가방" }
+  { code: "001001", label: "상의", subcategory: "티셔츠", quota: 12 },
+  { code: "001002", label: "상의", subcategory: "셔츠", quota: 6 },
+  { code: "001006", label: "상의", subcategory: "니트·이너", quota: 8 },
+  { code: "001004", label: "상의", subcategory: "후드", quota: 3 },
+  { code: "001005", label: "상의", subcategory: "스웨트셔츠", quota: 3 },
+  { code: "002000", label: "아우터", subcategory: "아우터", quota: 18 },
+  { code: "003000", label: "하의", subcategory: "바지", quota: 22 },
+  { code: "103000", label: "신발", subcategory: "신발", quota: 12 },
+  { code: "004000", label: "가방", subcategory: "가방", quota: 8 },
+  { code: "101000", label: "액세서리", subcategory: "액세서리", quota: 8 }
 ];
+const TARGET_TOTAL = 200;
 const excludedProducts = /상품권|세럼|토너|크림|마스크팩|클렌징|선크림|향수|드링크|음료|딸기맛|초코맛|캐리어|수화물|여행용|머리부/i;
 
 function collectProductNodes(value, products = []) {
@@ -80,7 +86,7 @@ function normalizeProduct({ product, source }, datasetRank) {
   const analytics = findAnalytics(product, product.id) || {};
   return {
     datasetRank, sourceRank: Number(product.image.rank), sourceCategory: source.label,
-    id: String(product.id), gender: "men", category: inferCategory(name, source.label), name,
+    id: String(product.id), gender: "men", category: inferCategory(name, source.label), subcategory: source.subcategory, name,
     brand: product.info.brandName.trim(), color: inferColor(name),
     price: Number(product.info.finalPrice || analytics.price || 0),
     originalPrice: Number(analytics.original_price || product.info.finalPrice || 0),
@@ -92,30 +98,36 @@ function normalizeProduct({ product, source }, datasetRank) {
   };
 }
 
+const existingMetadata = JSON.parse(await readFile(metadataPath, "utf8"));
+const existingRecords = Array.isArray(existingMetadata.images) ? existingMetadata.images : [];
+if (existingRecords.length > TARGET_TOTAL) throw new Error(`Existing dataset already exceeds ${TARGET_TOTAL} products`);
+const additionsNeeded = TARGET_TOTAL - existingRecords.length;
 const fetched = await Promise.all(rankingSources.map(fetchRanking));
 const selected = [];
-const seen = new Set();
+const seen = new Set(existingRecords.map(record => String(record.id)));
 function addEntry(entry) {
   if (!entry || seen.has(entry.product.id) || excludedProducts.test(entry.product.info.productName)) return;
   if (!inferCategory(entry.product.info.productName, entry.source.label)) return;
   seen.add(entry.product.id);
   selected.push(entry);
 }
-for (const entry of fetched[0].sort((a, b) => a.product.image.rank - b.product.image.rank)) addEntry(entry);
-for (let rankIndex = 0; selected.length < 100 && rankIndex < 101; rankIndex++) {
-  for (const categoryProducts of fetched.slice(1)) {
-    addEntry(categoryProducts[rankIndex]);
-    if (selected.length === 100) break;
+for (const categoryProducts of fetched) {
+  const quota = Math.min(categoryProducts[0]?.source.quota || 0, additionsNeeded - selected.length);
+  const before = selected.length;
+  for (const entry of categoryProducts.sort((a, b) => a.product.image.rank - b.product.image.rank)) {
+    addEntry(entry);
+    if (selected.length - before === quota) break;
   }
 }
-if (selected.length !== 100) throw new Error(`Only found ${selected.length}/100 wearable ranking products`);
-const records = selected.map((entry, index) => normalizeProduct(entry, index + 1));
+if (selected.length !== additionsNeeded) throw new Error(`Only found ${selected.length}/${additionsNeeded} new wearable ranking products`);
+const newRecords = selected.map((entry, index) => normalizeProduct(entry, existingRecords.length + index + 1));
+const records = [...existingRecords, ...newRecords];
 
 if (process.argv.includes("--inspect") || process.argv.includes("--dry-run")) {
   const counts = Object.groupBy(records, record => record.category);
-  console.log(`Ready: ${records.length} products`);
+  console.log(`Ready: ${existingRecords.length} existing + ${newRecords.length} new = ${records.length} products`);
   console.log(Object.fromEntries(Object.entries(counts).map(([key, values]) => [key, values.length])));
-  for (const record of records) console.log(`${record.datasetRank}\t${record.category}\t${record.brand}\t${record.name}`);
+  for (const record of newRecords) console.log(`${record.datasetRank}\t${record.category}\t${record.subcategory}\t${record.brand}\t${record.name}`);
   process.exit(0);
 }
 
@@ -137,32 +149,34 @@ async function downloadRecord(record) {
 
 try {
   let completed = 0;
-  for (let start = 0; start < records.length; start += 6) {
-    const batch = records.slice(start, start + 6);
+  for (let start = 0; start < newRecords.length; start += 6) {
+    const batch = newRecords.slice(start, start + 6);
     await Promise.all(batch.map(downloadRecord));
     completed += batch.length;
-    process.stdout.write(`\rDownloaded ${completed}/${records.length}`);
+    process.stdout.write(`\rDownloaded ${completed}/${newRecords.length}`);
   }
 
-  const oldFiles = (await readdir(targetRoot)).filter(file => /^look-\d{3}\.(?:jpe?g|png|webp)$/i.test(file));
-  for (const file of oldFiles) await unlink(path.join(targetRoot, file));
-  for (const record of records) await rename(path.join(stagingRoot, record.file), path.join(targetRoot, record.file));
+  for (const record of newRecords) {
+    const destination = path.join(targetRoot, record.file);
+    await unlink(destination).catch(error => { if (error.code !== "ENOENT") throw error; });
+    await rename(path.join(stagingRoot, record.file), destination);
+  }
   await rm(stagingRoot, { recursive: true, force: true });
 
   const metadata = {
     notice: "오늘옷 데모용으로 수집한 무신사 남성 실시간 상품 랭킹 이미지입니다. 상품 이미지의 권리는 각 브랜드와 무신사에 있으며, 재배포·상업적 이용 전 별도 허가가 필요합니다.",
-    methodology: "남성 전체 랭킹에서 비패션 상품을 제외하고, 부족분은 남성 상의·아우터·하의·신발·가방 카테고리 랭킹 순으로 보충했습니다.",
-    rankingPage, genderFilter: "M", retrievedAt: new Date().toISOString(), images: records
+    methodology: "기존 남성 랭킹 상품 100개를 보존하고, 티셔츠·셔츠·니트/이너·후드/스웨트·아우터·바지·신발·가방·액세서리 랭킹에서 중복 상품을 제외한 100개를 균형 있게 추가했습니다.",
+    rankingPage, genderFilter: "M", retrievedAt: new Date().toISOString(), targetTotal: TARGET_TOTAL, images: records
   };
-  await writeFile(path.join(assetsRoot, "lookbook-sources.json"), JSON.stringify(metadata, null, 2), "utf8");
+  await writeFile(metadataPath, JSON.stringify(metadata, null, 2), "utf8");
   const appData = records.map(record => ({
     id: `musinsa-${record.id}`, image: `assets/lookbook/${record.file}`, gender: "all", rankingGender: record.gender,
-    category: record.category, name: record.name, brand: record.brand, color: record.color,
+    category: record.category, subcategory: record.subcategory || null, name: record.name, brand: record.brand, color: record.color,
     rank: record.datasetRank, sourceRank: record.sourceRank, price: record.price, sourceUrl: record.productUrl,
     worn: 0, userAdded: false
   }));
   await writeFile(path.join(assetsRoot, "lookbook-data.js"), `window.MUSINSA_RANKING = ${JSON.stringify(appData, null, 2)};\n`, "utf8");
-  console.log(`\nReplaced ${oldFiles.length} images with ${records.length} labeled Musinsa ranking products.`);
+  console.log(`\nAdded ${newRecords.length} images; dataset now has ${records.length} labeled Musinsa ranking products.`);
 } catch (error) {
   await rm(stagingRoot, { recursive: true, force: true });
   throw error;

@@ -94,6 +94,8 @@ python scripts/validate-notebook.py colab/wearwell_backend_l4.ipynb
 
 ## 데이터 갱신
 
+옷장 데이터는 무신사 남성 랭킹 상품 200개로 구성되며 상품 ID, 카테고리, 세부 분류, 색상, 원문 URL과 이미지 출처를 함께 보관합니다.
+
 ```bash
 node scripts/fetch-korean-influencer-lookbook.mjs
 node scripts/fetch-lookbook.mjs
