@@ -47,23 +47,33 @@ const expression = `
   [...document.querySelectorAll('[data-style]')].slice(0, 3).forEach(button => button.click());
   document.querySelector('#nextPreferences').click();
   document.querySelector('#finishPreferences').click();
+  const wardrobeCount = document.querySelector('#wardrobeCount').textContent;
   document.querySelector('#wardrobeGrid [data-item-id]').click();
   const matchDialogOpened = document.querySelector('#itemMatchDialog').open;
   const matchOptions = document.querySelectorAll('.match-option').length;
   const matchedNames = [...document.querySelectorAll('.match-piece span')].map(node => node.textContent);
   document.querySelector('#itemMatchDialog').close();
+  window.__wearwellXss = false;
+  const maliciousName = '\"><img src=x onerror="window.__wearwellXss=true">';
+  wardrobe.unshift({ id: 'xss-test', image: 'assets/lookbook/look-001.jpg', gender: selectedGender, category: '상의', name: maliciousName, color: '검정', worn: 0, userAdded: true });
+  renderWardrobe();
+  await new Promise(resolve => setTimeout(resolve, 100));
+  const maliciousCard = document.querySelector('[data-item-id="xss-test"]');
+  const safeNameRendered = maliciousCard?.textContent.includes(maliciousName);
   document.querySelector('[data-view="discover"]').click();
   return ({
     profile: JSON.parse(localStorage.getItem('오늘옷-profile')),
     look: document.querySelector('#lookTitle').textContent,
-    wardrobeCount: document.querySelector('#wardrobeCount').textContent,
+    wardrobeCount,
     dialogOpen: document.querySelector('#preferenceDialog').open,
     matchDialogOpened,
     matchOptions,
     matchedNames,
     trendCards: document.querySelectorAll('.discover-card').length,
     closetMatches: document.querySelectorAll('.discover-closet-match').length,
-    avatarReady: Boolean(avatarImage)
+    avatarReady: Boolean(avatarImage),
+    xssTriggered: window.__wearwellXss,
+    safeNameRendered
   });
   })()
 `;
@@ -77,7 +87,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "women" || value.dialogOpen || value.wardrobeCount !== "100" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards !== 24 || value.closetMatches !== 24 || !value.avatarReady) {
+if (!value?.profile || value.profile.gender !== "women" || value.dialogOpen || value.wardrobeCount !== "100" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards !== 24 || value.closetMatches !== 24 || !value.avatarReady || value.xssTriggered || !value.safeNameRendered) {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
-console.log(`Smoke test passed: ${value.look} / ${value.matchedNames.slice(0, 4).join(" + ")} / 트렌드 추천 ${value.trendCards}개`);
+console.log(`Smoke test passed: ${value.look} / ${value.matchedNames.slice(0, 4).join(" + ")} / 트렌드 추천 ${value.trendCards}개 / XSS 방어 확인`);

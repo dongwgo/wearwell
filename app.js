@@ -83,6 +83,9 @@ const API_HEADERS = { "Content-Type": "application/json", ...(API_TOKEN ? { Auth
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+})[character]);
 
 function showToast(message) {
   const toast = $("#toast");
@@ -183,7 +186,7 @@ async function tryOnItems(items, targetImage = null) {
   if (!items.length) return showToast("입혀볼 옷을 먼저 골라주세요");
   if (!avatarImage) await generateAvatar();
   const cacheKey = `${items.map(item => item.id).join("-")}-${avatarMeasurements?.height || "base"}`;
-  $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${item.image}" alt="${item.name}" /><span>${item.name}</span></div>`).join("");
+  $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
   $("#tryonStage").innerHTML = '<div class="generation-loader"><span></span><strong>GPU로 착장 생성 중</strong><small>Colab L4에서 고해상도 착장을 만들고 있어요</small></div>';
   $("#tryonStatusText").textContent = "리뷰처럼 편하게 찍은 옷 사진에서 옷의 영역과 질감을 찾고 있어요.";
   openDialog($("#avatarTryonDialog"));
@@ -217,9 +220,9 @@ function renderCurrentLook() {
   $("#outfitCanvas").innerHTML = look.pieces.map((pieceIndex, slot) => {
     const item = wardrobe[pieceIndex % wardrobe.length];
     return `<div class="outfit-piece" data-slot="${slot}">
-      <img src="${item.image}" alt="${item.name}" />
-      <span class="piece-tag">${item.category} · ${item.color}</span>
-      <button class="swap-hint" data-swap="${slot}" aria-label="${item.name} 바꾸기">↻</button>
+      <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" />
+      <span class="piece-tag">${escapeHtml(item.category)} · ${escapeHtml(item.color)}</span>
+      <button class="swap-hint" data-swap="${slot}" aria-label="${escapeHtml(item.name)} 바꾸기">↻</button>
     </div>`;
   }).join("");
   $("#saveLook").classList.toggle("saved", savedLooks.has(`${selectedGender}-${currentLook}`));
@@ -356,15 +359,15 @@ function renderItemMatches() {
   $("#selectedItemName").textContent = item.name;
   $("#selectedItemHint").textContent = `${genderLabel()} · ${[...selectedStyles][0] || "내 취향"} · 오늘 서울 날씨를 함께 반영했어요.`;
   $("#selectedItemPanel").innerHTML = `
-    <div class="selected-item-image"><img src="${item.image}" alt="${item.name}" /><span class="selected-badge">선택한 옷</span></div>
-    <div class="selected-item-copy"><strong>${item.name}</strong><span>${item.color} · ${item.category}</span></div>`;
+    <div class="selected-item-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span class="selected-badge">선택한 옷</span></div>
+    <div class="selected-item-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.color)} · ${escapeHtml(item.category)}</span></div>`;
   const matches = [buildMatch(item, matchVariation), buildMatch(item, matchVariation + 1)];
   $("#bestMatchList").innerHTML = matches.map((match, index) => `
     <article class="match-option ${index === 0 ? "recommended" : ""}">
       <div class="match-option-top"><div class="match-option-title">${index === 0 ? '<span class="best-badge">BEST</span>' : ""}<b>${match.title}</b></div><span class="match-option-score">${match.score}% 잘 맞아요</span></div>
       <div class="match-pieces-grid">${match.pieces.map(piece => `
-        <div class="match-piece ${piece.id === item.id ? "anchor" : ""}"><div class="match-piece-image"><img src="${piece.image}" alt="${piece.name}" /></div><span>${piece.name}</span></div>`).join("")}</div>
-      <div class="match-reason">${match.reasons.map(reason => `<span>✓ ${reason}</span>`).join("")}</div>
+        <div class="match-piece ${piece.id === item.id ? "anchor" : ""}"><div class="match-piece-image"><img src="${escapeHtml(piece.image)}" alt="${escapeHtml(piece.name)}" /></div><span>${escapeHtml(piece.name)}</span></div>`).join("")}</div>
+      <div class="match-reason">${match.reasons.map(reason => `<span>✓ ${escapeHtml(reason)}</span>`).join("")}</div>
       <div class="match-option-actions"><button class="use-match-button" data-use-match="${index}">이 코디로 입기</button></div>
     </article>`).join("");
   $$('[data-use-match]').forEach(button => button.addEventListener("click", () => {
@@ -393,9 +396,9 @@ function filteredWardrobe() {
 function renderWardrobe() {
   const filtered = filteredWardrobe();
   $("#wardrobeGrid").innerHTML = filtered.slice(0, visibleWardrobe).map(item => `
-    <article class="wardrobe-item" data-item-id="${item.id}" role="button" tabindex="0" aria-label="${item.name} 활용 코디 보기">
-      <div class="wardrobe-image"><img src="${item.image}" alt="${item.color} ${item.name}" loading="lazy" />${item.userAdded ? '<span class="wardrobe-status">방금 추가</span>' : ""}<button class="item-menu" aria-label="옷 정보 더 보기">···</button><button class="garment-select-button ${selectedGarmentIds.has(item.id) ? "selected" : ""}" data-select-garment="${item.id}">${selectedGarmentIds.has(item.id) ? "✓ 선택됨" : "+ 아바타에 입기"}</button></div>
-      <div class="wardrobe-info"><strong>${item.brand ? `${item.brand} · ` : ""}${item.name}</strong><span>${item.sourceRank ? `랭킹 ${item.sourceRank}위 · ` : ""}${item.color} · ${item.category}${item.worn ? ` · ${item.worn}번 입음` : ""}</span></div>
+    <article class="wardrobe-item" data-item-id="${escapeHtml(item.id)}" role="button" tabindex="0" aria-label="${escapeHtml(item.name)} 활용 코디 보기">
+      <div class="wardrobe-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.color)} ${escapeHtml(item.name)}" loading="lazy" />${item.userAdded ? '<span class="wardrobe-status">방금 추가</span>' : ""}<button class="item-menu" aria-label="옷 정보 더 보기">···</button><button class="garment-select-button ${selectedGarmentIds.has(item.id) ? "selected" : ""}" data-select-garment="${escapeHtml(item.id)}">${selectedGarmentIds.has(item.id) ? "✓ 선택됨" : "+ 아바타에 입기"}</button></div>
+      <div class="wardrobe-info"><strong>${item.brand ? `${escapeHtml(item.brand)} · ` : ""}${escapeHtml(item.name)}</strong><span>${item.sourceRank ? `랭킹 ${escapeHtml(item.sourceRank)}위 · ` : ""}${escapeHtml(item.color)} · ${escapeHtml(item.category)}${item.worn ? ` · ${escapeHtml(item.worn)}번 입음` : ""}</span></div>
     </article>`).join("");
   $("#loadMore").hidden = visibleWardrobe >= filtered.length;
   $("#wardrobeCount").textContent = filtered.length;
@@ -418,7 +421,7 @@ function updateSelectionTray() {
   const items = [...selectedGarmentIds].map(id => wardrobe.find(item => item.id === id)).filter(Boolean);
   $("#selectionTray").classList.toggle("show", items.length > 0);
   $("#selectionTrayCount").textContent = `${items.length}/4개 선택`;
-  $("#selectionThumbs").innerHTML = items.map(item => `<img src="${item.image}" alt="${item.name}" title="${item.name}" />`).join("");
+  $("#selectionThumbs").innerHTML = items.map(item => `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" title="${escapeHtml(item.name)}" />`).join("");
 }
 
 function renderDiscover() {
