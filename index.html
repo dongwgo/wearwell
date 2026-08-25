@@ -165,7 +165,7 @@
           <div class="avatar-generator-card" id="avatarGeneratorCard">
             <div class="avatar-preview" id="avatarPreview"><span>내 아바타가<br />여기에 만들어져요</span></div>
             <button class="primary-button" id="generateAvatar">✦ 아바타 생성하기</button>
-            <small id="avatarEngineStatus">GPU 백엔드 연결 확인 전</small>
+            <small id="avatarEngineStatus">아바타를 만들 준비가 됐어요</small>
           </div>
         </div>
         <div class="dialog-footer"><button class="quiet-button" id="backToGender">← 이전</button><span>상세 치수는 나중에도 수정할 수 있어요</span><button class="primary-button" id="nextBody">다음</button></div>
@@ -217,9 +217,9 @@
     <dialog id="avatarTryonDialog" class="avatar-tryon-dialog">
       <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
       <div class="tryon-heading"><p class="eyebrow">AI 가상 착장</p><h2>내 아바타가<br /><em>직접 입어봤어요.</em></h2><p id="tryonStatusText">선택한 옷의 질감과 형태를 분석하고 있어요.</p></div>
-      <div class="tryon-stage" id="tryonStage"><div class="generation-loader"><span></span><strong>GPU로 착장 생성 중</strong><small>Colab L4에서 고해상도 착장을 만들고 있어요</small></div></div>
+      <div class="tryon-stage" id="tryonStage"><div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div></div>
       <div class="tryon-garments" id="tryonGarments"></div>
-      <div class="dialog-footer"><span id="tryonEngineLabel">FASHN VTON v1.5 · 576×864 · BF16</span><button class="primary-button" data-close-dialog>완료</button></div>
+      <div class="dialog-footer"><span id="tryonEngineLabel">AI 가상 착장</span><button class="primary-button" data-close-dialog>완료</button></div>
     </dialog>
 
     <dialog id="weatherDialog" class="mini-dialog">

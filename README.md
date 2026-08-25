@@ -1,94 +1,77 @@
 # Wearwell
 
-날씨·체형·취향 기반 스타일 추천 프론트엔드와 Colab GPU 모델 API를 분리한 프로젝트입니다.
+날씨·체형·취향 기반 스타일 추천 프론트엔드와 GPU 이미지 API를 분리한 프로젝트입니다.
 
 - 로컬 컴퓨터: `index.html`, CSS, JavaScript, `assets/`
-- Google Colab: FASHN VTON v1.5, SDXL Turbo, FastAPI
-- Cloudflare Quick Tunnel: 로컬 브라우저에서 Colab API로 보내는 요청만 전달
+- GPU 런타임: FLUX.2 [klein] 4B, FastAPI
+- Cloudflare Quick Tunnel: 로컬 브라우저의 모델 요청만 전달
 
 ## 권장 실행 환경
 
 - Google Colab 유료 런타임
 - Python 3.10 이상
-- NVIDIA L4 24GB 권장
+- NVIDIA L4 24GB 이상 권장
 
-계정에 G4가 표시될 수 있지만 이 프로젝트에는 L4면 충분합니다. A100/H100도 호환되며 T4는 느리고 메모리 여유가 적습니다.
+L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. VRAM이 20GB보다 작으면 노트북이 CPU offload를 자동으로 켭니다.
 
-## 모델
+## 모델과 처리 방식
 
-- 가상 착장: [FASHN VTON v1.5](https://github.com/fashn-AI/fashn-vton-1.5)
-  - Apache-2.0
-  - maskless pixel-space VTON
-  - tops, bottoms, one-pieces 지원
-- 체형 아바타: `stabilityai/sdxl-turbo`
-  - FP16, 4-step 생성
+[FLUX.2 [klein] 4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B)는 Apache 2.0 공개 가중치이며 텍스트 생성, 이미지 편집, 다중 참조 편집을 하나의 파이프라인에서 지원합니다.
 
-두 모델은 동시에 VRAM에 상주하지 않습니다. endpoint가 전환될 때 이전 pipeline을 해제하고 단일 GPU 요청을 직렬 처리합니다.
+- 아바타: 성별, 키, 몸무게, 체형과 선택 입력한 상세 치수를 포함해 768×1152 전신 이미지를 생성합니다.
+- 가상 착장: 아바타와 선택한 의류 사진을 한 번에 전달해 얼굴·체형을 유지하면서 모든 옷을 동시에 반영합니다.
+- 기본 추론: BF16, 4 steps, guidance 1.0
 
-## 1. Colab 모델 API 실행
+측정값으로 만든 아바타는 시각적 근사치이며 실제 신체 스캔이나 의류 사이즈 판정 결과가 아닙니다.
 
-[Colab에서 Wearwell L4 notebook 열기](https://colab.research.google.com/github/dongwgo/wearwell/blob/main/colab/wearwell_backend_l4.ipynb)
+## 1. GPU 모델 API 실행
 
-1. `런타임 → 런타임 유형 변경 → L4 GPU`를 선택합니다.
+[Colab에서 Wearwell notebook 열기](https://colab.research.google.com/github/dongwgo/wearwell/blob/main/colab/wearwell_backend_l4.ipynb)
+
+1. `런타임 → 런타임 유형 변경`에서 L4, A100 또는 H100을 선택합니다.
 2. 위에서부터 모든 셀을 실행합니다.
-3. 마지막 셀이 다운로드하는 `local-config.js`를 로컬 Wearwell 프로젝트 루트에 저장합니다.
+3. 마지막 셀이 내려주는 `local-config.js`를 로컬 Wearwell 프로젝트 루트에 저장합니다.
 
-Notebook이 수행하는 작업:
-
-- 저장소 clone/update
-- FASHN VTON과 backend 의존성 설치
-- FASHN weights 다운로드 및 필수 파일 확인
-- FastAPI 실행 후 FASHN·SDXL 실제 load warm-up
-- 세션별 API token 생성
-- Cloudflare Quick Tunnel 생성
-- 로컬 전용 `local-config.js` 다운로드
-
-Colab은 `/api/*`만 제공합니다. HTML, CSS, JavaScript 및 `assets/`는 Tunnel에서 제공하지 않습니다.
+노트북은 저장소와 의존성을 준비하고, 모델을 미리 적재한 다음 세션별 API 토큰과 Quick Tunnel 주소가 담긴 설정 파일을 생성합니다. GPU 런타임에서는 `/api/*`만 제공하며 프론트엔드 파일은 제공하지 않습니다.
 
 ## 2. 로컬 프론트엔드 실행
 
-프로젝트 루트에서:
+프로젝트 루트에서 다음 명령을 실행합니다.
 
 ```bash
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-브라우저에서 다음 주소를 엽니다.
-
-```text
-http://127.0.0.1:8000
-```
-
-`local-config.js`는 다음 런타임 설정을 담습니다.
+브라우저에서 `http://127.0.0.1:8000`을 엽니다. `local-config.js`는 다음 형식입니다.
 
 ```js
 window.WEARWELL_CONFIG = {
   API_BASE: "https://example.trycloudflare.com",
-  API_TOKEN: "colab-session-token"
+  API_TOKEN: "session-token"
 };
 ```
 
-직접 만들려면 `local-config.example.js`를 복사해 값을 채웁니다. `local-config.js`는 `.gitignore`에 포함되어 있으므로 commit하지 않습니다.
-
-Quick Tunnel 주소와 token은 Colab 세션을 재시작할 때마다 바뀝니다. 새 세션에서는 마지막 셀이 생성한 파일로 기존 `local-config.js`를 교체하세요.
+이 파일에는 세션 인증 정보가 있으므로 commit하거나 공유하지 마세요. 런타임을 재시작하면 새 파일로 교체해야 합니다.
 
 ## API
 
 - `GET /api/health`
 - `POST /api/avatar`
 - `POST /api/tryon`
-- `POST /api/warmup` — notebook 모델 검증용
+- `POST /api/warmup`
 
-POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 로컬 프론트엔드만 허용합니다.
+POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
 환경변수:
 
-- `FASHN_WEIGHTS_DIR`: FASHN weights 경로
+- `IMAGE_MODEL`: 기본값 `black-forest-labs/FLUX.2-klein-4B`
+- `IMAGE_WIDTH`, `IMAGE_HEIGHT`: 기본값 `768`, `1152`
+- `FLUX_STEPS`: 기본값 `4`
+- `FLUX_GUIDANCE`: 기본값 `1.0`
+- `FLUX_CPU_OFFLOAD`: `1`이면 일부 모델을 CPU RAM으로 이동
 - `HF_HOME`: Hugging Face cache 경로
-- `AVATAR_MODEL`: 기본값 `stabilityai/sdxl-turbo`
-- `FASHN_STEPS`: 기본값 `30`
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
-- `WEARWELL_API_TOKEN`: 공개 API의 bearer token
+- `WEARWELL_API_TOKEN`: API bearer token
 
 ## 개발 검증
 
@@ -106,4 +89,4 @@ node scripts/fetch-trends.mjs
 node scripts/fetch-lookbook.mjs
 ```
 
-외부 데이터 fetch가 실패하면 마지막 정상 생성물을 유지합니다.
+외부 데이터 수집이 실패하면 마지막 정상 생성물을 유지합니다.

@@ -145,7 +145,7 @@ function showAvatar(image, engine = "") {
   $("#avatarPreview").innerHTML = `<img src="${image}" alt="내 체형 아바타" />`;
   $("#profileAvatar").classList.add("has-image");
   $("#profileAvatar").style.backgroundImage = `url(${image})`;
-  if (engine) $("#avatarEngineStatus").textContent = engine.includes("cuda") ? `GPU 생성 완료 · ${engine}` : "빠른 미리보기 · GPU 서버 연결 시 실사 생성";
+  if (engine) $("#avatarEngineStatus").textContent = engine.includes("cuda") ? "내 체형 아바타가 완성됐어요" : "기본 아바타 미리보기";
 }
 
 async function generateAvatar() {
@@ -176,19 +176,17 @@ async function imageToDataUrl(source) {
 }
 
 function garmentType(category) {
-  if (["하의"].includes(category)) return "lower";
-  if (["원피스"].includes(category)) return "overall";
-  if (["상의", "아우터"].includes(category)) return "upper";
-  return null;
+  return ({ 상의: "upper", 하의: "lower", 원피스: "overall", 아우터: "outer", 신발: "shoes", 가방: "bag", 액세서리: "accessory" })[category] || null;
 }
 
 async function tryOnItems(items, targetImage = null) {
   if (!items.length) return showToast("입혀볼 옷을 먼저 골라주세요");
   if (!avatarImage) await generateAvatar();
-  const cacheKey = `${items.map(item => item.id).join("-")}-${avatarMeasurements?.height || "base"}`;
+  const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
+  const cacheKey = `${items.map(item => item.id).join("-")}-${avatarKey}`;
   $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
-  $("#tryonStage").innerHTML = '<div class="generation-loader"><span></span><strong>GPU로 착장 생성 중</strong><small>Colab L4에서 고해상도 착장을 만들고 있어요</small></div>';
-  $("#tryonStatusText").textContent = "리뷰처럼 편하게 찍은 옷 사진에서 옷의 영역과 질감을 찾고 있어요.";
+  $("#tryonStage").innerHTML = '<div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div>';
+  $("#tryonStatusText").textContent = "선택한 옷의 색과 형태를 살려 조합하고 있어요.";
   openDialog($("#avatarTryonDialog"));
   if (tryonCache.has(cacheKey)) {
     const cached = tryonCache.get(cacheKey); $("#tryonStage").innerHTML = `<img src="${cached}" alt="AI 가상 착장 결과" />`; return;
@@ -203,12 +201,12 @@ async function tryOnItems(items, targetImage = null) {
     tryonCache.set(cacheKey, result.image);
     $("#tryonStage").innerHTML = `<img src="${result.image}" alt="AI 가상 착장 결과" />`;
     $("#tryonStatusText").textContent = "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
-    $("#tryonEngineLabel").textContent = `${result.engine} · ${result.gpu || "CPU"}`;
+    $("#tryonEngineLabel").textContent = "AI 착장 결과";
     if (targetImage) targetImage.src = result.image;
   } catch {
     $("#tryonStage").innerHTML = `<img src="${avatarImage}" alt="아바타 미리보기" />`;
-    $("#tryonStatusText").textContent = "GPU 서버에 연결하지 못해 기본 아바타로 보여드려요. Colab notebook의 최신 링크로 다시 열어주세요.";
-    $("#tryonEngineLabel").textContent = "미리보기 모드 · GPU 백엔드 연결 필요";
+    $("#tryonStatusText").textContent = "지금은 착장 이미지를 만들지 못했어요. 잠시 후 다시 시도해주세요.";
+    $("#tryonEngineLabel").textContent = "착장 미리보기";
   }
 }
 

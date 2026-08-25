@@ -15,69 +15,92 @@ if str(BACKEND) not in sys.path:
 
 
 @pytest.fixture()
-def backend_app(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-    monkeypatch.setenv("FASHN_WEIGHTS_DIR", str(tmp_path / "weights"))
-    monkeypatch.setenv("AVATAR_MODEL", "stabilityai/sdxl-turbo")
+def backend_app(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
     monkeypatch.setenv("WEARWELL_API_TOKEN", "test-token")
+    monkeypatch.setenv("IMAGE_WIDTH", "768")
+    monkeypatch.setenv("IMAGE_HEIGHT", "1152")
     sys.modules.pop("app", None)
     return importlib.import_module("app")
 
 
-def test_health_describes_colab_fashn_runtime(backend_app, monkeypatch: pytest.MonkeyPatch):
+def image_payload(color: str = "white") -> str:
+    output = io.BytesIO()
+    Image.new("RGB", (64, 96), color).save(output, format="PNG")
+    return base64.b64encode(output.getvalue()).decode()
+
+
+def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
 
     result = backend_app.health()
 
     assert result["ok"] is True
     assert result["gpu"] == "NVIDIA L4"
-    assert result["model"] == "fashn-ai/fashn-vton-1.5"
-    assert result["avatarModel"] == "stabilityai/sdxl-turbo"
-    assert result["resolution"] == "576x864"
+    assert result["model"] == "black-forest-labs/FLUX.2-klein-4B"
+    assert result["avatarModel"] == result["tryonModel"] == result["model"]
+    assert result["resolution"] == "768x1152"
+    assert result["modelLoaded"] is False
 
 
-def test_fashn_engine_maps_api_category_and_parameters(backend_app, tmp_path: Path):
+def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
     calls = []
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(
+        engine,
+        "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", backend_app.INFERENCE_SIZE),
+    )
+    data = backend_app.Measurements(
+        gender="men",
+        height=181,
+        weight=76,
+        body_shape="역삼각형",
+        shoulder=49,
+        chest=103,
+        waist=82,
+        hip=96,
+        inseam=83,
+        seed=77,
+    )
 
-    class FakeResult:
-        images = [Image.new("RGB", (576, 864), "navy")]
+    result, engine_name = engine.generate_avatar(data)
 
-    class FakePipeline:
-        inference_dtype = "torch.bfloat16"
-
-        def __init__(self, *, weights_dir: str, device: str):
-            calls.append(("init", Path(weights_dir), device))
-
-        def __call__(self, **kwargs):
-            calls.append(("call", kwargs))
-            return FakeResult()
-
-    engine = backend_app.TryOnEngine(pipeline_factory=FakePipeline)
-    person = Image.new("RGB", (384, 512), "white")
-    garment = Image.new("RGB", (384, 512), "black")
-
-    result = engine.apply_one(person, garment, "upper", seed=17)
-
-    assert result.size == (576, 864)
-    assert calls[0] == ("init", tmp_path / "weights", "cuda")
-    request = calls[1][1]
-    assert request["category"] == "tops"
-    assert request["garment_photo_type"] == "model"
-    assert request["num_timesteps"] == 30
-    assert request["seed"] == 17
-    assert request["segmentation_free"] is True
-    assert engine.last_dtype == "bfloat16"
+    assert result.size == (768, 1152)
+    assert engine_name.startswith("flux2-klein-4b")
+    assert calls[0]["seed"] == 77
+    for value in ("181 cm", "76 kg", "49 cm", "103 cm", "82 cm", "96 cm", "83 cm"):
+        assert value in calls[0]["prompt"]
 
 
-def test_fashn_engine_maps_all_supported_categories(backend_app):
-    assert backend_app.TryOnEngine.CATEGORY_MAP == {
-        "upper": "tops",
-        "lower": "bottoms",
-        "overall": "one-pieces",
-    }
+def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(
+        engine,
+        "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", backend_app.INFERENCE_SIZE),
+    )
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[
+            {"image": image_payload("white"), "category": "upper", "name": "흰 셔츠"},
+            {"image": image_payload("navy"), "category": "lower", "name": "청바지"},
+        ],
+        seed=31,
+    )
 
+    result, _ = engine.generate_tryon(request)
 
-def test_avatar_engine_uses_sdxl_turbo_default(backend_app):
-    assert backend_app.AVATAR_MODEL == "stabilityai/sdxl-turbo"
+    assert result.size == (768, 1152)
+    assert len(calls) == 1
+    assert len(calls[0]["images"]) == 3
+    assert calls[0]["seed"] == 31
+    assert "reference image 1 is the person" in calls[0]["prompt"].lower()
+    assert "reference image 2" in calls[0]["prompt"]
+    assert "reference image 3" in calls[0]["prompt"]
 
 
 def test_tryon_request_rejects_oversized_images(backend_app):
@@ -88,14 +111,17 @@ def test_tryon_request_rejects_oversized_images(backend_app):
         )
 
 
-def test_weights_ready_requires_every_fashn_file(backend_app, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(backend_app, "FASHN_WEIGHTS_DIR", tmp_path)
-    (tmp_path / "model.safetensors").write_bytes(b"model")
-    assert backend_app.fashn_weights_ready() is False
-    (tmp_path / "dwpose").mkdir()
-    (tmp_path / "dwpose/yolox_l.onnx").write_bytes(b"pose")
-    (tmp_path / "dwpose/dw-ll_ucoco_384.onnx").write_bytes(b"pose")
-    assert backend_app.fashn_weights_ready() is True
+def test_tryon_accepts_full_outfit_categories(backend_app):
+    request = backend_app.TryOnRequest(
+        avatar=image_payload(),
+        garments=[
+            {"image": image_payload(), "category": "outer"},
+            {"image": image_payload(), "category": "shoes"},
+            {"image": image_payload(), "category": "bag"},
+            {"image": image_payload(), "category": "accessory"},
+        ],
+    )
+    assert [item.category for item in request.garments] == ["outer", "shoes", "bag", "accessory"]
 
 
 def test_decode_image_rejects_excessive_dimensions(backend_app):
@@ -131,7 +157,7 @@ def test_public_app_requires_token_and_hides_backend_source(backend_app):
     assert oversized.status_code == 413
 
 
-def test_colab_backend_exposes_only_api_routes(backend_app):
+def test_backend_exposes_only_api_routes(backend_app):
     from fastapi.testclient import TestClient
 
     client = TestClient(backend_app.app)
@@ -144,7 +170,7 @@ def test_colab_backend_exposes_only_api_routes(backend_app):
     assert client.get("/openapi.json").status_code == 404
 
 
-def test_cors_allows_local_frontend_but_not_tunnel_frontend(backend_app):
+def test_cors_allows_local_frontend_only(backend_app):
     from fastapi.testclient import TestClient
 
     client = TestClient(backend_app.app)
@@ -156,11 +182,11 @@ def test_cors_allows_local_frontend_but_not_tunnel_frontend(backend_app):
     assert local.status_code == 200
     assert local.headers["access-control-allow-origin"] == "http://localhost:8000"
 
-    tunnel = client.options(
+    remote = client.options(
         "/api/avatar",
-        headers={**headers, "Origin": "https://frontend.trycloudflare.com"},
+        headers={**headers, "Origin": "https://frontend.example.com"},
     )
-    assert "access-control-allow-origin" not in tunnel.headers
+    assert "access-control-allow-origin" not in remote.headers
 
 
 def test_gpu_api_fails_closed_without_server_token(backend_app, monkeypatch: pytest.MonkeyPatch):

@@ -9,7 +9,6 @@ import os
 import threading
 import time
 from collections import defaultdict, deque
-from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Request
@@ -18,12 +17,14 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
-ROOT = Path(__file__).resolve().parent
-FASHN_MODEL = "fashn-ai/fashn-vton-1.5"
-FASHN_WEIGHTS_DIR = Path(os.getenv("FASHN_WEIGHTS_DIR", ROOT / "weights" / "fashn-vton-1.5"))
-AVATAR_MODEL = os.getenv("AVATAR_MODEL", "stabilityai/sdxl-turbo")
+IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 API_TOKEN = os.getenv("WEARWELL_API_TOKEN", "")
-INFERENCE_SIZE = (576, 864)
+INFERENCE_SIZE = (
+    int(os.getenv("IMAGE_WIDTH", "768")),
+    int(os.getenv("IMAGE_HEIGHT", "1152")),
+)
+INFERENCE_STEPS = int(os.getenv("FLUX_STEPS", "4"))
+GUIDANCE_SCALE = float(os.getenv("FLUX_GUIDANCE", "1.0"))
 MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
@@ -63,9 +64,10 @@ class BodyLimitMiddleware:
 
         await self.app(scope, limited_receive, send)
 
+
 app = FastAPI(
-    title="오늘옷 GPU 스타일링 API",
-    version="0.3.0",
+    title="오늘옷 생성형 이미지 API",
+    version="0.4.0",
     docs_url=None,
     redoc_url=None,
     openapi_url=None,
@@ -116,13 +118,13 @@ class AvatarResponse(BaseModel):
     image: str
     engine: str
     gpu: str | None
-    disclaimer: str = "측정값을 시각적으로 근사한 2D 이미지이며 실제 체형·사이즈를 보증하지 않습니다."
+    disclaimer: str = "입력한 치수를 시각적으로 근사한 이미지이며 실제 체형이나 의류 사이즈를 보증하지 않습니다."
 
 
 class GarmentInput(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
-    category: Literal["upper", "lower", "overall"] = "upper"
-    name: str = "옷"
+    category: Literal["upper", "lower", "overall", "outer", "shoes", "bag", "accessory"] = "upper"
+    name: str = Field(default="옷", max_length=100)
 
 
 class TryOnRequest(BaseModel):
@@ -150,43 +152,55 @@ def decode_image(value: str) -> Image.Image:
 
 def encode_image(image: Image.Image, mime: str = "image/jpeg") -> str:
     output = io.BytesIO()
-    image.convert("RGB").save(output, format="JPEG", quality=90, optimize=True)
+    image.convert("RGB").save(output, format="JPEG", quality=92, optimize=True)
     return f"data:{mime};base64,{base64.b64encode(output.getvalue()).decode()}"
 
 
 def cuda_info() -> tuple[bool, str | None]:
     try:
         import torch
-        return torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
+
+        available = torch.cuda.is_available()
+        return available, torch.cuda.get_device_name(0) if available else None
     except Exception:
         return False, None
 
 
-def fashn_weights_ready() -> bool:
-    required = (
-        FASHN_WEIGHTS_DIR / "model.safetensors",
-        FASHN_WEIGHTS_DIR / "dwpose" / "yolox_l.onnx",
-        FASHN_WEIGHTS_DIR / "dwpose" / "dw-ll_ucoco_384.onnx",
-    )
-    return all(path.is_file() and path.stat().st_size > 0 for path in required)
+class FluxImageEngine:
+    CATEGORY_LABELS = {
+        "upper": "upper-body garment",
+        "lower": "lower-body garment",
+        "overall": "one-piece or full-body garment",
+        "outer": "outerwear layer",
+        "shoes": "pair of shoes",
+        "bag": "bag",
+        "accessory": "fashion accessory",
+    }
 
-
-class AvatarEngine:
-    def __init__(self) -> None:
+    def __init__(self, pipeline_factory=None) -> None:
         self.pipe = None
+        self.pipeline_factory = pipeline_factory
+        self.dtype: str | None = None
 
     def _load(self):
         if self.pipe is not None:
             return self.pipe
         import torch
-        from diffusers import AutoPipelineForText2Image
 
-        pipe = AutoPipelineForText2Image.from_pretrained(
-            AVATAR_MODEL,
-            torch_dtype=torch.float16,
-            variant="fp16",
-            use_safetensors=True,
-        ).to("cuda")
+        if self.pipeline_factory is None:
+            from diffusers import Flux2KleinPipeline
+
+            self.pipeline_factory = Flux2KleinPipeline
+
+        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        self.dtype = str(dtype).removeprefix("torch.")
+        pipe = self.pipeline_factory.from_pretrained(IMAGE_MODEL, torch_dtype=dtype)
+        if os.getenv("FLUX_CPU_OFFLOAD", "0") == "1":
+            pipe.enable_model_cpu_offload()
+        else:
+            pipe.to("cuda")
+        if hasattr(pipe, "set_progress_bar_config"):
+            pipe.set_progress_bar_config(disable=True)
         self.pipe = pipe
         return pipe
 
@@ -203,141 +217,135 @@ class AvatarEngine:
             pass
 
     @staticmethod
-    def _shape_prompt(data: Measurements) -> str:
+    def _shape_description(data: Measurements) -> str:
         bmi = data.weight / ((data.height / 100) ** 2)
-        build = "slim build" if bmi < 20 else "average build" if bmi < 25 else "soft sturdy build" if bmi < 30 else "plus size build"
-        gender = "Korean woman" if data.gender == "women" else "Korean man"
-        ratios = []
+        build = "lean" if bmi < 20 else "average" if bmi < 24 else "solid" if bmi < 28 else "fuller"
+        gender = "adult Korean woman" if data.gender == "women" else "adult Korean man"
+        details = [
+            gender,
+            f"{data.height:.0f} cm tall",
+            f"{data.weight:.0f} kg",
+            f"a {build} build",
+            f"body-shape description: {data.body_shape}",
+        ]
+        if data.shoulder:
+            details.append(f"shoulder width {data.shoulder:.0f} cm")
+        if data.chest:
+            details.append(f"chest circumference {data.chest:.0f} cm")
+        if data.waist:
+            details.append(f"waist circumference {data.waist:.0f} cm")
+        if data.hip:
+            details.append(f"hip circumference {data.hip:.0f} cm")
+        if data.inseam:
+            details.append(f"inseam {data.inseam:.0f} cm")
         if data.waist and data.hip:
-            ratios.append("defined waist" if data.waist / data.hip < .78 else "straight waistline")
-        if data.shoulder and data.chest:
-            ratios.append("balanced shoulders" if data.shoulder < data.chest * .55 else "broad shoulders")
-        return ", ".join([gender, f"{data.height:.0f}cm visual proportion", build, data.body_shape, *ratios])
+            details.append(f"waist-to-hip ratio {data.waist / data.hip:.2f}")
+        return ", ".join(details)
 
-    def generate(self, data: Measurements) -> tuple[Image.Image, str]:
+    def _run(self, *, prompt: str, seed: int, images: list[Image.Image] | None = None) -> Image.Image:
+        import torch
+
+        pipe = self._load()
+        inputs = {
+            "prompt": prompt,
+            "height": INFERENCE_SIZE[1],
+            "width": INFERENCE_SIZE[0],
+            "guidance_scale": GUIDANCE_SCALE,
+            "num_inference_steps": INFERENCE_STEPS,
+            "generator": torch.Generator(device="cuda").manual_seed(seed),
+        }
+        if images:
+            inputs["image"] = images
+        with GPU_LOCK, torch.inference_mode():
+            output = pipe(**inputs).images[0]
+            torch.cuda.empty_cache()
+        return output.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
+
+    def generate_avatar(self, data: Measurements) -> tuple[Image.Image, str]:
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
-            import torch
-            pipe = self._load()
             prompt = (
-                f"full body studio catalog photo of a {self._shape_prompt(data)}, standing naturally in a neutral front pose, "
-                "wearing seamless fitted gray base garments, feet visible, soft even light, plain warm gray background, "
-                "realistic proportions, Korean fashion fitting model, high detail"
+                "Create a photorealistic full-body studio fitting avatar. The subject is "
+                f"{self._shape_description(data)}. Accurately reflect the stated height, weight, body build, "
+                "and body proportions without slimming or exaggeration. Front-facing relaxed symmetrical A-pose, "
+                "arms slightly away from the torso, both feet fully visible, eye-level camera, 85 mm catalog lens. "
+                "Wear a plain fitted charcoal crew-neck top and fitted mid-thigh charcoal shorts so the body outline "
+                "is clearly visible. Clean warm-gray seamless background, soft even studio lighting, realistic skin, "
+                "natural Korean facial features, no accessories, no outerwear, no text, no watermark."
             )
-            negative = "cropped, close-up, extra limbs, deformed body, asymmetric pose, loose coat, text, watermark, busy background"
-            generator = torch.Generator(device="cuda").manual_seed(data.seed)
-            with GPU_LOCK, torch.inference_mode():
-                image = pipe(
-                    prompt,
-                    negative_prompt=negative,
-                    width=INFERENCE_SIZE[0],
-                    height=INFERENCE_SIZE[1],
-                    num_inference_steps=4,
-                    guidance_scale=0.0,
-                    generator=generator,
-                ).images[0]
-                torch.cuda.empty_cache()
-            return image, "sdxl-turbo-cuda-fp16"
-        return self.fallback(data), "measurement-preview-fallback"
+            return self._run(prompt=prompt, seed=data.seed), self.engine_name
+        return self.fallback_avatar(data), "measurement-preview-fallback"
+
+    def generate_tryon(self, request: TryOnRequest) -> tuple[Image.Image, str]:
+        person = decode_image(request.avatar)
+        garments = [decode_image(item.image) for item in request.garments]
+        has_cuda, _ = cuda_info()
+        if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
+            garment_roles = "; ".join(
+                f"reference image {index + 2}: {self.CATEGORY_LABELS[item.category]} named '{item.name}'"
+                for index, item in enumerate(request.garments)
+            )
+            prompt = (
+                "Virtual try-on edit using all reference images together. Reference image 1 is the person and must "
+                f"remain the same person with the same face, hair, body proportions, pose, hands, legs, and background. {garment_roles}. "
+                "Dress the person in exactly those referenced garments. Preserve each garment's actual color, fabric, "
+                "pattern, logo placement, neckline, sleeve length, cut, and silhouette; remove any original model or "
+                "background visible in the garment references. Replace only the clothing categories provided and keep "
+                "the remaining base clothing unchanged. Make the fit physically plausible with correct layering, folds, "
+                "occlusion, body contact, and consistent studio lighting. Photorealistic Korean fashion e-commerce "
+                "full-body result, no extra garments, no invented accessories, no text, no collage, no split screen."
+            )
+            return self._run(prompt=prompt, seed=request.seed, images=[person, *garments]), self.engine_name
+        return self.fallback_tryon(person, request.garments), "tryon-preview-fallback"
+
+    @property
+    def engine_name(self) -> str:
+        return f"flux2-klein-4b-cuda-{self.dtype or 'auto'}"
 
     @staticmethod
-    def fallback(data: Measurements) -> Image.Image:
-        canvas = Image.new("RGB", (384, 512), "#eeeae5")
+    def fallback_avatar(data: Measurements) -> Image.Image:
+        canvas = Image.new("RGB", (512, 768), "#eeeae5")
         draw = ImageDraw.Draw(canvas)
         bmi = data.weight / ((data.height / 100) ** 2)
-        body_width = int(75 + max(-15, min(45, (bmi - 20) * 4)))
-        shoulder_width = int((data.shoulder or (40 if data.gender == "women" else 46)) * 2.05)
-        hip_width = int((data.hip or (92 if data.gender == "women" else 94)) * .78)
-        cx = 192
+        body_width = int(90 + max(-18, min(55, (bmi - 20) * 4.5)))
+        shoulder_width = int((data.shoulder or (40 if data.gender == "women" else 46)) * 2.35)
+        hip_width = int((data.hip or (92 if data.gender == "women" else 94)) * 0.93)
+        cx = 256
         skin = "#d2ab94"
-        cloth = "#838990"
-        draw.ellipse((cx - 32, 38, cx + 32, 102), fill=skin)
-        draw.rounded_rectangle((cx - shoulder_width // 2, 103, cx + shoulder_width // 2, 285), 35, fill=cloth)
-        draw.polygon([(cx - body_width // 2, 200), (cx + body_width // 2, 200), (cx + hip_width // 2, 326), (cx - hip_width // 2, 326)], fill=cloth)
-        leg_gap = 8
-        draw.rounded_rectangle((cx - hip_width // 2, 310, cx - leg_gap, 475), 18, fill="#5e646a")
-        draw.rounded_rectangle((cx + leg_gap, 310, cx + hip_width // 2, 475), 18, fill="#5e646a")
-        draw.rounded_rectangle((cx - shoulder_width // 2 - 18, 115, cx - shoulder_width // 2 + 12, 325), 15, fill=skin)
-        draw.rounded_rectangle((cx + shoulder_width // 2 - 12, 115, cx + shoulder_width // 2 + 18, 325), 15, fill=skin)
+        cloth = "#696f75"
+        draw.ellipse((cx - 38, 55, cx + 38, 131), fill=skin)
+        draw.rounded_rectangle((cx - shoulder_width // 2, 132, cx + shoulder_width // 2, 410), 42, fill=cloth)
+        draw.polygon(
+            [(cx - body_width // 2, 280), (cx + body_width // 2, 280), (cx + hip_width // 2, 500), (cx - hip_width // 2, 500)],
+            fill=cloth,
+        )
+        draw.rounded_rectangle((cx - hip_width // 2, 480, cx - 10, 715), 22, fill="#555b61")
+        draw.rounded_rectangle((cx + 10, 480, cx + hip_width // 2, 715), 22, fill="#555b61")
+        draw.rounded_rectangle((cx - shoulder_width // 2 - 23, 150, cx - shoulder_width // 2 + 14, 475), 18, fill=skin)
+        draw.rounded_rectangle((cx + shoulder_width // 2 - 14, 150, cx + shoulder_width // 2 + 23, 475), 18, fill=skin)
         return canvas.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
 
-
-class TryOnEngine:
-    CATEGORY_MAP = {"upper": "tops", "lower": "bottoms", "overall": "one-pieces"}
-
-    def __init__(self, pipeline_factory=None) -> None:
-        self.pipeline = None
-        self.pipeline_factory = pipeline_factory
-        self.last_dtype: str | None = None
-
-    def _load(self):
-        if self.pipeline is not None:
-            return self.pipeline
-        if self.pipeline_factory is None:
-            from fashn_vton import TryOnPipeline
-
-            self.pipeline_factory = TryOnPipeline
-        self.pipeline = self.pipeline_factory(weights_dir=str(FASHN_WEIGHTS_DIR), device="cuda")
-        dtype = getattr(self.pipeline, "inference_dtype", None)
-        self.last_dtype = str(dtype).removeprefix("torch.") if dtype is not None else "unknown"
-        return self.pipeline
-
-    def unload(self) -> None:
-        if self.pipeline is None:
-            return
-        self.pipeline = None
-        gc.collect()
-        try:
-            import torch
-
-            torch.cuda.empty_cache()
-        except Exception:
-            pass
-
-    def apply_one(self, person: Image.Image, garment: Image.Image, category: str, seed: int) -> Image.Image:
-        pipeline = self._load()
-        with GPU_LOCK:
-            result = pipeline(
-                person_image=person,
-                garment_image=garment,
-                category=self.CATEGORY_MAP[category],
-                garment_photo_type="model",
-                num_samples=1,
-                num_timesteps=int(os.getenv("FASHN_STEPS", "30")),
-                guidance_scale=1.5,
-                seed=seed,
-                segmentation_free=True,
-            ).images[0]
-            try:
-                import torch
-
-                torch.cuda.empty_cache()
-            except Exception:
-                pass
-        return result.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
-
     @staticmethod
-    def fallback(person: Image.Image, garments: list[GarmentInput]) -> Image.Image:
+    def fallback_tryon(person: Image.Image, garments: list[GarmentInput]) -> Image.Image:
         person = person.resize(INFERENCE_SIZE)
         draw = ImageDraw.Draw(person, "RGBA")
         colors = [(255, 113, 91, 110), (55, 83, 120, 115), (238, 238, 232, 125), (45, 45, 45, 100)]
-        regions = {"upper": (168, 203, 408, 473), "lower": (180, 447, 396, 793), "overall": (158, 194, 418, 776)}
+        width, height = INFERENCE_SIZE
+        regions = {
+            "upper": (int(width * .29), int(height * .23), int(width * .71), int(height * .54)),
+            "lower": (int(width * .31), int(height * .51), int(width * .69), int(height * .91)),
+            "overall": (int(width * .27), int(height * .22), int(width * .73), int(height * .90)),
+            "outer": (int(width * .24), int(height * .21), int(width * .76), int(height * .65)),
+            "shoes": (int(width * .25), int(height * .88), int(width * .75), int(height * .98)),
+            "bag": (int(width * .68), int(height * .38), int(width * .88), int(height * .68)),
+            "accessory": (int(width * .35), int(height * .08), int(width * .65), int(height * .22)),
+        }
         for index, garment in enumerate(garments):
-            draw.rounded_rectangle(regions[garment.category], radius=24, fill=colors[index % len(colors)])
+            draw.rounded_rectangle(regions[garment.category], radius=28, fill=colors[index % len(colors)])
         return person
 
-    def generate(self, request: TryOnRequest) -> tuple[Image.Image, str]:
-        person = decode_image(request.avatar)
-        has_cuda, _ = cuda_info()
-        if has_cuda and fashn_weights_ready() and os.getenv("ONEULOUT_GPU", "1") == "1":
-            for index, garment in enumerate(request.garments):
-                person = self.apply_one(person, decode_image(garment.image), garment.category, request.seed + index)
-            return person, f"fashn-vton-1.5-cuda-{self.last_dtype or 'unknown'}"
-        return self.fallback(person, request.garments), "tryon-preview-fallback"
 
-
-avatar_engine = AvatarEngine()
-tryon_engine = TryOnEngine()
+image_engine = FluxImageEngine()
 
 
 @app.get("/api/health")
@@ -347,11 +355,12 @@ def health():
         "ok": True,
         "cuda": available,
         "gpu": name,
-        "model": FASHN_MODEL,
-        "avatarModel": AVATAR_MODEL,
-        "weightsInstalled": fashn_weights_ready(),
+        "model": IMAGE_MODEL,
+        "avatarModel": IMAGE_MODEL,
+        "tryonModel": IMAGE_MODEL,
+        "modelLoaded": image_engine.pipe is not None,
         "warmupVerified": WARMUP_VERIFIED,
-        "dtype": tryon_engine.last_dtype,
+        "dtype": image_engine.dtype,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
     }
 
@@ -361,13 +370,9 @@ def generate_avatar(data: Measurements):
     if not INFERENCE_GATE.acquire(blocking=False):
         raise HTTPException(status_code=429, detail="GPU is busy")
     try:
-        with GPU_LOCK:
-            tryon_engine.unload()
-            image, engine = avatar_engine.generate(data)
+        image, engine = image_engine.generate_avatar(data)
         _, gpu = cuda_info()
         return AvatarResponse(image=encode_image(image), engine=engine, gpu=gpu)
-    except ValueError as error:
-        raise HTTPException(status_code=422, detail="Invalid image payload") from error
     except Exception as error:
         logging.exception("Avatar generation failed")
         raise HTTPException(status_code=500, detail="Avatar generation failed") from error
@@ -380,9 +385,7 @@ def generate_tryon(request: TryOnRequest):
     if not INFERENCE_GATE.acquire(blocking=False):
         raise HTTPException(status_code=429, detail="GPU is busy")
     try:
-        with GPU_LOCK:
-            avatar_engine.unload()
-            image, engine = tryon_engine.generate(request)
+        image, engine = image_engine.generate_tryon(request)
         _, gpu = cuda_info()
         return {"image": encode_image(image), "engine": engine, "gpu": gpu, "garmentCount": len(request.garments)}
     except ValueError as error:
@@ -395,20 +398,17 @@ def generate_tryon(request: TryOnRequest):
 
 
 @app.post("/api/warmup")
-def warmup_models():
+def warmup_model():
     global WARMUP_VERIFIED
-    if not fashn_weights_ready():
-        raise HTTPException(status_code=503, detail="FASHN weights are incomplete")
+    available, _ = cuda_info()
+    if not available:
+        raise HTTPException(status_code=503, detail="CUDA GPU is unavailable")
     if not INFERENCE_GATE.acquire(blocking=False):
         raise HTTPException(status_code=429, detail="GPU is busy")
     try:
-        with GPU_LOCK:
-            avatar_engine._load()
-            avatar_engine.unload()
-            tryon_engine._load()
-            tryon_engine.unload()
-            WARMUP_VERIFIED = True
-        return {"ok": True, "avatarModel": AVATAR_MODEL, "tryonModel": FASHN_MODEL}
+        image_engine._load()
+        WARMUP_VERIFIED = True
+        return {"ok": True, "model": IMAGE_MODEL, "dtype": image_engine.dtype}
     except Exception as error:
         logging.exception("Model warmup failed")
         raise HTTPException(status_code=500, detail="Model warmup failed") from error
