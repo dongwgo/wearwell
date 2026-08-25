@@ -88,6 +88,7 @@ const API_HEADERS = { "Content-Type": "application/json", ...(API_TOKEN ? { Auth
 const todayWeather = { temperature: 22, condition: "약한 비", tags: ["선선함", "약한 비", "간절기", "습함"] };
 const LOOK_ANALYSIS_VERSION = 3;
 const VLM_ANALYSIS_ENGINE = "Qwen3-VL-8B-Instruct";
+let interactiveGpuRequests = 0;
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -106,6 +107,33 @@ function showToast(message) {
 function openDialog(dialog) { if (!dialog.open) dialog.showModal(); }
 function closeDialogs() { $$('dialog[open]').forEach(dialog => dialog.close()); }
 function genderLabel() { return selectedGender === "men" ? "남성" : "여성"; }
+
+const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+async function fetchGpuJson(path, payload, onQueued = () => {}) {
+  const retryDelays = [15000, 25000, 35000];
+  for (let attempt = 0; ; attempt += 1) {
+    const response = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: API_HEADERS,
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => ({}));
+    if (response.ok) return result;
+    if (response.status === 429 && attempt < retryDelays.length) {
+      const headerDelay = Number(response.headers.get("Retry-After")) * 1000;
+      const delay = Number.isFinite(headerDelay) && headerDelay > 0 ? headerDelay : retryDelays[attempt];
+      onQueued(result.detail || "GPU is busy");
+      await wait(delay);
+      continue;
+    }
+    throw new Error(result.detail || `GPU API 오류 (${response.status})`);
+  }
+}
+
+async function waitForInteractiveGpu() {
+  while (interactiveGpuRequests > 0) await wait(250);
+}
 
 function readMeasurements() {
   if (bodyInputMethod === "photo" && avatarMeasurements?.photoBased) return { ...avatarMeasurements, gender: selectedGender || avatarMeasurements.gender };
@@ -158,6 +186,15 @@ function showAvatar(image, engine = "") {
 }
 
 async function generateAvatar() {
+  interactiveGpuRequests += 1;
+  try {
+    return await runGenerateAvatar();
+  } finally {
+    interactiveGpuRequests = Math.max(0, interactiveGpuRequests - 1);
+  }
+}
+
+async function runGenerateAvatar() {
   if (bodyInputMethod === "photo") {
     if (!fullBodyPhoto) return showToast("먼저 전신사진을 선택해주세요");
     avatarMeasurements = {
@@ -181,9 +218,9 @@ async function generateAvatar() {
   $("#generateAvatar").disabled = true;
   $("#avatarEngineStatus").textContent = "신체 비율을 계산하고 있어요…";
   try {
-    const response = await fetch(`${API_BASE}/api/avatar`, { method: "POST", headers: API_HEADERS, body: JSON.stringify(data) });
-    if (!response.ok) throw new Error("GPU backend unavailable");
-    const result = await response.json();
+    const result = await fetchGpuJson("/api/avatar", data, () => {
+      $("#avatarEngineStatus").textContent = "앞선 분석이 끝나면 바로 아바타를 만들게요";
+    });
     showAvatar(result.image, result.engine);
   } catch {
     showAvatar(localAvatarPreview(data), "fallback");
@@ -240,6 +277,15 @@ function renderTryonStage(reference, output = null, loading = false) {
 }
 
 async function tryOnItems(items, comparison = null) {
+  interactiveGpuRequests += 1;
+  try {
+    return await runTryOnItems(items, comparison);
+  } finally {
+    interactiveGpuRequests = Math.max(0, interactiveGpuRequests - 1);
+  }
+}
+
+async function runTryOnItems(items, comparison = null) {
   if (!items.length) return showToast("입혀볼 옷을 먼저 골라주세요");
   if (!avatarImage) await generateAvatar();
   const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
@@ -255,9 +301,9 @@ async function tryOnItems(items, comparison = null) {
     const wearableItems = items.filter(item => garmentType(item.category)).slice(0, 4);
     if (!wearableItems.length) throw new Error("No supported garments");
     const garments = await Promise.all(wearableItems.map(async item => ({ image: await imageToDataUrl(item.image), category: garmentType(item.category), name: item.name })));
-    const response = await fetch(`${API_BASE}/api/tryon`, { method: "POST", headers: API_HEADERS, body: JSON.stringify({ avatar: avatarImage, garments, seed: 42 }) });
-    if (!response.ok) throw new Error("Try-on backend unavailable");
-    const result = await response.json();
+    const result = await fetchGpuJson("/api/tryon", { avatar: avatarImage, garments, seed: 42 }, () => {
+      $("#tryonStatusText").textContent = "먼저 시작한 분석이 끝나는 대로 착장을 만들게요. 잠시만 기다려주세요.";
+    });
     tryonCache.set(cacheKey, result.image);
     renderTryonStage(comparison, result.image);
     $("#tryonStatusText").textContent = comparison ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요." : "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
@@ -671,6 +717,7 @@ function pieceObjectPosition(piece) {
 async function analyzeLookbooks(lookbooks) {
   for (const look of lookbooks) {
     try {
+      await waitForInteractiveGpu();
       const stored = await window.WearwellDB.getLook(look.id);
       look.analysisState = "analyzing";
       let result = stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION ? stored.analysis : null;

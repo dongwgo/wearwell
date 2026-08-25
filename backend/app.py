@@ -33,6 +33,8 @@ GUIDANCE_SCALE = float(os.getenv("FLUX_GUIDANCE", "1.0"))
 MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
+RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
 GPU_LOCK = threading.RLock()
 INFERENCE_GATE = threading.Lock()
 RATE_LOCK = threading.Lock()
@@ -101,8 +103,13 @@ async def protect_gpu_api(request: Request, call_next):
             times = REQUEST_TIMES[key]
             while times and times[0] < now - 60:
                 times.popleft()
-            if len(times) >= 12:
-                return JSONResponse({"detail": "Rate limit exceeded"}, status_code=429)
+            if len(times) >= RATE_LIMIT_PER_MINUTE:
+                retry_after = max(1, int(60 - (now - times[0])))
+                return JSONResponse(
+                    {"detail": "Rate limit exceeded"},
+                    status_code=429,
+                    headers={"Retry-After": str(retry_after)},
+                )
             times.append(now)
     return await call_next(request)
 
@@ -469,6 +476,15 @@ image_engine = FluxImageEngine()
 vlm_engine = QwenVLMEngine()
 
 
+def acquire_inference_slot() -> None:
+    if not INFERENCE_GATE.acquire(timeout=GPU_QUEUE_TIMEOUT):
+        raise HTTPException(
+            status_code=503,
+            detail="GPU queue timeout",
+            headers={"Retry-After": "10"},
+        )
+
+
 @app.get("/api/health")
 def health():
     available, name = cuda_info()
@@ -487,14 +503,15 @@ def health():
         "dtype": image_engine.dtype,
         "vlmDtype": vlm_engine.dtype,
         "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
+        "queueTimeoutSeconds": GPU_QUEUE_TIMEOUT,
+        "rateLimitPerMinute": RATE_LIMIT_PER_MINUTE,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
     }
 
 
 @app.post("/api/avatar", response_model=AvatarResponse)
 def generate_avatar(data: Measurements):
-    if not INFERENCE_GATE.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="GPU is busy")
+    acquire_inference_slot()
     try:
         image, engine = image_engine.generate_avatar(data)
         _, gpu = cuda_info()
@@ -508,8 +525,7 @@ def generate_avatar(data: Measurements):
 
 @app.post("/api/tryon")
 def generate_tryon(request: TryOnRequest):
-    if not INFERENCE_GATE.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="GPU is busy")
+    acquire_inference_slot()
     try:
         image, engine = image_engine.generate_tryon(request)
         _, gpu = cuda_info()
@@ -524,8 +540,7 @@ def generate_tryon(request: TryOnRequest):
 
 
 def run_vlm_request(request: VLMImageRequest, prompt: str, max_new_tokens: int) -> dict:
-    if not INFERENCE_GATE.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="GPU is busy")
+    acquire_inference_slot()
     try:
         return vlm_engine.analyze(decode_image(request.image), prompt, max_new_tokens)
     except ValueError as error:
@@ -560,8 +575,7 @@ def warmup_model():
     available, _ = cuda_info()
     if not available:
         raise HTTPException(status_code=503, detail="CUDA GPU is unavailable")
-    if not INFERENCE_GATE.acquire(blocking=False):
-        raise HTTPException(status_code=429, detail="GPU is busy")
+    acquire_inference_slot()
     try:
         vlm_engine._load()
         VLM_WARMUP_VERIFIED = True

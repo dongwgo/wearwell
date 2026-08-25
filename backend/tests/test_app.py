@@ -46,6 +46,23 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["vlmModel"] == "Qwen/Qwen3-VL-8B-Instruct"
     assert result["vlmLoaded"] is False
     assert result["vlmQuantization"] == "nf4"
+    assert result["queueTimeoutSeconds"] == 300
+    assert result["rateLimitPerMinute"] == 60
+
+
+def test_inference_slot_waits_instead_of_returning_busy(backend_app, monkeypatch: pytest.MonkeyPatch):
+    class Gate:
+        def __init__(self):
+            self.timeout = None
+
+        def acquire(self, *, timeout):
+            self.timeout = timeout
+            return True
+
+    gate = Gate()
+    monkeypatch.setattr(backend_app, "INFERENCE_GATE", gate)
+    backend_app.acquire_inference_slot()
+    assert gate.timeout == 300
 
 
 def test_qwen_json_parser_accepts_fenced_json(backend_app):

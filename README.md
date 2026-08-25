@@ -73,6 +73,8 @@ POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `lo
 - `VLM_MODEL`: 기본값 `Qwen/Qwen3-VL-8B-Instruct`
 - `VLM_LOAD_IN_4BIT`: L4에서는 `1` 권장
 - `VLM_MAX_PIXELS`: VLM 입력 이미지 최대 픽셀 수, 기본값 `1048576`
+- `GPU_QUEUE_TIMEOUT`: 앞선 GPU 작업을 기다리는 최대 시간(초), 기본값 `300`
+- `RATE_LIMIT_PER_MINUTE`: 세션당 분당 POST 요청 제한, 기본값 `60`
 - `IMAGE_WIDTH`, `IMAGE_HEIGHT`: 기본값 `768`, `1152`
 - `FLUX_STEPS`: 기본값 `4`
 - `FLUX_GUIDANCE`: 기본값 `1.0`
