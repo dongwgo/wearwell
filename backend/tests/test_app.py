@@ -131,6 +131,38 @@ def test_public_app_requires_token_and_hides_backend_source(backend_app):
     assert oversized.status_code == 413
 
 
+def test_colab_backend_exposes_only_api_routes(backend_app):
+    from fastapi.testclient import TestClient
+
+    client = TestClient(backend_app.app)
+    assert client.get("/").status_code == 404
+    assert client.get("/index.html").status_code == 404
+    assert client.get("/app.js").status_code == 404
+    assert client.get("/assets/lookbook/look-001.jpg").status_code == 404
+    assert client.get("/docs").status_code == 404
+    assert client.get("/redoc").status_code == 404
+    assert client.get("/openapi.json").status_code == 404
+
+
+def test_cors_allows_local_frontend_but_not_tunnel_frontend(backend_app):
+    from fastapi.testclient import TestClient
+
+    client = TestClient(backend_app.app)
+    headers = {
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "authorization,content-type",
+    }
+    local = client.options("/api/avatar", headers={**headers, "Origin": "http://localhost:8000"})
+    assert local.status_code == 200
+    assert local.headers["access-control-allow-origin"] == "http://localhost:8000"
+
+    tunnel = client.options(
+        "/api/avatar",
+        headers={**headers, "Origin": "https://frontend.trycloudflare.com"},
+    )
+    assert "access-control-allow-origin" not in tunnel.headers
+
+
 def test_gpu_api_fails_closed_without_server_token(backend_app, monkeypatch: pytest.MonkeyPatch):
     from fastapi.testclient import TestClient
 

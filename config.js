@@ -5,9 +5,7 @@
   const safeStorageGet = key => {
     try { return window.localStorage?.getItem(key) || ""; } catch { return ""; }
   };
-  const safeStorageSet = (key, value) => {
-    try { window.localStorage?.setItem(key, value); } catch {}
-  };
+
   const cleanHttpUrl = value => {
     try {
       const url = new URL(String(value || "").trim());
@@ -21,19 +19,16 @@
     protocol = window.location.protocol,
     origin = window.location.origin
   } = {}) => {
-    const explicit = cleanHttpUrl(storageValue) || cleanHttpUrl(configuredValue);
-    if (explicit) return explicit;
+    const configuredInput = String(configuredValue || "").trim();
+    if (configuredInput) return cleanHttpUrl(configuredInput);
+    const stored = cleanHttpUrl(storageValue);
+    if (stored) return stored;
     return protocol === "http:" || protocol === "https:" ? cleanHttpUrl(origin) : "http://127.0.0.1:8787";
   };
 
   window.resolveWearwellApiToken = () => {
-    const hash = String(window.location.hash || "");
-    const match = hash.match(/(?:^#|&)token=([A-Za-z0-9_-]{12,128})(?:&|$)/);
-    if (match) {
-      safeStorageSet("wearwell-api-token", match[1]);
-      try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch {}
-      return match[1];
-    }
-    return String(window.WEARWELL_CONFIG.API_TOKEN || safeStorageGet("wearwell-api-token") || "");
+    const configuredToken = String(window.WEARWELL_CONFIG.API_TOKEN || "");
+    if (configuredToken) return cleanHttpUrl(window.WEARWELL_CONFIG.API_BASE) ? configuredToken : "";
+    return String(safeStorageGet("wearwell-api-token") || "");
   };
 })();

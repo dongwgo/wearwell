@@ -14,8 +14,7 @@ from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
@@ -64,12 +63,17 @@ class BodyLimitMiddleware:
 
         await self.app(scope, limited_receive, send)
 
-app = FastAPI(title="오늘옷 GPU 스타일링 API", version="0.3.0")
+app = FastAPI(
+    title="오늘옷 GPU 스타일링 API",
+    version="0.3.0",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
+)
 app.add_middleware(BodyLimitMiddleware, max_bytes=MAX_REQUEST_BYTES)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8787", "http://localhost:8787"],
-    allow_origin_regex=r"https://[-a-z0-9]+\.trycloudflare\.com",
+    allow_origin_regex=r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
     allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
 )
@@ -410,28 +414,3 @@ def warmup_models():
         raise HTTPException(status_code=500, detail="Model warmup failed") from error
     finally:
         INFERENCE_GATE.release()
-
-
-FRONTEND_ROOT = ROOT.parent
-app.mount("/assets", StaticFiles(directory=str(FRONTEND_ROOT / "assets")), name="assets")
-
-
-@app.get("/")
-@app.get("/index.html")
-def frontend_index():
-    return FileResponse(FRONTEND_ROOT / "index.html")
-
-
-@app.get("/app.js")
-def frontend_app_script():
-    return FileResponse(FRONTEND_ROOT / "app.js")
-
-
-@app.get("/config.js")
-def frontend_config_script():
-    return FileResponse(FRONTEND_ROOT / "config.js")
-
-
-@app.get("/styles.css")
-def frontend_styles():
-    return FileResponse(FRONTEND_ROOT / "styles.css")
