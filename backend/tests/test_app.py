@@ -17,6 +17,8 @@ if str(BACKEND) not in sys.path:
 @pytest.fixture()
 def backend_app(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
+    monkeypatch.setenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+    monkeypatch.setenv("VLM_LOAD_IN_4BIT", "1")
     monkeypatch.setenv("WEARWELL_API_TOKEN", "test-token")
     monkeypatch.setenv("IMAGE_WIDTH", "768")
     monkeypatch.setenv("IMAGE_HEIGHT", "1152")
@@ -41,6 +43,41 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["avatarModel"] == result["tryonModel"] == result["model"]
     assert result["resolution"] == "768x1152"
     assert result["modelLoaded"] is False
+    assert result["vlmModel"] == "Qwen/Qwen3-VL-8B-Instruct"
+    assert result["vlmLoaded"] is False
+    assert result["vlmQuantization"] == "nf4"
+
+
+def test_qwen_json_parser_accepts_fenced_json(backend_app):
+    result = backend_app.QwenVLMEngine._parse_json(
+        '```json\n{"pieces":[{"pieceId":"top-1","colors":["white"]}]}\n```'
+    )
+    assert result["pieces"][0]["pieceId"] == "top-1"
+
+
+def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    calls = []
+
+    def analyze(image, prompt, max_new_tokens):
+        calls.append((image.size, prompt, max_new_tokens))
+        return {"pieces": [{"pieceId": "piece-1", "colors": ["white"]}], "engine": "Qwen3-VL-8B-Instruct"}
+
+    monkeypatch.setattr(backend_app.vlm_engine, "analyze", analyze)
+    client = TestClient(backend_app.app)
+    auth = {"Authorization": "Bearer test-token"}
+    payload = {"image": image_payload(), "name": "white shirt", "category": "upper", "gender": "men"}
+
+    garment = client.post("/api/vlm/garment", headers=auth, json=payload)
+    lookbook = client.post("/api/vlm/lookbook", headers=auth, json=payload)
+    body = client.post("/api/vlm/body", headers=auth, json=payload)
+
+    assert garment.status_code == lookbook.status_code == body.status_code == 200
+    assert [call[2] for call in calls] == [640, 900, 320]
+    assert all(call[0] == (64, 96) for call in calls)
+    assert len({call[1] for call in calls}) == 3
+    assert "bbox" in backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
 
 
 def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypatch: pytest.MonkeyPatch):

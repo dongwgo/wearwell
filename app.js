@@ -19,7 +19,8 @@ const priorityOptions = [
 ];
 const rankingWardrobe = Array.isArray(window.MUSINSA_RANKING) ? window.MUSINSA_RANKING : [];
 if (rankingWardrobe.length !== 100) throw new Error(`무신사 랭킹 데이터가 100개 필요합니다. 현재 ${rankingWardrobe.length}개입니다.`);
-let wardrobe = rankingWardrobe.map(item => ({ ...item }));
+const influencerLooks = Array.isArray(window.WEARWELL_INFLUENCER_LOOKS) ? window.WEARWELL_INFLUENCER_LOOKS : [];
+let wardrobe = rankingWardrobe.map(item => ({ ...item, analysis: window.WearwellVLM.seedGarmentAnalysis(item) }));
 const photo = number => wardrobe[((number - 1) % wardrobe.length + wardrobe.length) % wardrobe.length].image;
 const itemMatchesGender = item => item.userAdded || !selectedGender || item.gender === "all" || item.gender === selectedGender;
 
@@ -68,6 +69,7 @@ let visibleWardrobe = 24;
 let activeCategory = "전체";
 let activeMood = "전체";
 let selectedStyles = new Set();
+let selectedInfluencerLookIds = new Set();
 let selectedPriorities = new Set(["날씨에 잘 맞기"]);
 let uploadFiles = [];
 let savedLooks = new Set(JSON.parse(localStorage.getItem("오늘옷-saved") || "[]"));
@@ -75,11 +77,17 @@ let selectedWardrobeItem = null;
 let matchVariation = 0;
 let avatarImage = localStorage.getItem("오늘옷-avatar") || null;
 let avatarMeasurements = null;
+let bodyInputMethod = "measurements";
+let fullBodyPhoto = null;
 const selectedGarmentIds = new Set();
 const tryonCache = new Map();
+const lookbookAnalysisQueued = new Set();
 const API_BASE = window.resolveWearwellApiBase();
 const API_TOKEN = window.resolveWearwellApiToken();
 const API_HEADERS = { "Content-Type": "application/json", ...(API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {}) };
+const todayWeather = { temperature: 22, condition: "약한 비", tags: ["선선함", "약한 비", "간절기", "습함"] };
+const LOOK_ANALYSIS_VERSION = 3;
+const VLM_ANALYSIS_ENGINE = "Qwen3-VL-8B-Instruct";
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -100,6 +108,7 @@ function closeDialogs() { $$('dialog[open]').forEach(dialog => dialog.close()); 
 function genderLabel() { return selectedGender === "men" ? "남성" : "여성"; }
 
 function readMeasurements() {
+  if (bodyInputMethod === "photo" && avatarMeasurements?.photoBased) return { ...avatarMeasurements, gender: selectedGender || avatarMeasurements.gender };
   const optionalNumber = id => $(id).value ? Number($(id).value) : null;
   return {
     gender: selectedGender || "women",
@@ -141,14 +150,30 @@ function localAvatarPreview(data) {
 
 function showAvatar(image, engine = "") {
   avatarImage = image;
-  localStorage.setItem("오늘옷-avatar", image);
+  try { localStorage.setItem("오늘옷-avatar", image); } catch {}
   $("#avatarPreview").innerHTML = `<img src="${image}" alt="내 체형 아바타" />`;
   $("#profileAvatar").classList.add("has-image");
   $("#profileAvatar").style.backgroundImage = `url(${image})`;
-  if (engine) $("#avatarEngineStatus").textContent = engine.includes("cuda") ? "내 체형 아바타가 완성됐어요" : "기본 아바타 미리보기";
+  if (engine) $("#avatarEngineStatus").textContent = engine === "photo-reference" ? "전신사진을 아바타 기준으로 준비했어요" : engine.includes("cuda") ? "내 체형 아바타가 완성됐어요" : "기본 아바타 미리보기";
 }
 
 async function generateAvatar() {
+  if (bodyInputMethod === "photo") {
+    if (!fullBodyPhoto) return showToast("먼저 전신사진을 선택해주세요");
+    avatarMeasurements = {
+      gender: selectedGender || "women", height: selectedGender === "men" ? 175 : 165,
+      weight: selectedGender === "men" ? 70 : 55, body_shape: "보통", photoBased: true, seed: 20260825
+    };
+    showAvatar(fullBodyPhoto, "photo-reference");
+    window.WearwellVLM.analyzeBodyImage(fullBodyPhoto, selectedGender).then(profile => {
+      avatarMeasurements = { ...avatarMeasurements, ...profile, photoBased: true };
+      $("#avatarEngineStatus").textContent = `사진에서 ${profile.body_shape || "체형"} 특징을 정리했어요`;
+      if ($('.preference-step[data-step="3"]').classList.contains("active")) {
+        renderPreferenceChoices(); updatePreferenceCount();
+      }
+    }).catch(() => {});
+    return;
+  }
   const data = readMeasurements();
   avatarMeasurements = data;
   const card = $("#avatarGeneratorCard");
@@ -168,6 +193,26 @@ async function generateAvatar() {
   }
 }
 
+async function resizeBodyPhoto(file) {
+  const source = await fileToDataUrl(file);
+  const image = new Image();
+  await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = source; });
+  const scale = Math.min(1, 1200 / Math.max(image.width, image.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(image.width * scale); canvas.height = Math.round(image.height * scale);
+  canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", .88);
+}
+
+function setBodyInputMethod(method) {
+  bodyInputMethod = method;
+  $$("[data-body-method]").forEach(button => button.classList.toggle("active", button.dataset.bodyMethod === method));
+  $("#measurementBodyForm").hidden = method !== "measurements";
+  $("#fullBodyUpload").hidden = method !== "photo";
+  $("#generateAvatar").textContent = method === "photo" ? "✦ 이 사진으로 시작하기" : "✦ 아바타 만들기";
+  $("#avatarEngineStatus").textContent = method === "photo" ? "전신사진을 선택해주세요" : "아바타를 만들 준비가 됐어요";
+}
+
 async function imageToDataUrl(source) {
   if (source.startsWith("data:")) return source;
   const response = await fetch(source);
@@ -179,17 +224,32 @@ function garmentType(category) {
   return ({ 상의: "upper", 하의: "lower", 원피스: "overall", 아우터: "outer", 신발: "shoes", 가방: "bag", 액세서리: "accessory" })[category] || null;
 }
 
-async function tryOnItems(items, targetImage = null) {
+function renderTryonStage(reference, output = null, loading = false) {
+  const resultPane = loading
+    ? '<div class="tryon-compare-loading"><div class="generation-loader"><span></span><strong>내 옷을 입혀보는 중</strong><small>룩북의 비율과 분위기를 비교해요</small></div></div>'
+    : `<img src="${escapeHtml(output)}" alt="내 아바타 착장 결과" />`;
+  if (!reference) {
+    $("#tryonStage").classList.remove("comparison");
+    $("#tryonStage").innerHTML = loading ? resultPane : `<img src="${escapeHtml(output)}" alt="AI 가상 착장 결과" />`;
+    return;
+  }
+  $("#tryonStage").classList.add("comparison");
+  $("#tryonStage").innerHTML = `
+    <figure><div><img src="${escapeHtml(reference.image)}" alt="${escapeHtml(reference.title || "룩북 원본")}" /></div><figcaption><b>룩북 원본</b><span>${escapeHtml(reference.title || "")}</span></figcaption></figure>
+    <figure><div>${resultPane}</div><figcaption><b>내 아바타 + 내 옷</b><span>${loading ? "생성 중" : "내 옷장으로 재현"}</span></figcaption></figure>`;
+}
+
+async function tryOnItems(items, comparison = null) {
   if (!items.length) return showToast("입혀볼 옷을 먼저 골라주세요");
   if (!avatarImage) await generateAvatar();
   const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
   const cacheKey = `${items.map(item => item.id).join("-")}-${avatarKey}`;
   $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
-  $("#tryonStage").innerHTML = '<div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div>';
+  renderTryonStage(comparison, null, true);
   $("#tryonStatusText").textContent = "선택한 옷의 색과 형태를 살려 조합하고 있어요.";
   openDialog($("#avatarTryonDialog"));
   if (tryonCache.has(cacheKey)) {
-    const cached = tryonCache.get(cacheKey); $("#tryonStage").innerHTML = `<img src="${cached}" alt="AI 가상 착장 결과" />`; return;
+    const cached = tryonCache.get(cacheKey); renderTryonStage(comparison, cached); return;
   }
   try {
     const wearableItems = items.filter(item => garmentType(item.category)).slice(0, 4);
@@ -199,12 +259,11 @@ async function tryOnItems(items, targetImage = null) {
     if (!response.ok) throw new Error("Try-on backend unavailable");
     const result = await response.json();
     tryonCache.set(cacheKey, result.image);
-    $("#tryonStage").innerHTML = `<img src="${result.image}" alt="AI 가상 착장 결과" />`;
-    $("#tryonStatusText").textContent = "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
-    $("#tryonEngineLabel").textContent = "AI 착장 결과";
-    if (targetImage) targetImage.src = result.image;
+    renderTryonStage(comparison, result.image);
+    $("#tryonStatusText").textContent = comparison ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요." : "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
+    $("#tryonEngineLabel").textContent = comparison ? "원본 ↔ 내 착장 비교" : "AI 착장 결과";
   } catch {
-    $("#tryonStage").innerHTML = `<img src="${avatarImage}" alt="아바타 미리보기" />`;
+    renderTryonStage(comparison, avatarImage);
     $("#tryonStatusText").textContent = "지금은 착장 이미지를 만들지 못했어요. 잠시 후 다시 시도해주세요.";
     $("#tryonEngineLabel").textContent = "착장 미리보기";
   }
@@ -351,6 +410,166 @@ function buildTrendMatch(trend, variation = 0) {
   return { pieces, fulfilled, total: trend.requirements.length, score: 86 + Math.min(10, fulfilled * 3) };
 }
 
+function textTokens(value) {
+  return String(value || "").toLowerCase().split(/[\s·,/()[\]_-]+/).filter(token => token.length > 1);
+}
+
+const colorRgb = {
+  "블랙": [22, 22, 24], "차콜": [58, 61, 66], "그레이": [128, 130, 134], "실버": [190, 194, 199],
+  "화이트": [246, 246, 242], "아이보리": [239, 232, 207], "크림": [244, 229, 190], "오트밀": [205, 191, 164],
+  "네이비": [28, 42, 72], "진청": [31, 55, 90], "블루": [53, 105, 176], "연청": [137, 178, 207],
+  "브라운": [108, 70, 45], "카멜": [170, 116, 67], "베이지": [205, 184, 145],
+  "카키": [105, 105, 67], "올리브": [91, 104, 58], "그린": [46, 126, 79],
+  "레드": [190, 42, 45], "버건디": [104, 32, 46], "코랄": [231, 107, 92], "오렌지": [226, 119, 47],
+  "옐로우": [227, 194, 53], "핑크": [220, 135, 159], "라벤더": [170, 149, 202], "퍼플": [105, 69, 143]
+};
+
+function knownColors(...values) {
+  const text = values.flat(Infinity).filter(Boolean).join(" ").toLowerCase();
+  return Object.keys(colorRgb).filter(color => text.includes(color.toLowerCase()));
+}
+
+function rgbColorSimilarity(left, right) {
+  if (left === right) return 1;
+  const a = colorRgb[left];
+  const b = colorRgb[right];
+  if (!a || !b) return 0;
+  const distance = Math.sqrt(a.reduce((sum, channel, index) => sum + ((channel - b[index]) ** 2), 0));
+  return Math.exp(-((distance ** 2) / (2 * (92 ** 2))));
+}
+
+function setSimilarity(actualValues, wantedValues, groups = []) {
+  const actual = textTokens((actualValues || []).join(" "));
+  const wanted = textTokens((wantedValues || []).join(" "));
+  if (!actual.length || !wanted.length) return .18;
+  let best = 0;
+  for (const left of actual) {
+    for (const right of wanted) {
+      if (left === right) best = Math.max(best, 1);
+      else if (left.includes(right) || right.includes(left)) best = Math.max(best, .82);
+      else if (groups.some(group => group.some(token => left.includes(token)) && group.some(token => right.includes(token)))) best = Math.max(best, .68);
+    }
+  }
+  return best;
+}
+
+function garmentSimilarityDetail(item, requirement) {
+  const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item);
+  if (item.category !== requirement.category) return { total: 0, color: 0, material: 0, fit: 0, detail: 0 };
+  const actualColors = knownColors(item.color, item.name, analysis.primaryColor, analysis.secondaryColors, analysis.dominantColors);
+  const wantedColors = knownColors(requirement.colors);
+  const color = actualColors.length && wantedColors.length
+    ? Math.max(...actualColors.flatMap(actual => wantedColors.map(wanted => rgbColorSimilarity(actual, wanted))))
+    : .12;
+  const material = setSimilarity(
+    [analysis.material, analysis.texture, item.name], requirement.materials || [],
+    [["코튼", "면"], ["울", "모직"], ["폴리에스터", "나일론", "합성"], ["레더", "가죽"], ["데님", "진"]]
+  );
+  const fit = setSimilarity(
+    [analysis.fit, analysis.silhouette, item.name], requirement.fits || [],
+    [["오버", "세미오버", "여유"], ["와이드", "세미와이드", "커브드"], ["레귤러", "스트레이트", "기본"], ["슬림", "크롭"]]
+  );
+  const detail = setSimilarity(
+    [analysis.subcategory, analysis.pattern, analysis.finish, ...(analysis.construction || []), item.name],
+    requirement.details || []
+  );
+  const total = .04 + color * .62 + material * .14 + fit * .12 + detail * .08;
+  return { total: Math.min(1, total), color, material, fit, detail };
+}
+
+function garmentSimilarity(item, requirement) {
+  return garmentSimilarityDetail(item, requirement).total;
+}
+
+function buildInfluencerMatch(look, variation = 0) {
+  if (!look.analysisReady || !Array.isArray(look.pieces) || !look.pieces.length) {
+    return { matches: [], pieces: [], fulfilled: 0, total: 0, similarity: 0, colorSimilarity: 0, score: 0, weatherHits: 0, analyzed: false };
+  }
+  const candidateLists = look.pieces.map((requirement, requirementIndex) => ({
+    requirement,
+    requirementIndex,
+    candidates: wardrobe
+      .filter(item => itemMatchesGender(item) && item.category === requirement.category)
+      .map(item => {
+        const detail = garmentSimilarityDetail(item, requirement);
+        return { item, similarity: detail.total, detail };
+      })
+      .sort((a, b) => b.similarity - a.similarity || b.detail.color - a.detail.color || Number(Boolean(b.item.userAdded)) - Number(Boolean(a.item.userAdded)) || Number(a.item.sourceRank || 999) - Number(b.item.sourceRank || 999))
+  })).map(entry => ({ ...entry, candidates: entry.candidates.filter(candidate => candidate.detail.color >= .56 && candidate.similarity >= .56).slice(0, 5) }));
+
+  // 같은 옷을 두 번 쓰지 않는 최대 가중치 1:1 배정. 후보가 적은 룩북 의류부터 탐색해 탐욕 매칭의 오판을 피한다.
+  const searchOrder = [...candidateLists].sort((left, right) => left.candidates.length - right.candidates.length);
+  let best = { fulfilled: -1, sum: -1, matches: [] };
+  const assign = (position, used, chosen, fulfilled, sum) => {
+    if (position === searchOrder.length) {
+      if (fulfilled > best.fulfilled || (fulfilled === best.fulfilled && sum > best.sum)) best = { fulfilled, sum, matches: [...chosen] };
+      return;
+    }
+    const entry = searchOrder[position];
+    for (const candidate of entry.candidates) {
+      if (used.has(candidate.item.id)) continue;
+      used.add(candidate.item.id);
+      chosen.push({ ...candidate, requirement: entry.requirement, requirementIndex: entry.requirementIndex });
+      assign(position + 1, used, chosen, fulfilled + 1, sum + candidate.similarity);
+      chosen.pop();
+      used.delete(candidate.item.id);
+    }
+    assign(position + 1, used, chosen, fulfilled, sum);
+  };
+  assign(0, new Set(), [], 0, 0);
+  const matches = Array(look.pieces.length).fill(null);
+  best.matches.forEach(match => { matches[match.requirementIndex] = match; });
+  const fulfilled = matches.filter(Boolean).length;
+  const similarity = fulfilled ? matches.filter(Boolean).reduce((sum, match) => sum + match.similarity, 0) / fulfilled : 0;
+  const colorSimilarity = fulfilled ? matches.filter(Boolean).reduce((sum, match) => sum + match.detail.color, 0) / fulfilled : 0;
+  const weatherHits = look.weather.filter(tag => todayWeather.tags.includes(tag)).length;
+  return {
+    matches,
+    pieces: matches.filter(Boolean).map(match => match.item),
+    fulfilled,
+    total: look.pieces.length,
+    similarity,
+    colorSimilarity,
+    score: Math.round(Math.min(98, similarity * 88 + weatherHits * 3)),
+    weatherHits,
+    analyzed: true
+  };
+}
+
+function bodySimilarity(look, measurements = avatarMeasurements || readMeasurements()) {
+  if (measurements?.photoBased) return look.bodyShapes.includes(measurements.body_shape) ? 96 : 72;
+  const height = Number(measurements?.height || 170);
+  const weight = Number(measurements?.weight || 65);
+  const bmi = weight / ((height / 100) ** 2);
+  const rangeDistance = (value, range) => value < range[0] ? range[0] - value : value > range[1] ? value - range[1] : 0;
+  const heightPenalty = Math.min(45, rangeDistance(height, look.heightRange) * 2.2);
+  const bmiPenalty = Math.min(35, rangeDistance(bmi, look.bmiRange) * 7);
+  const shapeBonus = look.bodyShapes.includes(measurements?.body_shape) ? 10 : 0;
+  return Math.max(20, Math.round(90 - heightPenalty - bmiPenalty + shapeBonus));
+}
+
+function availableInfluencerMatches({ selectedOnly = false } = {}) {
+  return influencerLooks
+    .filter(look => look.gender === (selectedGender || "women"))
+    .filter(look => look.analysisReady)
+    .filter(look => !selectedOnly || selectedInfluencerLookIds.has(look.id))
+    .map(look => ({ look, match: buildInfluencerMatch(look), bodyScore: bodySimilarity(look) }))
+    .filter(result => result.match.fulfilled === result.match.total && result.match.colorSimilarity >= .62 && result.match.similarity >= .61)
+    .sort((a, b) => (b.bodyScore + b.match.score) - (a.bodyScore + a.match.score));
+}
+
+function buildPersonalizedLooks() {
+  const candidates = availableInfluencerMatches({ selectedOnly: selectedInfluencerLookIds.size > 0 });
+  if (!candidates.length) return lookSets[selectedGender || "women"];
+  return candidates.map(({ look, match }) => ({
+    title: `${look.creator}의 ${look.mood}`,
+    mood: look.mood,
+    score: match.score,
+    pieces: match.pieces.map(item => wardrobe.findIndex(candidate => candidate.id === item.id)),
+    reasons: [`오늘 ${todayWeather.condition}에 어울려요`, `${look.creator} 룩과 ${Math.round(match.similarity * 100)}% 유사`, "내 옷장에 있는 옷만 사용"]
+  }));
+}
+
 function renderItemMatches() {
   const item = selectedWardrobeItem;
   if (!item) return;
@@ -359,6 +578,19 @@ function renderItemMatches() {
   $("#selectedItemPanel").innerHTML = `
     <div class="selected-item-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span class="selected-badge">선택한 옷</span></div>
     <div class="selected-item-copy"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.color)} · ${escapeHtml(item.category)}</span></div>`;
+  const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item);
+  const analysisRows = [
+    ["소재·질감", `${analysis.material} · ${analysis.texture}`],
+    ["핏·실루엣", `${analysis.fit} · ${analysis.silhouette}`],
+    ["주름", analysis.wrinkle],
+    ["마감", analysis.finish],
+    ["디테일", (analysis.construction || []).join(" · ")]
+  ];
+  $("#selectedItemAnalysis").innerHTML = `
+    <div class="garment-analysis-head"><strong>옷 사진 텍스트 분석</strong><span>${analysis.engine === VLM_ANALYSIS_ENGINE ? "Qwen3-VL" : "기본 분석"}</span></div>
+    <p>${escapeHtml(analysis.summary)}</p>
+    <dl>${analysisRows.map(([label, value]) => `<div><dt>${label}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
+    <button class="analysis-rerun" id="analyzeSelectedItem">Qwen으로 사진 정밀 분석</button>`;
   const matches = [buildMatch(item, matchVariation), buildMatch(item, matchVariation + 1)];
   $("#bestMatchList").innerHTML = matches.map((match, index) => `
     <article class="match-option ${index === 0 ? "recommended" : ""}">
@@ -373,6 +605,105 @@ function renderItemMatches() {
     $("#itemMatchDialog").close();
     tryOnItems(match.pieces);
   }));
+  $("#analyzeSelectedItem").addEventListener("click", () => analyzeGarment(item, true));
+}
+
+async function persistGarment(item) {
+  try {
+    await window.WearwellDB.putGarment({
+      id: item.id, image: item.userAdded ? item.image : undefined, userAdded: Boolean(item.userAdded),
+      gender: item.gender, category: item.category, name: item.name, color: item.color,
+      analysis: item.analysis, updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.warn("옷 분석 저장 실패", error);
+  }
+}
+
+async function analyzeGarment(item, reopen = false) {
+  const button = reopen ? $("#analyzeSelectedItem") : null;
+  if (button) { button.disabled = true; button.textContent = "스타일 분석 준비 중…"; }
+  try {
+    item.analysis = await window.WearwellVLM.analyzeImage(item.image, item);
+    await persistGarment(item);
+    if (reopen) renderItemMatches();
+    renderWardrobe(); renderDiscover();
+    showToast("주름·핏·마감·소재 분석을 저장했어요");
+  } catch (error) {
+    showToast(error.message || "Qwen 분석을 시작하지 못했어요");
+    if (button) { button.disabled = false; button.textContent = "Qwen으로 사진 정밀 분석"; }
+  }
+}
+
+function applyLookAnalysis(look, result) {
+  const detectedPieces = Array.isArray(result?.pieces) ? result.pieces : [];
+  const validCategories = new Set(["상의", "하의", "아우터", "원피스", "신발", "가방", "액세서리"]);
+  const arrayValue = value => (Array.isArray(value) ? value : [value]).map(entry => String(entry || "").trim()).filter(Boolean);
+  const normalizedPieces = detectedPieces.map((piece, index) => ({
+    pieceId: String(piece.pieceId || `piece-${index + 1}`),
+    label: String(piece.label || piece.subcategory || piece.category || `의류 ${index + 1}`),
+    layer: String(piece.layer || "단독"),
+    category: String(piece.category || "").trim(),
+    bbox: Array.isArray(piece.bbox) && piece.bbox.length === 4 ? piece.bbox.map(value => Math.max(0, Math.min(1000, Number(value) || 0))) : null,
+    colors: arrayValue(piece.colors || piece.color),
+    materials: arrayValue(piece.materials || piece.material),
+    fits: arrayValue(piece.fits || piece.fit),
+    details: arrayValue(piece.details),
+    confidence: Math.max(0, Math.min(1, Number(piece.confidence ?? .8)))
+  })).filter(piece => validCategories.has(piece.category) && piece.colors.length && piece.confidence >= .5);
+
+  if (!normalizedPieces.length) throw new Error("룩북에서 개별 의류를 찾지 못했어요.");
+  look.summary = result?.summary || look.summary;
+  // 검출된 옷 배열을 그대로 사용한다. 같은 카테고리의 이너와 아우터를 첫 항목 하나로 합치지 않는다.
+  look.pieces = normalizedPieces;
+  look.vlmAnalysis = result;
+  look.analysisReady = true;
+  look.analysisState = "ready";
+  look.analysisError = null;
+}
+
+function pieceObjectPosition(piece) {
+  if (!Array.isArray(piece?.bbox) || piece.bbox.length !== 4) return "50% 50%";
+  const [left, top, right, bottom] = piece.bbox;
+  return `${Math.max(0, Math.min(100, (left + right) / 20))}% ${Math.max(0, Math.min(100, (top + bottom) / 20))}%`;
+}
+
+async function analyzeLookbooks(lookbooks) {
+  for (const look of lookbooks) {
+    try {
+      const stored = await window.WearwellDB.getLook(look.id);
+      look.analysisState = "analyzing";
+      let result = stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION ? stored.analysis : null;
+      if (!result) result = await window.WearwellVLM.analyzeLookImage(look.image, look);
+      applyLookAnalysis(look, result);
+      await window.WearwellDB.putLook({
+        id: look.id, creator: look.creator, sourceUrl: look.sourceUrl, image: look.image,
+        summary: look.summary, pieces: look.pieces, styles: look.styles, weather: look.weather,
+        analysis: result, analysisEngine: VLM_ANALYSIS_ENGINE, analysisVersion: LOOK_ANALYSIS_VERSION, updatedAt: new Date().toISOString()
+      });
+      looks = buildPersonalizedLooks(); currentLook = 0;
+      renderCurrentLook(); renderRotation(); renderDiscover();
+      if ($('.preference-step[data-step="3"]').classList.contains("active")) renderPreferenceChoices();
+    } catch (error) {
+      look.analysisState = "failed";
+      look.analysisError = error.message || "분석 실패";
+      console.warn("룩북 Qwen 분석 실패", look.id, error);
+      if ($('.preference-step[data-step="3"]').classList.contains("active")) renderPreferenceChoices();
+    }
+  }
+}
+
+function analyzeSelectedLookbooks() {
+  return analyzeLookbooks(influencerLooks.filter(candidate => selectedInfluencerLookIds.has(candidate.id) && !candidate.vlmAnalysis && !lookbookAnalysisQueued.has(candidate.id)));
+}
+
+function queueVisibleLookbookAnalysis(looksToAnalyze) {
+  const pending = looksToAnalyze.filter(look => !look.vlmAnalysis && !lookbookAnalysisQueued.has(look.id));
+  pending.forEach(look => { lookbookAnalysisQueued.add(look.id); look.analysisState = "analyzing"; });
+  if (!pending.length) return;
+  const start = () => analyzeLookbooks(pending);
+  if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 1200 });
+  else setTimeout(start, 150);
 }
 
 function openItemMatches(itemId) {
@@ -387,7 +718,7 @@ function filteredWardrobe() {
   return wardrobe.filter(item =>
     itemMatchesGender(item) &&
     (activeCategory === "전체" || item.category === activeCategory) &&
-    `${item.name} ${item.color} ${item.category}`.toLowerCase().includes(query)
+    `${item.name} ${item.color} ${item.category} ${item.analysis?.material || ""} ${item.analysis?.fit || ""} ${item.analysis?.finish || ""}`.toLowerCase().includes(query)
   );
 }
 
@@ -395,7 +726,7 @@ function renderWardrobe() {
   const filtered = filteredWardrobe();
   $("#wardrobeGrid").innerHTML = filtered.slice(0, visibleWardrobe).map(item => `
     <article class="wardrobe-item" data-item-id="${escapeHtml(item.id)}" role="button" tabindex="0" aria-label="${escapeHtml(item.name)} 활용 코디 보기">
-      <div class="wardrobe-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.color)} ${escapeHtml(item.name)}" loading="lazy" />${item.userAdded ? '<span class="wardrobe-status">방금 추가</span>' : ""}<button class="item-menu" aria-label="옷 정보 더 보기">···</button><button class="garment-select-button ${selectedGarmentIds.has(item.id) ? "selected" : ""}" data-select-garment="${escapeHtml(item.id)}">${selectedGarmentIds.has(item.id) ? "✓ 선택됨" : "+ 아바타에 입기"}</button></div>
+      <div class="wardrobe-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.color)} ${escapeHtml(item.name)}" loading="lazy" />${item.userAdded ? '<span class="wardrobe-status">내 사진</span>' : ""}<span class="analysis-badge ${item.analysis?.engine === VLM_ANALYSIS_ENGINE ? "qwen" : ""}">${item.analysis?.engine === VLM_ANALYSIS_ENGINE ? "Qwen 분석" : "특징 저장됨"}</span><button class="item-menu" aria-label="옷 정보 더 보기">···</button><button class="garment-select-button ${selectedGarmentIds.has(item.id) ? "selected" : ""}" data-select-garment="${escapeHtml(item.id)}">${selectedGarmentIds.has(item.id) ? "✓ 선택됨" : "+ 아바타에 입기"}</button></div>
       <div class="wardrobe-info"><strong>${item.brand ? `${escapeHtml(item.brand)} · ` : ""}${escapeHtml(item.name)}</strong><span>${item.sourceRank ? `랭킹 ${escapeHtml(item.sourceRank)}위 · ` : ""}${escapeHtml(item.color)} · ${escapeHtml(item.category)}${item.worn ? ` · ${escapeHtml(item.worn)}번 입음` : ""}</span></div>
     </article>`).join("");
   $("#loadMore").hidden = visibleWardrobe >= filtered.length;
@@ -423,26 +754,25 @@ function updateSelectionTray() {
 }
 
 function renderDiscover() {
-  const trends = trendSets[selectedGender || "women"];
-  const moods = ["전체", ...new Set(trends.map(trend => trend.mood))];
+  const results = availableInfluencerMatches({ selectedOnly: selectedInfluencerLookIds.size > 0 });
+  const moods = ["전체", ...new Set(results.map(result => result.look.mood))];
   $("#moodFilters").innerHTML = moods.map(mood => `<button class="mood-chip ${mood === activeMood ? "active" : ""}" data-mood="${mood}">${mood}</button>`).join("");
   $$('[data-mood]').forEach(button => button.addEventListener("click", () => { activeMood = button.dataset.mood; renderDiscover(); }));
-  const cards = Array.from({ length: 24 }, (_, index) => {
-    const trend = trends[index % trends.length];
-    const match = buildTrendMatch(trend, Math.floor(index / trends.length));
-    return { ...trend, id: index, image: photo(trend.image + Math.floor(index / trends.length)), match };
-  }).filter(trend => activeMood === "전체" || trend.mood === activeMood);
-  $("#discoverGrid").innerHTML = cards.map(trend => `
+  const cards = results.filter(result => activeMood === "전체" || result.look.mood === activeMood);
+  $("#discoverGrid").innerHTML = cards.length ? cards.map(({ look, match, bodyScore }) => `
     <article class="discover-card">
-      <div class="discover-image"><img data-trend-hero="${trend.id}" src="${trend.image}" alt="${trend.title}" loading="lazy" /><span class="trend-reference-badge">최신 룩 레퍼런스</span></div>
-      <button class="save-discover ${savedLooks.has(`d-${selectedGender}-${trend.id}`) ? "saved" : ""}" data-save-discover="${trend.id}" aria-label="코디 저장">${savedLooks.has(`d-${selectedGender}-${trend.id}`) ? "♥" : "♡"}</button>
-      <div class="discover-info"><div><strong>${trend.title}</strong><p><a href="${trend.sourceUrl}" target="_blank" rel="noreferrer">${trend.source}</a> · 최신 트렌드</p></div><span class="closet-match">2026.08</span></div>
+      <div class="discover-image"><img data-trend-hero="${escapeHtml(look.id)}" src="${escapeHtml(look.image)}" alt="${escapeHtml(look.sourceTitle)}" loading="lazy" /><span class="trend-reference-badge">사진 룩북 · ${escapeHtml(look.creator)}</span></div>
+      <button class="save-discover ${savedLooks.has(`d-${selectedGender}-${look.id}`) ? "saved" : ""}" data-save-discover="${escapeHtml(look.id)}" aria-label="코디 저장">${savedLooks.has(`d-${selectedGender}-${look.id}`) ? "♥" : "♡"}</button>
+      <div class="discover-info"><div><strong>${escapeHtml(look.mood)}</strong><p><a href="${escapeHtml(look.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(look.credit || look.creator)} · 원본 사진</a></p></div><span class="closet-match">체형 ${bodyScore}%</span></div>
+      <p class="look-analysis-copy">${escapeHtml(look.summary)}</p>
+      <div class="look-feature-chips">${look.styles.map(style => `<span>#${escapeHtml(style)}</span>`).join("")}</div>
       <div class="discover-closet-match">
-        <div class="discover-match-head"><strong>내 옷으로 이렇게 입어요</strong><span>${trend.match.fulfilled}/${trend.match.total}개 조건 매칭</span></div>
-        <div class="matched-items">${trend.match.pieces.map(piece => `<button class="matched-thumb" data-match-item="${piece.id}" aria-label="${piece.name} 활용 코디 보기"><img src="${piece.image}" alt="${piece.name}" /><small>${piece.name}</small></button>`).join("")}</div>
-        <button class="trend-avatar-button" data-try-trend="${trend.id}">내 아바타에 이 조합 입혀보기 ✦</button>
+        <div class="discover-match-head"><strong>이 옷들을 입어서 비슷하게 연출해봐요</strong><span>색상 ${Math.round(match.colorSimilarity * 100)}% · 전체 ${Math.round(match.similarity * 100)}%</span></div>
+        <div class="matched-items">${match.matches.map(entry => `<button class="matched-thumb" data-match-item="${escapeHtml(entry.item.id)}" aria-label="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}와 내 옷 ${escapeHtml(entry.item.name)} 비교"><span class="match-pair-images"><span><img src="${escapeHtml(look.image)}" alt="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}" style="object-position:${pieceObjectPosition(entry.requirement)}" /><em>룩북</em></span><span><img src="${escapeHtml(entry.item.image)}" alt="내 옷 ${escapeHtml(entry.item.name)}" /><em>내 옷</em></span></span><small><b>${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>→ ${escapeHtml(entry.item.name)}</span></small><i>${Math.round(entry.similarity * 100)}%</i></button>`).join("")}</div>
+        <ol class="matched-instructions">${match.matches.map(entry => `<li><b>룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>${escapeHtml((entry.requirement.colors || []).join("·"))} → 내 옷 ${escapeHtml(entry.item.name)}</span></li>`).join("")}</ol>
+        <button class="trend-avatar-button" data-try-trend="${escapeHtml(look.id)}">룩북 원본과 내 아바타 비교하기 ✦</button>
       </div>
-    </article>`).join("");
+    </article>`).join("") : '<div class="discover-empty"><strong>개별 옷이 모두 맞는 룩이 아직 없어요.</strong><p>Qwen 분석이 끝난 뒤, 룩북 속 각 옷에 대응하는 내 옷이 전부 있을 때만 추천해요.</p></div>';
   $$('[data-save-discover]').forEach(button => button.addEventListener("click", () => {
     const id = `d-${selectedGender}-${button.dataset.saveDiscover}`;
     savedLooks.has(id) ? savedLooks.delete(id) : savedLooks.add(id);
@@ -450,9 +780,8 @@ function renderDiscover() {
   }));
   $$('[data-match-item]').forEach(button => button.addEventListener("click", () => openItemMatches(button.dataset.matchItem)));
   $$('[data-try-trend]').forEach(button => button.addEventListener("click", () => {
-    const trend = cards.find(card => String(card.id) === button.dataset.tryTrend);
-    const target = $(`[data-trend-hero="${trend.id}"]`);
-    tryOnItems(trend.match.pieces, target);
+    const result = cards.find(card => card.look.id === button.dataset.tryTrend);
+    tryOnItems(result.match.pieces, { image: result.look.image, title: `${result.look.creator} · ${result.look.mood}` });
   }));
   $("#analysisPieces").textContent = filteredWardrobe().length;
   $("#analysisLooks").textContent = cards.length;
@@ -479,7 +808,7 @@ function renderGenderChoices() {
     <button class="gender-choice ${selectedGender === value ? "selected" : ""}" data-gender="${value}"><b>${selectedGender === value ? "✓" : icon}</b><strong>${title}</strong><span>${detail}</span></button>`).join("");
   $$('[data-gender]').forEach(button => button.addEventListener("click", () => {
     if (selectedGender !== button.dataset.gender) {
-      selectedStyles.clear(); avatarMeasurements = null; avatarImage = null;
+      selectedStyles.clear(); selectedInfluencerLookIds.clear(); avatarMeasurements = null; avatarImage = null; fullBodyPhoto = null;
       localStorage.removeItem("오늘옷-avatar");
       $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
       $("#profileAvatar").classList.remove("has-image"); $("#profileAvatar").style.backgroundImage = "";
@@ -491,18 +820,31 @@ function renderGenderChoices() {
 }
 
 function renderPreferenceChoices() {
-  const options = styleOptions[selectedGender || "women"];
-  $("#styleChoices").innerHTML = options.map(option => `<button class="style-choice ${selectedStyles.has(option.name) ? "selected" : ""}" data-style="${option.name}"><img src="${photo(option.image)}" alt="${option.name}" /><span>${option.name}</span><i>✓</i></button>`).join("");
-  $$('[data-style]').forEach(button => button.addEventListener("click", () => {
-    const style = button.dataset.style;
-    selectedStyles.has(style) ? selectedStyles.delete(style) : selectedStyles.add(style);
+  const readyOptions = availableInfluencerMatches().slice(0, 6);
+  const bodyCandidates = influencerLooks
+    .filter(look => look.gender === (selectedGender || "women"))
+    .sort((left, right) => bodySimilarity(right) - bodySimilarity(left));
+  const pendingLooks = bodyCandidates
+    .filter(look => !look.analysisReady && look.analysisState !== "failed")
+    .slice(0, Math.max(0, 6 - readyOptions.length));
+  const options = [...readyOptions, ...pendingLooks.map(look => ({ look, match: null, bodyScore: bodySimilarity(look) }))];
+  $("#styleChoices").innerHTML = options.length ? options.map(({ look, match, bodyScore }) => `
+    <button class="influencer-choice ${selectedInfluencerLookIds.has(look.id) ? "selected" : ""} ${match ? "" : "analyzing"}" data-influencer-look="${escapeHtml(look.id)}">
+      <span class="influencer-image"><img src="${escapeHtml(look.image)}" alt="${escapeHtml(look.sourceTitle)}" /><i>✓</i></span>
+      <span class="influencer-copy"><b>${escapeHtml(look.creator)}</b><strong>${escapeHtml(look.mood)}</strong><small>${escapeHtml(look.publicSpec)}</small><em>${match ? `개별 옷 ${match.fulfilled}/${match.total} 매칭 · 색상 ${Math.round(match.colorSimilarity * 100)}%` : "취향 선택 가능 · 룩북 속 옷을 하나씩 분석 중…"}</em></span>
+    </button>`).join("") : '<div class="influencer-empty">개별 의류 분석을 통과하고 내 옷장과 모두 매칭되는 룩을 찾지 못했어요.</div>';
+  $$('[data-influencer-look]').forEach(button => button.addEventListener("click", () => {
+    const id = button.dataset.influencerLook;
+    selectedInfluencerLookIds.has(id) ? selectedInfluencerLookIds.delete(id) : selectedInfluencerLookIds.add(id);
+    selectedStyles = new Set(influencerLooks.filter(look => selectedInfluencerLookIds.has(look.id)).flatMap(look => look.styles));
     renderPreferenceChoices(); updatePreferenceCount();
   }));
+  if (selectedGender && $('.preference-step[data-step="3"]').classList.contains("active")) queueVisibleLookbookAnalysis(pendingLooks);
 }
 
 function updatePreferenceCount() {
-  $("#selectionCount").textContent = `${selectedStyles.size}개 선택`;
-  $("#nextPreferences").disabled = selectedStyles.size < 3;
+  $("#selectionCount").textContent = `${selectedInfluencerLookIds.size}개 선택`;
+  $("#nextPreferences").disabled = selectedInfluencerLookIds.size < 2;
 }
 
 function renderPriorityChoices() {
@@ -524,20 +866,28 @@ function showPreferenceStep(step) {
 
 function savePreferences() {
   avatarMeasurements = readMeasurements();
-  const profile = { gender: selectedGender, styles: [...selectedStyles], priorities: [...selectedPriorities], measurements: avatarMeasurements, avatar: avatarImage };
+  const profile = { gender: selectedGender, styles: [...selectedStyles], influencerLooks: [...selectedInfluencerLookIds], priorities: [...selectedPriorities], measurements: avatarMeasurements, avatar: avatarImage };
   localStorage.setItem("오늘옷-profile", JSON.stringify(profile));
   applyProfile(profile);
   closeDialogs();
   showToast(`${genderLabel()} 맞춤 옷장이 준비됐어요`);
+  analyzeSelectedLookbooks();
 }
 
 function applyProfile(profile) {
   if (!profile?.gender || !profile?.styles?.length) return;
   selectedGender = profile.gender;
   selectedStyles = new Set(profile.styles);
+  selectedInfluencerLookIds = new Set(profile.influencerLooks || []);
   selectedPriorities = new Set(profile.priorities || []);
   avatarMeasurements = profile.measurements || avatarMeasurements;
-  looks = lookSets[selectedGender];
+  if (avatarMeasurements?.photoBased) {
+    fullBodyPhoto = profile.avatar || avatarImage;
+    setBodyInputMethod("photo");
+    if (fullBodyPhoto) $("#fullBodyPreview").innerHTML = `<img src="${escapeHtml(fullBodyPhoto)}" alt="저장한 전신사진" /><span><strong>전신사진 저장됨</strong><small>다시 누르면 사진을 바꿀 수 있어요</small></span>`;
+  } else setBodyInputMethod("measurements");
+  if (!selectedInfluencerLookIds.size) availableInfluencerMatches().slice(0, 3).forEach(result => selectedInfluencerLookIds.add(result.look.id));
+  looks = buildPersonalizedLooks();
   currentLook = 0;
   activeMood = "전체";
   $("#signalTags").innerHTML = profile.styles.slice(0, 3).map(style => `<span>${style}</span>`).join("");
@@ -554,8 +904,19 @@ function handleUploads(files) {
   $("#addUploads").disabled = uploadFiles.length === 0;
 }
 
-function addUploadsToWardrobe() {
-  uploadFiles.forEach((file, index) => {
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function addUploadsToWardrobe() {
+  $("#addUploads").disabled = true;
+  const added = [];
+  for (const [index, file] of uploadFiles.entries()) {
     const lower = file.name.toLowerCase();
     let category = "상의";
     if (/coat|jacket|blazer|코트|재킷/.test(lower)) category = "아우터";
@@ -563,12 +924,67 @@ function addUploadsToWardrobe() {
     else if (/dress|원피스/.test(lower)) category = "원피스";
     else if (/shoe|boot|sneaker|loafer|신발/.test(lower)) category = "신발";
     else if (/bag|tote|가방/.test(lower)) category = "가방";
-    wardrobe.unshift({ id: `upload-${Date.now()}-${index}`, image: URL.createObjectURL(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true });
-  });
+    const item = { id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true };
+    item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
+    wardrobe.unshift(item);
+    added.push(item);
+    await persistGarment(item);
+  }
   uploadFiles = [];
   closeDialogs(); activeCategory = "전체";
   renderCategoryFilters(); renderWardrobe();
-  showToast("내 옷장에 추가했어요. 이제 코디에 활용할게요");
+  showToast("내 옷장과 분석 데이터베이스에 저장했어요");
+  (async () => {
+    for (const item of added) await analyzeGarment(item);
+  })();
+}
+
+async function restoreWardrobeDatabase() {
+  try {
+    const records = await window.WearwellDB.getAllGarments();
+    records.forEach(record => {
+      const existing = wardrobe.find(item => item.id === record.id);
+      if (existing) existing.analysis = record.analysis || existing.analysis;
+      else if (record.userAdded && record.image) wardrobe.unshift({ ...record, worn: 0 });
+    });
+    renderWardrobe(); renderDiscover();
+    rankingWardrobe.forEach(item => {
+      const current = wardrobe.find(candidate => candidate.id === item.id);
+      if (current) persistGarment(current);
+    });
+    for (const look of influencerLooks) {
+      const stored = await window.WearwellDB.getLook(look.id);
+      if (stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION && stored.analysis) {
+        applyLookAnalysis(look, stored.analysis);
+        continue;
+      }
+      await window.WearwellDB.putLook({
+        id: look.id, creator: look.creator, sourceUrl: look.sourceUrl, image: look.image,
+        summary: look.summary, pieces: look.pieces, styles: look.styles, weather: look.weather,
+        analysisEngine: "curated-qwen-schema", updatedAt: new Date().toISOString()
+      });
+    }
+    looks = buildPersonalizedLooks();
+    renderPreferenceChoices(); renderDiscover();
+    queueVisibleLookbookAnalysis(influencerLooks.filter(look => selectedInfluencerLookIds.has(look.id) && !look.analysisReady));
+  } catch (error) {
+    console.warn("옷장 데이터베이스 복원 실패", error);
+  }
+}
+
+async function analyzeVisibleWardrobe() {
+  const button = $("#analyzeVisibleWardrobe");
+  const items = filteredWardrobe().slice(0, visibleWardrobe);
+  button.disabled = true;
+  try {
+    for (let index = 0; index < items.length; index++) {
+      $("#analysisStatus").textContent = `Qwen3-VL로 ${index + 1}/${items.length}번째 옷의 주름·핏·마감을 읽고 있어요.`;
+      await analyzeGarment(items[index]);
+    }
+  } finally {
+    button.disabled = false;
+    $("#analysisStatus").textContent = "주름·핏·마감·소재·봉제 디테일을 옷별로 저장하고 비교해요.";
+  }
 }
 
 function initEvents() {
@@ -594,6 +1010,21 @@ function initEvents() {
     showPreferenceStep(2);
   });
   $("#backToGender").addEventListener("click", () => showPreferenceStep(1));
+  $$("[data-body-method]").forEach(button => button.addEventListener("click", () => {
+    if (bodyInputMethod !== button.dataset.bodyMethod) {
+      avatarImage = null; avatarMeasurements = null;
+      $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
+    }
+    setBodyInputMethod(button.dataset.bodyMethod);
+  }));
+  $("#fullBodyInput").addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    fullBodyPhoto = await resizeBodyPhoto(file);
+    avatarImage = null; avatarMeasurements = null;
+    $("#fullBodyPreview").innerHTML = `<img src="${fullBodyPhoto}" alt="선택한 전신사진" /><span><strong>전신사진 선택 완료</strong><small>다시 누르면 사진을 바꿀 수 있어요</small></span>`;
+    $("#avatarEngineStatus").textContent = "이 사진을 아바타 기준으로 사용할 수 있어요";
+  });
   $("#generateAvatar").addEventListener("click", generateAvatar);
   $("#nextBody").addEventListener("click", async () => { if (!avatarImage) await generateAvatar(); renderPreferenceChoices(); updatePreferenceCount(); showPreferenceStep(3); });
   $("#backGender").addEventListener("click", () => showPreferenceStep(2));
@@ -603,6 +1034,7 @@ function initEvents() {
   $("#uploadButton").addEventListener("click", () => openDialog($("#uploadDialog")));
   $("#fileInput").addEventListener("change", event => handleUploads(event.target.files));
   $("#addUploads").addEventListener("click", addUploadsToWardrobe);
+  $("#analyzeVisibleWardrobe").addEventListener("click", analyzeVisibleWardrobe);
   $("#trySelectedGarments").addEventListener("click", () => tryOnItems([...selectedGarmentIds].map(id => wardrobe.find(item => item.id === id)).filter(Boolean)));
   $("#clearGarmentSelection").addEventListener("click", () => { selectedGarmentIds.clear(); updateSelectionTray(); renderWardrobe(); });
   $("#regenerateMatches").addEventListener("click", () => { matchVariation = (matchVariation + 1) % 4; renderItemMatches(); showToast("내 옷장에서 다른 조합을 찾았어요"); });
@@ -625,6 +1057,12 @@ function init() {
   const storedProfile = JSON.parse(localStorage.getItem("오늘옷-profile") || localStorage.getItem("morrow-profile") || "null");
   if (storedProfile?.gender) applyProfile(storedProfile);
   else setTimeout(() => openDialog($("#preferenceDialog")), 350);
+  restoreWardrobeDatabase();
+  window.addEventListener("wearwell:vlm-status", event => {
+    const { state, detail } = event.detail;
+    $("#analysisTitle").textContent = state === "loading" ? "Qwen3-VL을 준비하고 있어요" : state === "analyzing" ? "옷 사진을 정밀 분석 중이에요" : state === "error" ? "기본 분석으로 계속 추천할게요" : "Qwen3-VL 옷 분석 준비 완료";
+    $("#analysisStatus").textContent = detail;
+  });
 }
 
 init();

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -116,15 +116,16 @@
           <div class="saved-count"><span id="savedCount">0</span><small>저장한 코디</small></div>
         </div>
         <div class="closet-analysis" id="closetAnalysis">
-          <div class="analysis-icon">✓</div>
-          <div><strong>내 옷장 분석 완료</strong><p>현재 옷장에 있는 옷으로 바로 입을 수 있는 코디부터 보여드려요.</p></div>
+          <div class="analysis-icon">AI</div>
+          <div><strong id="analysisTitle">옷의 핏과 소재를 텍스트로 정리했어요</strong><p id="analysisStatus">주름·핏·마감·소재·봉제 디테일을 옷별로 저장하고 비교해요.</p></div>
           <div class="analysis-stats"><span><b id="analysisPieces">100</b>개 옷</span><span><b id="analysisLooks">24</b>개 추천</span></div>
+          <button class="analysis-button" id="analyzeVisibleWardrobe">Qwen으로 보이는 옷 다시 분석</button>
         </div>
         <div class="mood-strip" id="moodFilters"></div>
         <div class="discover-grid" id="discoverGrid"></div>
         <div class="source-note">
           <span>사진 출처 안내</span>
-          <p>데모에 사용한 100장은 무신사 남성 상품 랭킹의 상품 이미지예요. 브랜드·상품명·순위·원문 링크는 <a href="assets/lookbook-sources.json" target="_blank">레이블 및 출처 목록</a>에서 확인할 수 있어요.</p>
+          <p>내 옷장 100장은 기존 무신사 상품 이미지와 레이블을 그대로 유지했어요. 룩북은 한국 패션 인물의 공개 착장 사진 100장이며, 각 카드에서 사진 원문과 인물을 확인할 수 있어요. 룩북 사진 출처는 <a href="assets/influencers/sources.json" target="_blank">사진 출처 목록</a>, 옷장 원문은 <a href="assets/lookbook-sources.json" target="_blank">옷장 출처 목록</a>에 정리했어요.</p>
         </div>
       </section>
     </main>
@@ -141,10 +142,14 @@
       </section>
       <section class="preference-step" data-step="2">
         <p class="eyebrow">내 체형 아바타</p>
-        <h2>내 몸에 가까운 아바타를<br /><em>먼저 만들어볼게요.</em></h2>
-        <p>기본 정보만으로도 만들 수 있고, 상세 치수를 넣으면 체형 표현이 더 자연스러워져요.</p>
+        <h2>신체 정보를 넣거나<br /><em>전신사진을 올려주세요.</em></h2>
+        <p>둘 중 편한 방법 하나만 선택하면 돼요. 전신사진은 이후 룩북과 나란히 비교할 아바타 기준 이미지로 사용해요.</p>
+        <div class="body-method-switch">
+          <button class="active" data-body-method="measurements">키·몸무게로 만들기</button>
+          <button data-body-method="photo">전신사진으로 만들기</button>
+        </div>
         <div class="body-profile-layout">
-          <div class="body-form">
+          <div class="body-form" id="measurementBodyForm">
             <div class="body-basic-grid">
               <label><span>키 <small>필수</small></span><div><input id="bodyHeight" type="number" min="130" max="210" value="165" /><b>cm</b></div></label>
               <label><span>몸무게 <small>필수</small></span><div><input id="bodyWeight" type="number" min="35" max="180" value="55" /><b>kg</b></div></label>
@@ -162,19 +167,23 @@
             </details>
             <p class="measurement-notice">측정값을 시각적으로 근사한 이미지로 실제 체형이나 의류 사이즈를 보증하지 않아요.</p>
           </div>
+          <label class="full-body-upload" id="fullBodyUpload" hidden>
+            <input id="fullBodyInput" type="file" accept="image/jpeg,image/png,image/webp" />
+            <span id="fullBodyPreview"><b>+</b><strong>전신사진 선택</strong><small>머리부터 발끝까지 보이는 정면 사진이 좋아요</small></span>
+          </label>
           <div class="avatar-generator-card" id="avatarGeneratorCard">
             <div class="avatar-preview" id="avatarPreview"><span>내 아바타가<br />여기에 만들어져요</span></div>
-            <button class="primary-button" id="generateAvatar">✦ 아바타 생성하기</button>
+            <button class="primary-button" id="generateAvatar">✦ 아바타 만들기</button>
             <small id="avatarEngineStatus">아바타를 만들 준비가 됐어요</small>
           </div>
         </div>
         <div class="dialog-footer"><button class="quiet-button" id="backToGender">← 이전</button><span>상세 치수는 나중에도 수정할 수 있어요</span><button class="primary-button" id="nextBody">다음</button></div>
       </section>
       <section class="preference-step" data-step="3">
-        <p class="eyebrow">내 취향 찾기</p>
-        <h2>평소에 어떤 스타일을<br /><em>자주 입나요?</em></h2>
-        <p>마음에 드는 스타일을 3개 이상 골라주세요.</p>
-        <div class="style-choice-grid" id="styleChoices"></div>
+        <p class="eyebrow">나와 비슷한 체형의 룩북</p>
+        <h2>실제로 입어보고 싶은 룩을<br /><em>2개 이상 골라주세요.</em></h2>
+        <p>내 체형과 가까운 사진 룩북부터 보여드려요. 영상 썸네일 없이, 한 장의 전신 착장만 보고 골라요.</p>
+        <div class="influencer-choice-grid" id="styleChoices"></div>
         <div class="dialog-footer"><button class="quiet-button" id="backGender">← 이전</button><span id="selectionCount">0개 선택</span><button class="primary-button" id="nextPreferences" disabled>다음</button></div>
       </section>
       <section class="preference-step" data-step="4">
@@ -205,7 +214,7 @@
         <p id="selectedItemHint">내 취향과 오늘 날씨까지 함께 반영했어요.</p>
       </div>
       <div class="match-dialog-body">
-        <article class="selected-item-panel" id="selectedItemPanel"></article>
+        <div><article class="selected-item-panel" id="selectedItemPanel"></article><section class="garment-analysis-panel" id="selectedItemAnalysis"></section></div>
         <div class="best-match-list" id="bestMatchList"></div>
       </div>
       <div class="dialog-footer match-dialog-footer">
@@ -216,7 +225,7 @@
 
     <dialog id="avatarTryonDialog" class="avatar-tryon-dialog">
       <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
-      <div class="tryon-heading"><p class="eyebrow">AI 가상 착장</p><h2>내 아바타가<br /><em>직접 입어봤어요.</em></h2><p id="tryonStatusText">선택한 옷의 질감과 형태를 분석하고 있어요.</p></div>
+      <div class="tryon-heading"><p class="eyebrow">룩북과 내 착장 비교</p><h2>그 느낌을 내 옷으로<br /><em>얼마나 살렸을까요?</em></h2><p id="tryonStatusText">선택한 옷의 질감과 형태를 분석하고 있어요.</p></div>
       <div class="tryon-stage" id="tryonStage"><div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div></div>
       <div class="tryon-garments" id="tryonGarments"></div>
       <div class="dialog-footer"><span id="tryonEngineLabel">AI 가상 착장</span><button class="primary-button" data-close-dialog>완료</button></div>
@@ -236,6 +245,9 @@
     <script src="local-config.js"></script>
     <script src="config.js"></script>
     <script src="assets/lookbook-data.js"></script>
+    <script src="assets/influencer-data.js"></script>
+    <script src="wardrobe-db.js"></script>
+    <script src="qwen-vlm.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

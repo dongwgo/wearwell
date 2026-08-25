@@ -4,8 +4,10 @@ import base64
 import gc
 import hmac
 import io
+import json
 import logging
 import os
+import re
 import threading
 import time
 from collections import defaultdict, deque
@@ -18,6 +20,9 @@ from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
+VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
+VLM_MAX_PIXELS = int(os.getenv("VLM_MAX_PIXELS", str(1024 * 1024)))
 API_TOKEN = os.getenv("WEARWELL_API_TOKEN", "")
 INFERENCE_SIZE = (
     int(os.getenv("IMAGE_WIDTH", "768")),
@@ -33,6 +38,7 @@ INFERENCE_GATE = threading.Lock()
 RATE_LOCK = threading.Lock()
 REQUEST_TIMES: dict[str, deque[float]] = defaultdict(deque)
 WARMUP_VERIFIED = False
+VLM_WARMUP_VERIFIED = False
 
 
 class BodyLimitMiddleware:
@@ -131,6 +137,13 @@ class TryOnRequest(BaseModel):
     avatar: str = Field(min_length=1, max_length=8_000_000)
     garments: list[GarmentInput] = Field(min_length=1, max_length=4)
     seed: int = 42
+
+
+class VLMImageRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    name: str = Field(default="이미지", max_length=120)
+    category: str | None = Field(default=None, max_length=30)
+    gender: Literal["women", "men"] | None = None
 
 
 def decode_image(value: str) -> Image.Image:
@@ -345,7 +358,115 @@ class FluxImageEngine:
         return person
 
 
+class QwenVLMEngine:
+    GARMENT_PROMPT = """이 사진에서 주된 옷 한 벌만 분석해 한국어 JSON으로만 답해. 보이지 않는 정보는 추측하지 말고 '확인 어려움'으로 써. 스키마: {"category":"상의/하의/아우터/원피스/신발/가방/액세서리","subcategory":"구체 종류","primaryColor":"주색","secondaryColors":["보조색"],"material":"소재 추정","texture":"표면 질감","fit":"슬림/레귤러/세미오버/오버/스트레이트/세미와이드/와이드/커브드","silhouette":"실루엣","wrinkle":"주름의 정도와 형태","finish":"광택·워싱·표면 마감","construction":["봉제선·단추·지퍼·포켓·밑단 등 보이는 디테일"],"pattern":"패턴","season":["계절"],"weather":["어울리는 날씨"],"summary":"한 문장 요약"}"""
+    LOOKBOOK_PROMPT = """이 패션 룩북에서 가장 크게 보이는 한 사람의 착장을 분석해. 착장 전체를 한 항목으로 요약하지 말고 눈에 보이는 옷을 실제 경계대로 각각 분리해 한국어 JSON으로만 답해. 재킷 안에 셔츠가 있으면 아우터와 상의를 별도 pieces 항목으로 쓰고 같은 카테고리의 레이어도 합치지 마. 보이지 않는 옷이나 색은 추측하지 말고 색상은 각 옷 자체의 주조색부터 최대 2개만 써. 신발·가방도 충분히 보일 때만 별도 항목으로 써. bbox는 전체 이미지 왼쪽 위를 0,0, 오른쪽 아래를 1000,1000으로 본 옷의 경계야. 스키마: {"summary":"색·실루엣·레이어링 한 문장","mood":"스타일 무드","pieces":[{"pieceId":"고유 번호","label":"화이트 셔츠처럼 옷을 구별하는 이름","layer":"아우터/이너/단독/하의/신발/가방","category":"상의/하의/아우터/원피스/신발/가방/액세서리","bbox":[0,0,1000,1000],"colors":["정확한 주조색"],"materials":["소재 추정"],"fits":["핏"],"details":["주름·마감·봉제·형태 디테일"],"confidence":0.0}]}"""
+    BODY_PROMPT = """전신사진에서 의상과 포즈의 영향을 감안해 보이는 체형 특징만 한국어 JSON으로 답해. 키나 몸무게 숫자를 추측하지 마. 스키마: {"body_shape":"보통/마른 체형/탄탄한 체형/상체가 발달한 체형/하체가 발달한 체형/통통한 체형 중 하나","proportion":"상하체 비율 설명","shoulderLine":"어깨선 설명","silhouette":"전체 실루엣 설명"}"""
+
+    def __init__(self, model_factory=None, processor_factory=None) -> None:
+        self.model = None
+        self.processor = None
+        self.model_factory = model_factory
+        self.processor_factory = processor_factory
+        self.dtype: str | None = None
+
+    def _load(self):
+        if self.model is not None and self.processor is not None:
+            return self.model, self.processor
+        import torch
+        from transformers import AutoModelForImageTextToText, AutoProcessor, BitsAndBytesConfig
+
+        model_factory = self.model_factory or AutoModelForImageTextToText
+        processor_factory = self.processor_factory or AutoProcessor
+        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        quantization_config = None
+        if VLM_LOAD_IN_4BIT:
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=dtype,
+                bnb_4bit_use_double_quant=True,
+            )
+        load_options = {
+            "dtype": dtype,
+            "device_map": "auto",
+            "low_cpu_mem_usage": True,
+            "attn_implementation": "sdpa",
+        }
+        if quantization_config is not None:
+            load_options["quantization_config"] = quantization_config
+        self.model = model_factory.from_pretrained(VLM_MODEL, **load_options)
+        self.processor = processor_factory.from_pretrained(
+            VLM_MODEL,
+            min_pixels=256 * 28 * 28,
+            max_pixels=VLM_MAX_PIXELS,
+        )
+        self.dtype = str(dtype).removeprefix("torch.")
+        return self.model, self.processor
+
+    def unload(self) -> None:
+        self.model = None
+        self.processor = None
+        gc.collect()
+        try:
+            import torch
+
+            torch.cuda.empty_cache()
+        except Exception:
+            pass
+
+    @staticmethod
+    def _parse_json(value: str) -> dict:
+        cleaned = re.sub(r"```(?:json)?|```", "", value, flags=re.IGNORECASE).strip()
+        start = cleaned.find("{")
+        end = cleaned.rfind("}")
+        if start < 0 or end < start:
+            raise ValueError("VLM response did not contain JSON")
+        result = json.loads(cleaned[start : end + 1])
+        if not isinstance(result, dict):
+            raise ValueError("VLM response must be a JSON object")
+        return result
+
+    def analyze(self, image: Image.Image, prompt: str, max_new_tokens: int) -> dict:
+        import torch
+
+        model, processor = self._load()
+        messages = [{
+            "role": "user",
+            "content": [
+                {"type": "image", "image": image},
+                {"type": "text", "text": prompt},
+            ],
+        }]
+        inputs = processor.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_dict=True,
+            return_tensors="pt",
+        )
+        inputs.pop("token_type_ids", None)
+        inputs = inputs.to(model.device)
+        with GPU_LOCK, torch.inference_mode():
+            generated = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+        trimmed = [output[len(source) :] for source, output in zip(inputs.input_ids, generated)]
+        text = processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        result = self._parse_json(text)
+        result.update({
+            "engine": "Qwen3-VL-8B-Instruct",
+            "model": VLM_MODEL,
+            "quantization": "nf4" if VLM_LOAD_IN_4BIT else self.dtype,
+        })
+        return result
+
+    @property
+    def engine_name(self) -> str:
+        mode = "nf4" if VLM_LOAD_IN_4BIT else self.dtype or "auto"
+        return f"qwen3-vl-8b-{mode}-cuda"
+
+
 image_engine = FluxImageEngine()
+vlm_engine = QwenVLMEngine()
 
 
 @app.get("/api/health")
@@ -358,9 +479,14 @@ def health():
         "model": IMAGE_MODEL,
         "avatarModel": IMAGE_MODEL,
         "tryonModel": IMAGE_MODEL,
+        "vlmModel": VLM_MODEL,
         "modelLoaded": image_engine.pipe is not None,
+        "vlmLoaded": vlm_engine.model is not None,
         "warmupVerified": WARMUP_VERIFIED,
+        "vlmWarmupVerified": VLM_WARMUP_VERIFIED,
         "dtype": image_engine.dtype,
+        "vlmDtype": vlm_engine.dtype,
+        "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
     }
 
@@ -397,18 +523,58 @@ def generate_tryon(request: TryOnRequest):
         INFERENCE_GATE.release()
 
 
+def run_vlm_request(request: VLMImageRequest, prompt: str, max_new_tokens: int) -> dict:
+    if not INFERENCE_GATE.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="GPU is busy")
+    try:
+        return vlm_engine.analyze(decode_image(request.image), prompt, max_new_tokens)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("VLM analysis failed")
+        raise HTTPException(status_code=500, detail="VLM analysis failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+@app.post("/api/vlm/garment")
+def analyze_garment(request: VLMImageRequest):
+    context = f"\n사용자 레이블: name={request.name}, category={request.category or '미지정'}. 레이블은 참고만 하고 사진을 우선해."
+    return run_vlm_request(request, QwenVLMEngine.GARMENT_PROMPT + context, 640)
+
+
+@app.post("/api/vlm/lookbook")
+def analyze_lookbook(request: VLMImageRequest):
+    return run_vlm_request(request, QwenVLMEngine.LOOKBOOK_PROMPT, 900)
+
+
+@app.post("/api/vlm/body")
+def analyze_body(request: VLMImageRequest):
+    context = f"\n사용자가 선택한 성별은 {request.gender or '미지정'}이야."
+    return run_vlm_request(request, QwenVLMEngine.BODY_PROMPT + context, 320)
+
+
 @app.post("/api/warmup")
 def warmup_model():
-    global WARMUP_VERIFIED
+    global WARMUP_VERIFIED, VLM_WARMUP_VERIFIED
     available, _ = cuda_info()
     if not available:
         raise HTTPException(status_code=503, detail="CUDA GPU is unavailable")
     if not INFERENCE_GATE.acquire(blocking=False):
         raise HTTPException(status_code=429, detail="GPU is busy")
     try:
+        vlm_engine._load()
+        VLM_WARMUP_VERIFIED = True
         image_engine._load()
         WARMUP_VERIFIED = True
-        return {"ok": True, "model": IMAGE_MODEL, "dtype": image_engine.dtype}
+        return {
+            "ok": True,
+            "model": IMAGE_MODEL,
+            "dtype": image_engine.dtype,
+            "vlmModel": VLM_MODEL,
+            "vlmDtype": vlm_engine.dtype,
+            "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
+        }
     except Exception as error:
         logging.exception("Model warmup failed")
         raise HTTPException(status_code=500, detail="Model warmup failed") from error

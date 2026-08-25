@@ -21,7 +21,14 @@ def validate(path: Path) -> int:
     if code_cells == 0:
         raise ValueError("Notebook has no code cells")
     all_source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
-    required = ("files.download", "local-config.js", "BACKEND_URL=")
+    required = (
+        "files.download",
+        "local-config.js",
+        "BACKEND_URL=",
+        "Qwen/Qwen3-VL-8B-Instruct",
+        '\"VLM_LOAD_IN_4BIT\": \"1\"',
+        'health.get(\"vlmWarmupVerified\")',
+    )
     forbidden = ("APP_URL=", 'REPO_DIR / "config.js"', "인증된 Wearwell 열기")
     if missing := [value for value in required if value not in all_source]:
         raise ValueError(f"Notebook is missing API-only setup: {missing}")

@@ -3,7 +3,7 @@
 날씨·체형·취향 기반 스타일 추천 프론트엔드와 GPU 이미지 API를 분리한 프로젝트입니다.
 
 - 로컬 컴퓨터: `index.html`, CSS, JavaScript, `assets/`
-- GPU 런타임: FLUX.2 [klein] 4B, FastAPI
+- GPU 런타임: FLUX.2 [klein] 4B + Qwen3-VL-8B-Instruct(NF4), FastAPI
 - Cloudflare Quick Tunnel: 로컬 브라우저의 모델 요청만 전달
 
 ## 권장 실행 환경
@@ -39,7 +39,7 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 프로젝트 루트에서 다음 명령을 실행합니다.
 
 ```bash
-python -m http.server 8000 --bind 127.0.0.1
+uv run --python 3.11 python -m http.server 8000 --bind 127.0.0.1
 ```
 
 브라우저에서 `http://127.0.0.1:8000`을 엽니다. `local-config.js`는 다음 형식입니다.
@@ -53,11 +53,16 @@ window.WEARWELL_CONFIG = {
 
 이 파일에는 세션 인증 정보가 있으므로 commit하거나 공유하지 마세요. 런타임을 재시작하면 새 파일로 교체해야 합니다.
 
+옷 사진과 룩북의 색상·아이템 경계·주름·핏·소재·마감·봉제 디테일은 GPU 백엔드의 `Qwen3-VL-8B-Instruct`가 NF4 4비트로 분석합니다. 프론트엔드는 `/api/vlm/*`를 호출하고 결과를 브라우저 IndexedDB(`oneulout-fashion`)에 저장합니다. 백엔드가 잠시 연결되지 않으면 저장된 분석이나 상품명 기반 기본 분석으로 추천 기능을 계속 사용할 수 있습니다.
+
 ## API
 
 - `GET /api/health`
 - `POST /api/avatar`
 - `POST /api/tryon`
+- `POST /api/vlm/garment`
+- `POST /api/vlm/lookbook`
+- `POST /api/vlm/body`
 - `POST /api/warmup`
 
 POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
@@ -65,6 +70,9 @@ POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `lo
 환경변수:
 
 - `IMAGE_MODEL`: 기본값 `black-forest-labs/FLUX.2-klein-4B`
+- `VLM_MODEL`: 기본값 `Qwen/Qwen3-VL-8B-Instruct`
+- `VLM_LOAD_IN_4BIT`: L4에서는 `1` 권장
+- `VLM_MAX_PIXELS`: VLM 입력 이미지 최대 픽셀 수, 기본값 `1048576`
 - `IMAGE_WIDTH`, `IMAGE_HEIGHT`: 기본값 `768`, `1152`
 - `FLUX_STEPS`: 기본값 `4`
 - `FLUX_GUIDANCE`: 기본값 `1.0`
@@ -85,7 +93,7 @@ python scripts/validate-notebook.py colab/wearwell_backend_l4.ipynb
 ## 데이터 갱신
 
 ```bash
-node scripts/fetch-trends.mjs
+node scripts/fetch-korean-influencer-lookbook.mjs
 node scripts/fetch-lookbook.mjs
 ```
 

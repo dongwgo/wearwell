@@ -21,3 +21,6 @@ outputs/
 .env.*
 !.env.example
 local-config.js
+
+# Replaced prototype lookbook assets; the app uses assets/influencers/.
+assets/trends/
