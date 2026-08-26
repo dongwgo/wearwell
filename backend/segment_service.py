@@ -25,6 +25,7 @@ MODEL_ID = MODELS[PRODUCTION_MODEL].model_id
 LABEL_TO_CATEGORY = MODELS[PRODUCTION_MODEL].label_to_category
 
 CACHE_SIZE = max(1, int(os.getenv("SEGMENT_MODEL_CACHE_SIZE", "3")))
+HF_TOKEN = os.getenv("HF_TOKEN") or None
 # 이 비율 미만으로 잡힌 라벨은 노이즈로 보고 rawLabels에서 뺀다.
 RAW_LABEL_MIN_RATIO = 0.0005
 # analyze()는 화면에 늘어놓고 눈으로 비교하는 용도라 원본 해상도를 보낼 이유가 없다.
@@ -80,8 +81,9 @@ def get_model(model_key: str | None = None):
         device = _resolve_device()
         started = time.perf_counter()
         try:
-            processor = SegformerImageProcessor.from_pretrained(spec.model_id)
-            model = AutoModelForSemanticSegmentation.from_pretrained(spec.model_id).to(device)
+            auth = {"token": HF_TOKEN} if HF_TOKEN else {}
+            processor = SegformerImageProcessor.from_pretrained(spec.model_id, **auth)
+            model = AutoModelForSemanticSegmentation.from_pretrained(spec.model_id, **auth).to(device)
         except Exception as exc:  # 네트워크 없음, 저장소 삭제, 디스크 부족 등
             raise ModelUnavailable(f"'{spec.model_id}' 적재 실패: {exc}") from exc
         model.eval()

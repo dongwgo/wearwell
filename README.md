@@ -30,8 +30,9 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 [Colab에서 Wearwell notebook 열기](https://colab.research.google.com/github/dongwgo/wearwell/blob/main/colab/wearwell_backend_l4.ipynb)
 
 1. `런타임 → 런타임 유형 변경`에서 L4, A100 또는 H100을 선택합니다.
-2. 위에서부터 모든 셀을 실행합니다.
-3. 마지막 셀이 내려주는 `local-config.js`를 로컬 Wearwell 프로젝트 루트에 저장합니다.
+2. Colab 왼쪽의 열쇠 모양 **Secrets**에서 이름이 `HF_TOKEN`인 secret을 만들고 Hugging Face 토큰을 값으로 넣은 뒤, 노트북 액세스를 켭니다. 토큰은 Git에 올리지 않습니다.
+3. 위에서부터 모든 셀을 실행합니다.
+4. 마지막 셀이 내려주는 `local-config.js`를 로컬 Wearwell 프로젝트 루트에 저장합니다.
 
 노트북은 저장소와 의존성을 준비하고, 모델을 미리 적재한 다음 세션별 API 토큰과 Quick Tunnel 주소가 담긴 설정 파일을 생성합니다. GPU 런타임에서는 `/api/*`만 제공하며 프론트엔드 파일은 제공하지 않습니다.
 
@@ -169,11 +170,13 @@ window.WEARWELL_CONFIG = {
 - `FLUX_GUIDANCE`: 기본값 `1.0`
 - `FLUX_CPU_OFFLOAD`: `1`이면 일부 모델을 CPU RAM으로 이동
 - `HF_HOME`: Hugging Face cache 경로
+- `HF_TOKEN`: Hugging Face 인증 토큰. FLUX, Qwen, SegFormer 다운로드에 사용하며 코드나 Git에 직접 적지 않음
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
 - `SEGMENTATION_DEVICE`: `auto`(기본), `cuda`, `cpu` 중 하나. `auto`는 GPU가 있으면 GPU를 사용
 - `WEARWELL_DEV_TOOLS`: `1`이면 개발용 Seg Lab API를 노출. 기본값은 `0`
 - `SEGMENT_MODEL_CACHE_SIZE`: 메모리에 유지할 세그멘테이션 모델 수. 기본값은 `3`
 - `WEARWELL_API_TOKEN`: API bearer token
+- `GPU_CONCURRENCY`: 동시에 처리할 GPU 요청 및 FLUX 파이프라인 수 (기본 `2`; 96GB VRAM 권장값)
 
 ## Seg Lab — 옷 분리 모델 비교
 

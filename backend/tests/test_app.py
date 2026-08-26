@@ -55,7 +55,19 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["segmentationDevice"] is None
     assert result["segmentationWarmupVerified"] is False
     assert result["queueTimeoutSeconds"] == 300
+    assert result["gpuConcurrency"] == 2
+    assert result["imageWorkersLoaded"] == 0
     assert result["rateLimitPerMinute"] == 60
+
+
+def test_default_gpu_gate_allows_two_parallel_requests(backend_app):
+    assert backend_app.INFERENCE_GATE.acquire(timeout=0)
+    assert backend_app.INFERENCE_GATE.acquire(timeout=0)
+    try:
+        assert not backend_app.INFERENCE_GATE.acquire(timeout=0)
+    finally:
+        backend_app.INFERENCE_GATE.release()
+        backend_app.INFERENCE_GATE.release()
 
 
 def test_inference_slot_waits_instead_of_returning_busy(backend_app, monkeypatch: pytest.MonkeyPatch):

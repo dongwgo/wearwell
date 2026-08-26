@@ -7,6 +7,7 @@ import io
 import json
 import logging
 import os
+import queue
 import re
 import threading
 import time
@@ -29,6 +30,7 @@ SEGMENTATION_MODEL = os.getenv("SEGMENTATION_MODEL", "sayeed99/segformer_b3_clot
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
 VLM_MAX_PIXELS = int(os.getenv("VLM_MAX_PIXELS", str(1024 * 1024)))
 API_TOKEN = os.getenv("WEARWELL_API_TOKEN", "")
+HF_TOKEN = os.getenv("HF_TOKEN") or None
 INFERENCE_SIZE = (
     int(os.getenv("IMAGE_WIDTH", "768")),
     int(os.getenv("IMAGE_HEIGHT", "1152")),
@@ -51,8 +53,9 @@ RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
 DEV_TOOLS_ENABLED = os.getenv("WEARWELL_DEV_TOOLS", "0") == "1"
 MAX_COMPARE_MODELS = 4
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
-GPU_LOCK = threading.RLock()
-INFERENCE_GATE = threading.Lock()
+GPU_CONCURRENCY = max(1, int(os.getenv("GPU_CONCURRENCY", "2")))
+INFERENCE_GATE = threading.BoundedSemaphore(GPU_CONCURRENCY)
+VLM_LOCK = threading.RLock()
 RATE_LOCK = threading.Lock()
 REQUEST_TIMES: dict[str, deque[float]] = defaultdict(deque)
 WARMUP_VERIFIED = False
@@ -233,47 +236,62 @@ class FluxImageEngine:
         self.pipeline_factory = pipeline_factory
         self.dtype: str | None = None
         self.lora_name: str | None = None
+        self.pipes: list = []
+        self._lora_workers: set[int] = set()
+        self._available: queue.LifoQueue = queue.LifoQueue()
+        self._load_lock = threading.Lock()
 
     def _load(self):
-        if self.pipe is not None:
+        if self.pipes:
             return self.pipe
-        import torch
+        with self._load_lock:
+            if self.pipes:
+                return self.pipe
+            import torch
 
-        if self.pipeline_factory is None:
-            from diffusers import Flux2KleinPipeline
+            if self.pipeline_factory is None:
+                from diffusers import Flux2KleinPipeline
 
-            self.pipeline_factory = Flux2KleinPipeline
+                self.pipeline_factory = Flux2KleinPipeline
 
-        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-        self.dtype = str(dtype).removeprefix("torch.")
-        pipe = self.pipeline_factory.from_pretrained(IMAGE_MODEL, torch_dtype=dtype)
-        if os.getenv("FLUX_CPU_OFFLOAD", "0") == "1":
-            pipe.enable_model_cpu_offload()
-        else:
-            pipe.to("cuda")
-        if hasattr(pipe, "set_progress_bar_config"):
-            pipe.set_progress_bar_config(disable=True)
-        # 파인튜닝한 try-on edit-LoRA가 지정돼 있으면 얹는다. 실패해도 base 모델로
-        # 서비스는 계속 돌아가야 하므로 예외를 삼키고 로그만 남긴다.
-        if TRYON_LORA_PATH:
-            try:
-                # 아바타 생성과 try-on이 같은 파이프라인을 공유하므로 LoRA를 fuse하면
-                # 아바타까지 try-on 학습 가중치의 영향을 받는다. 이름 있는 어댑터로
-                # 올린 뒤 try-on 호출에서만 켠다.
-                pipe.load_lora_weights(TRYON_LORA_PATH, adapter_name="wearwell_tryon")
-                if hasattr(pipe, "disable_lora"):
-                    pipe.disable_lora()
-                self.lora_name = os.path.basename(TRYON_LORA_PATH)
-            except Exception:
-                logging.exception("Try-on LoRA load failed; continuing with the base model")
-                self.lora_name = None
-        self.pipe = pipe
-        return pipe
+            dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+            self.dtype = str(dtype).removeprefix("torch.")
+            for worker_id in range(GPU_CONCURRENCY):
+                load_options = {"torch_dtype": dtype}
+                if HF_TOKEN:
+                    load_options["token"] = HF_TOKEN
+                pipe = self.pipeline_factory.from_pretrained(IMAGE_MODEL, **load_options)
+                if os.getenv("FLUX_CPU_OFFLOAD", "0") == "1":
+                    pipe.enable_model_cpu_offload()
+                else:
+                    pipe.to("cuda")
+                if hasattr(pipe, "set_progress_bar_config"):
+                    pipe.set_progress_bar_config(disable=True)
+                if TRYON_LORA_PATH:
+                    try:
+                        pipe.load_lora_weights(TRYON_LORA_PATH, adapter_name="wearwell_tryon")
+                        if hasattr(pipe, "disable_lora"):
+                            pipe.disable_lora()
+                        self.lora_name = os.path.basename(TRYON_LORA_PATH)
+                        self._lora_workers.add(worker_id)
+                    except Exception:
+                        logging.exception("Try-on LoRA load failed on worker %s; using base model", worker_id)
+                self.pipes.append(pipe)
+                self._available.put(worker_id)
+            self.pipe = self.pipes[0]
+            return self.pipe
 
     def unload(self) -> None:
-        if self.pipe is None:
+        if not self.pipes:
             return
         self.pipe = None
+        self.pipes.clear()
+        self._lora_workers.clear()
+        while not self._available.empty():
+            try:
+                self._available.get_nowait()
+            except queue.Empty:
+                break
         gc.collect()
         try:
             import torch
@@ -319,7 +337,7 @@ class FluxImageEngine:
     ) -> Image.Image:
         import torch
 
-        pipe = self._load()
+        self._load()
         inputs = {
             "prompt": prompt,
             "height": INFERENCE_SIZE[1],
@@ -330,17 +348,24 @@ class FluxImageEngine:
         }
         if images:
             inputs["image"] = images
-        with GPU_LOCK, torch.inference_mode():
-            if self.lora_name:
-                if use_tryon_lora:
-                    if hasattr(pipe, "set_adapters"):
-                        pipe.set_adapters("wearwell_tryon", adapter_weights=TRYON_LORA_SCALE)
-                    elif hasattr(pipe, "enable_lora"):
-                        pipe.enable_lora()
-                elif hasattr(pipe, "disable_lora"):
-                    pipe.disable_lora()
-            output = pipe(**inputs).images[0]
-            torch.cuda.empty_cache()
+        try:
+            worker_id = self._available.get(timeout=GPU_QUEUE_TIMEOUT)
+        except queue.Empty as error:
+            raise RuntimeError("FLUX worker pool timeout") from error
+        pipe = self.pipes[worker_id]
+        try:
+            with torch.inference_mode():
+                if worker_id in self._lora_workers:
+                    if use_tryon_lora:
+                        if hasattr(pipe, "set_adapters"):
+                            pipe.set_adapters("wearwell_tryon", adapter_weights=TRYON_LORA_SCALE)
+                        elif hasattr(pipe, "enable_lora"):
+                            pipe.enable_lora()
+                    elif hasattr(pipe, "disable_lora"):
+                        pipe.disable_lora()
+                output = pipe(**inputs).images[0]
+        finally:
+            self._available.put(worker_id)
         return output.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
 
     def generate_avatar(self, data: Measurements) -> tuple[dict[str, Image.Image], str, dict]:
@@ -537,14 +562,18 @@ class QwenVLMEngine:
             "low_cpu_mem_usage": True,
             "attn_implementation": "sdpa",
         }
+        if HF_TOKEN:
+            load_options["token"] = HF_TOKEN
         if quantization_config is not None:
             load_options["quantization_config"] = quantization_config
         self.model = model_factory.from_pretrained(VLM_MODEL, **load_options)
-        self.processor = processor_factory.from_pretrained(
-            VLM_MODEL,
-            min_pixels=256 * 28 * 28,
-            max_pixels=VLM_MAX_PIXELS,
-        )
+        processor_options = {
+            "min_pixels": 256 * 28 * 28,
+            "max_pixels": VLM_MAX_PIXELS,
+        }
+        if HF_TOKEN:
+            processor_options["token"] = HF_TOKEN
+        self.processor = processor_factory.from_pretrained(VLM_MODEL, **processor_options)
         self.dtype = str(dtype).removeprefix("torch.")
         return self.model, self.processor
 
@@ -591,7 +620,7 @@ class QwenVLMEngine:
         )
         inputs.pop("token_type_ids", None)
         inputs = inputs.to(model.device)
-        with GPU_LOCK, torch.inference_mode():
+        with VLM_LOCK, torch.inference_mode():
             generated = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
         trimmed = [output[len(source) :] for source, output in zip(inputs.input_ids, generated)]
         text = processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
@@ -651,6 +680,8 @@ def health():
         "vlmDtype": vlm_engine.dtype,
         "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
         "queueTimeoutSeconds": GPU_QUEUE_TIMEOUT,
+        "gpuConcurrency": GPU_CONCURRENCY,
+        "imageWorkersLoaded": len(image_engine.pipes),
         "rateLimitPerMinute": RATE_LIMIT_PER_MINUTE,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
         "tryonSteps": TRYON_STEPS,
