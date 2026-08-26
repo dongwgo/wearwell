@@ -4,7 +4,8 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const chrome = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+// Windows 기본 설치 경로. 리눅스/CI에서는 CHROME_PATH로 덮어쓴다.
+const chrome = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const profile = await mkdtemp(path.join(os.tmpdir(), "oneulout-smoke-"));
 const pageUrl = pathToFileURL(path.resolve("index.html")).href;
 const chromeProcess = spawn(chrome, ["--headless=new", "--disable-gpu", "--no-sandbox", "--window-size=1440,1000", "--remote-debugging-port=9223", `--user-data-dir=${profile}`, pageUrl], { windowsHide: true, stdio: "ignore" });

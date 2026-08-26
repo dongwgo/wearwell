@@ -382,6 +382,13 @@ dialog { border-radius: 28px; }
 .avatar-generator-card { border-radius: 20px; padding: 10px; background: #fff0eb; text-align: center; }
 .avatar-preview { height: 275px; border-radius: 14px; overflow: hidden; display: grid; place-items: center; background: linear-gradient(145deg,#f6ddd5,#e7e9e9); color: #9e796f; font-size: 11px; line-height: 1.6; position: relative; }
 .avatar-preview img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+/* 여러 시점을 만든 뒤에는 가로 드래그로 돌려 볼 수 있다. */
+.avatar-preview.rotatable { cursor: ew-resize; touch-action: pan-y; }
+.avatar-preview .avatar-view-dots { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; pointer-events: none; }
+.avatar-preview .avatar-view-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(60,50,46,.28); transition: background .2s, transform .2s; }
+.avatar-preview .avatar-view-dots i.active { background: rgba(60,50,46,.75); transform: scale(1.35); }
+.avatar-preview .avatar-view-label { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.82); font-size: 9px; letter-spacing: .02em; color: #6c5a53; pointer-events: none; }
+.avatar-views-button { width: 100%; margin-top: 8px; font-size: 11px; }
 .avatar-generator-card .primary-button { width: 100%; margin-top: 9px; padding: 11px; }
 .avatar-generator-card > small { display: block; margin-top: 7px; color: var(--muted); font-size: 7px; }
 .avatar-generator-card.generating .avatar-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg,transparent 25%,rgba(255,255,255,.65) 45%,transparent 65%); animation: avatarShimmer 1.4s linear infinite; }
@@ -395,7 +402,7 @@ dialog { border-radius: 28px; }
 .full-body-upload b { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: white; color: var(--clay); font-size: 22px; }
 .full-body-upload strong { color: var(--ink); font-size: 12px; }
 .full-body-upload small { font-size: 8px; }
-.full-body-upload img { width: 100%; height: 355px; object-fit: cover; }
+.full-body-upload img { width: 100%; height: 355px; object-fit: contain; background: #eeece8; }
 .full-body-upload span:has(> img) { position: relative; display: block; }
 .full-body-upload span:has(> img) > span { position: absolute; inset: auto 10px 10px; display: grid; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.9); text-align: left; }
 .garment-select-button { position: absolute; right: 8px; bottom: 8px; border: 0; border-radius: 9px; padding: 7px 9px; background: rgba(255,255,255,.92); cursor: pointer; font-size: 8px; font-weight: 700; }

@@ -11,3 +11,8 @@ bitsandbytes>=0.47,<1
 safetensors>=0.5,<1
 huggingface-hub>=1.23,<2
 torchvision>=0.20,<1
+scipy>=1.11,<2
+# SMPL-X 아바타 피팅은 선택 사항이다. 설치하고 SMPLX_MODEL_PATH를 지정하면
+# 메시 기반 체형 피팅이 켜지고, 없으면 비율 실루엣으로 자동 폴백한다.
+# smplx>=0.1.28
+# torch  # 이미 Colab/GPU 런타임에 설치돼 있다

@@ -127,15 +127,44 @@ def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypa
         seed=77,
     )
 
-    result, engine_name = engine.generate_avatar(data)
+    monkeypatch.setattr(backend_app, "AVATAR_BODY_REFERENCE", False)
+    images, engine_name, report = engine.generate_avatar(data)
 
-    assert result.size == (768, 1152)
+    assert images["front"].size == (768, 1152)
     assert engine_name.startswith("flux2-klein-4b")
+    assert engine_name.endswith("text-only")
+    assert report["bodyReference"] == "text-only"
     assert calls[0]["seed"] == 77
     for value in ("181 cm", "76 kg", "49 cm", "103 cm", "82 cm", "96 cm", "83 cm"):
         assert value in calls[0]["prompt"]
     for composition_instruction in ("soles of both feet", "floor beneath them", "75 percent", "Do not crop"):
         assert composition_instruction in calls[0]["prompt"]
+
+
+def test_avatar_passes_a_body_silhouette_as_the_reference_image(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(backend_app, "AVATAR_BODY_REFERENCE", True)
+    calls = []
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(
+        engine,
+        "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", backend_app.INFERENCE_SIZE),
+    )
+    data = backend_app.Measurements(gender="women", height=163, weight=52, waist=68, hip=92)
+
+    _, engine_name, report = engine.generate_avatar(data)
+    assert report["views"] == ["front"]
+
+    # 치수는 문장이 아니라 참조 이미지로 들어간다.
+    assert len(calls[0]["images"]) == 1
+    assert calls[0]["images"][0].size == backend_app.INFERENCE_SIZE
+    assert "Reference image 1 is a body-shape guide" in calls[0]["prompt"]
+    assert "163" not in calls[0]["prompt"]
+    # 입력하지 않은 둘레도 추정치로 채워져 목표에 들어간다.
+    assert report["targetMeasurements"]["waist"] == 68
+    assert report["targetMeasurements"]["chest"] > 0
+    assert engine_name.endswith(report["bodyReference"])
 
 
 def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -365,9 +394,48 @@ def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monke
     assert len(calls) == 1
     assert len(calls[0]["images"]) == 3
     assert calls[0]["seed"] == 31
-    assert "reference image 1 is the person" in calls[0]["prompt"].lower()
-    assert "reference image 2" in calls[0]["prompt"]
-    assert "reference image 3" in calls[0]["prompt"]
+    assert calls[0]["steps"] == backend_app.TRYON_STEPS
+    prompt = calls[0]["prompt"]
+    assert "reference image 1 is the person" in prompt.lower()
+    # 참조 번호는 옷장 순서가 아니라 레이어 순서를 따른다: 하의(2) 다음에 상의(3).
+    assert "Reference image 2 is the lower-body garment" in prompt
+    assert "Reference image 3 is the upper-body top" in prompt
+
+
+def test_tryon_reorders_layers_and_keeps_every_selected_item(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(
+        engine,
+        "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", backend_app.INFERENCE_SIZE),
+    )
+    # 예전 파이프라인은 앞 4개만 잘라서 가방과 액세서리를 버렸다.
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[
+            {"image": image_payload("black"), "category": "accessory", "name": "볼캡"},
+            {"image": image_payload("brown"), "category": "bag", "name": "크로스백"},
+            {"image": image_payload("white"), "category": "shoes", "name": "스니커즈"},
+            {"image": image_payload("navy"), "category": "outer", "name": "블레이저"},
+            {"image": image_payload("white"), "category": "upper", "name": "셔츠"},
+            {"image": image_payload("gray"), "category": "lower", "name": "슬랙스"},
+        ],
+    )
+
+    engine.generate_tryon(request)
+
+    prompt = calls[0]["prompt"]
+    assert len(calls[0]["images"]) == 7  # 사람 1 + 아이템 6
+    positions = [
+        prompt.index(needle)
+        for needle in ("'슬랙스'", "'셔츠'", "'블레이저'", "'스니커즈'", "'크로스백'", "'볼캡'")
+    ]
+    assert positions == sorted(positions)
+    assert "the top then the outerwear" in prompt
+    assert "cross-body" in prompt  # 가방 종류에 맞는 착용 지점
+    assert "on the head" in prompt  # 액세서리 착용 지점
 
 
 def test_tryon_request_rejects_oversized_images(backend_app):
@@ -463,3 +531,102 @@ def test_gpu_api_fails_closed_without_server_token(backend_app, monkeypatch: pyt
     response = TestClient(backend_app.app).post("/api/avatar", json={})
     assert response.status_code == 503
     assert response.json() == {"detail": "API authentication is not configured"}
+
+
+def test_tryon_judge_route_scores_a_result_image(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    seen = {}
+
+    def fake_analyze(image, prompt, max_new_tokens):
+        seen["prompt"] = prompt
+        return {"layering_ok": True, "items_present": ["셔츠"], "identity_ok": True}
+
+    monkeypatch.setattr(backend_app.vlm_engine, "analyze", fake_analyze)
+    response = TestClient(backend_app.app).post(
+        "/api/vlm/tryon-judge",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "manifest": "- 화이트 셔츠 (상의)\\n- 네이비 블레이저 (아우터)"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["layering_ok"] is True
+    # 심판 프롬프트에 채점 대상 목록이 실제로 들어가야 한다.
+    assert "네이비 블레이저" in seen["prompt"]
+    assert "layering_ok" in seen["prompt"]
+
+
+def test_avatar_generates_side_and_back_from_the_finished_front(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(backend_app, "AVATAR_BODY_REFERENCE", True)
+    calls = []
+    engine = backend_app.FluxImageEngine()
+
+    def fake_run(**kwargs):
+        calls.append(kwargs)
+        # 호출마다 구분되는 이미지를 돌려줘야 front가 재사용됐는지 확인할 수 있다.
+        return Image.new("RGB", backend_app.INFERENCE_SIZE, (len(calls) * 40, 0, 0))
+
+    monkeypatch.setattr(engine, "_run", fake_run)
+    data = backend_app.Measurements(gender="men", height=178, weight=72, views=["side", "back"])
+
+    images, _, report = engine.generate_avatar(data)
+
+    # front를 요청하지 않아도 먼저 만들어진다 — 나머지 시점의 인물 기준이기 때문.
+    assert report["views"] == ["front", "side", "back"]
+    assert set(images) == {"front", "side", "back"}
+    assert [len(call["images"]) for call in calls] == [1, 2, 2]
+    # 측면·후면은 완성된 정면을 참조 이미지 2로 받는다.
+    for call in calls[1:]:
+        assert call["images"][1] is images["front"]
+    assert "seen from the side" in calls[1]["prompt"]
+    assert "rotated to the side view" in calls[1]["prompt"]
+    assert "seen from the back" in calls[2]["prompt"]
+
+
+def test_avatar_view_list_is_deduplicated(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(backend_app, "AVATAR_BODY_REFERENCE", True)
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(engine, "_run", lambda **k: Image.new("RGB", backend_app.INFERENCE_SIZE))
+    data = backend_app.Measurements(gender="men", height=178, weight=72, views=["front", "front", "side"])
+
+    _, _, report = engine.generate_avatar(data)
+
+    assert report["views"] == ["front", "side"]
+
+
+def test_avatar_route_returns_every_requested_view(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(
+        backend_app.image_engine,
+        "generate_avatar",
+        lambda data: (
+            {view: Image.new("RGB", (64, 96)) for view in ("front", "back")},
+            "stub-engine",
+            {"bodyReference": "silhouette-fallback", "views": ["front", "back"]},
+        ),
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/avatar",
+        headers={"Authorization": "Bearer test-token"},
+        json={"gender": "men", "height": 178, "weight": 72, "views": ["front", "back"]},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert set(body["views"]) == {"front", "back"}
+    assert body["image"] == body["views"]["front"]
+
+
+def test_avatar_route_rejects_an_unknown_view(backend_app):
+    from fastapi.testclient import TestClient
+
+    response = TestClient(backend_app.app).post(
+        "/api/avatar",
+        headers={"Authorization": "Bearer test-token"},
+        json={"gender": "men", "height": 178, "weight": 72, "views": ["top-down"]},
+    )
+    assert response.status_code == 422

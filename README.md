@@ -18,8 +18,8 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 
 [FLUX.2 [klein] 4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B)는 Apache 2.0 공개 가중치이며 텍스트 생성, 이미지 편집, 다중 참조 편집을 하나의 파이프라인에서 지원합니다.
 
-- 아바타: 성별, 키, 몸무게, 체형과 선택 입력한 상세 치수를 포함해 기본 FLUX 백엔드가 768×1152 전신 이미지를 생성합니다.
-- 가상 착장: 아바타와 선택한 의류 사진을 한 번에 전달해 얼굴·체형을 유지하면서 모든 옷을 동시에 반영합니다.
+- 아바타: 치수를 문장이 아니라 **체형 실루엣 이미지**로 바꿔 참조 이미지로 넣고, FLUX가 그 실루엣을 따라 768×1152 전신 이미지를 그립니다(`backend/avatar_body.py`). `views`로 정면·측면·후면을 요청할 수 있고, 미리보기에서 가로로 드래그하면 시점이 돌아갑니다. 측면·후면은 완성된 정면을 참조 이미지로 함께 받아 같은 인물을 유지합니다. `SMPLX_MODEL_PATH`를 지정하면 SMPL-X 메시를 목표 치수에 맞춰 피팅하고 `/api/avatar` 응답의 `fit.measurementErrorCm`으로 cm 단위 오차를 함께 돌려줍니다. 가중치가 없으면 인체 계측 비율 실루엣으로 폴백합니다.
+- 가상 착장: 아바타와 선택한 의류 사진을 한 번에 전달해 얼굴·체형을 유지하면서 모든 옷을 동시에 반영합니다. 참조 이미지는 피부에서 바깥으로 나가는 **레이어 순서**로 번호가 매겨지고(하의 → 상의 → 아우터 → 신발 → 가방 → 액세서리), 지시문에 몸통 레이어 스택과 가방·액세서리의 착용 지점이 문장으로 들어갑니다. 자세한 근거는 `backend/tryon_prompt.py` 참고.
 - 옷 분리: `sayeed99/segformer_b3_clothes`가 전신샷에서 의류를 투명 PNG로 분리합니다. 모델 선정과 품질 임계값 설계는 [docs/segmentation.md](docs/segmentation.md)에 정리했습니다. 설정된 Colab API를 우선 사용하고, 연결 실패 시 같은 FastAPI를 `127.0.0.1:8787`에서 실행 중이면 로컬로 폴백합니다.
 - 기본 추론: BF16, 4 steps, guidance 1.0
 
@@ -138,12 +138,13 @@ window.WEARWELL_CONFIG = {
 ## API
 
 - `GET /api/health`
-- `POST /api/avatar`
+- `POST /api/avatar` — `views: ["front","side","back"]`로 시점을 요청 (기본 `["front"]`)
 - `POST /api/closet/segment`
 - `POST /api/tryon`
 - `POST /api/vlm/garment`
 - `POST /api/vlm/lookbook`
 - `POST /api/vlm/body`
+- `POST /api/vlm/tryon-judge`
 - `POST /api/warmup`
 - `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (개발용 Seg Lab)
 
@@ -159,6 +160,12 @@ window.WEARWELL_CONFIG = {
 - `RATE_LIMIT_PER_MINUTE`: 세션당 분당 POST 요청 제한, 기본값 `60`
 - `IMAGE_WIDTH`, `IMAGE_HEIGHT`: 기본값 `768`, `1152`
 - `FLUX_STEPS`: 기본값 `4`
+- `FLUX_TRYON_STEPS`: 가상 착장 전용 스텝 수, 기본값 `8`. 참조가 여러 장인 편집은 4스텝에서 레이어가 뭉개집니다
+- `FLUX_TRYON_LORA`: 파인튜닝한 try-on edit-LoRA(`.safetensors`) 경로. 비어 있으면 base 모델로 동작
+- `FLUX_TRYON_LORA_SCALE`: 기본값 `1.0`
+- `MAX_TRYON_GARMENTS`: 한 번에 입힐 수 있는 아이템 수, 기본값 `6`
+- `AVATAR_BODY_REFERENCE`: `1`(기본)이면 체형 실루엣을 참조로 사용, `0`이면 예전 텍스트 전용 경로(A/B 비교용)
+- `SMPLX_MODEL_PATH`: SMPL-X 모델 폴더 경로. 지정하면 메시 기반 체형 피팅 활성화 (측면·후면은 메시를 실제로 회전시켜 렌더)
 - `FLUX_GUIDANCE`: 기본값 `1.0`
 - `FLUX_CPU_OFFLOAD`: `1`이면 일부 모델을 CPU RAM으로 이동
 - `HF_HOME`: Hugging Face cache 경로
@@ -196,8 +203,30 @@ WEARWELL_DEV_TOOLS=1 WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --hos
 python -m pytest backend/tests -q
 node scripts/config-test.mjs
 node scripts/smoke-test.mjs
+node scripts/avatar-view-test.mjs
 python scripts/validate-notebook.py colab/wearwell_backend_l4.ipynb
 ```
+
+브라우저 테스트는 Chrome 실행 파일을 찾습니다. Windows 기본 경로가 아니면 `CHROME_PATH`로 지정하세요.
+
+`avatar-view-test.mjs`는 두 가지 회귀를 막습니다 — 전신 이미지가 잘리지 않는지(`object-fit: contain`)와 시점 여러 개일 때 드래그 회전이 도는지. 발이 잘리던 문제는 CSS `object-fit: cover`가 768×1152 이미지를 390×510 상자에 폭 기준으로 확대하면서 위아래를 잘라낸 것이 원인이었고, 생성 프롬프트에도 머리 위·발밑 여백 요구를 추가했습니다.
+
+## 착장 품질 측정
+
+가상 착장에는 정답 이미지가 없어 SSIM/LPIPS로는 "상의가 아우터 안쪽인가"를 잴 수 없습니다. `scripts/eval_tryon.py`는 백엔드의 Qwen3-VL을 심판으로 써서 네 항목을 이진 채점합니다 — 레이어 정확도, 아이템 일치도, 가방·액세서리 배치, 인물 보존.
+
+```bash
+python scripts/eval_tryon.py --cases eval/cases.json --out eval/before.json --api $API --token $TOKEN
+# 개선/LoRA 적용 후 다시 돌리고
+python scripts/eval_tryon.py --cases eval/cases.json --out eval/after.json --api $API --token $TOKEN
+python scripts/eval_tryon.py --compare eval/before.json eval/after.json
+```
+
+## 착장 모델 파인튜닝
+
+`colab/wearwell_tryon_lora.ipynb`가 `FLUX.2-klein-base-4B`에 edit-LoRA를 학습시킵니다(L4 24GB, 약 1시간). 학습 캡션은 `build_tryon_prompt()`로 만들어 추론 지시문과 형식을 맞춥니다 — 이 둘이 다르면 학습이 수렴해도 서비스에 전이되지 않습니다. 학습 데이터는 저장소의 룩북 이미지에서 cloth-agnostic 사람 + 옷 조각 쌍으로 자동 생성합니다.
+
+[Colab에서 파인튜닝 notebook 열기](https://colab.research.google.com/github/dongwgo/wearwell/blob/main/colab/wearwell_tryon_lora.ipynb)
 
 ## 데이터 갱신
 
