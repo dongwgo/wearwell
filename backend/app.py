@@ -40,6 +40,13 @@ RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
 # 공개 터널에 붙일 때는 0으로 끈다 — 모델을 여러 개 올려 메모리를 크게 쓴다.
 DEV_TOOLS_ENABLED = os.getenv("WEARWELL_DEV_TOOLS", "1") == "1"
 MAX_COMPARE_MODELS = 4
+# 옷 한 벌은 정사각에 가깝다. 아바타용 768x1152로 만들면 옷이 세로로 늘어난다.
+REFINE_SIZE = (
+    int(os.getenv("REFINE_WIDTH", "768")),
+    int(os.getenv("REFINE_HEIGHT", "768")),
+)
+# 옷 한 벌마다 FLUX를 한 번씩 돌린다. 한 요청 안에서 무한정 돌리면 GPU 큐가 막힌다.
+MAX_REFINE_ITEMS = int(os.getenv("MAX_REFINE_ITEMS", "4"))
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
 GPU_LOCK = threading.RLock()
 INFERENCE_GATE = threading.Lock()
@@ -172,6 +179,30 @@ class SegmentCompareRequest(BaseModel):
     models: list[str] = Field(default_factory=list, max_length=MAX_COMPARE_MODELS)
 
 
+class RepairOptions(BaseModel):
+    """마스크 보수 단계 스위치. 랩에서 하나씩 꺼 보면서 어떤 단계가 무슨 일을 하는지 본다."""
+
+    close: bool = True
+    fillHoles: bool = True
+    dropStrays: bool = True
+    closeScale: float = Field(default=0.012, ge=0.0, le=0.05)
+    strayRatio: float = Field(default=0.08, ge=0.0, le=1.0)
+
+
+class ClosetRefineRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    name: str = Field(default="full-body photo", max_length=120)
+    model: str | None = Field(default=None, max_length=60)
+    # 비우면 품질 필터를 통과한 카테고리 전부.
+    categories: list[str] = Field(default_factory=list, max_length=len(segment_models.CATEGORIES))
+    # 걸러진 후보까지 파이프라인에 태운다. 왜 걸러졌는지를 생성 결과로 확인할 때 쓴다.
+    includeRejected: bool = False
+    repair: RepairOptions = Field(default_factory=RepairOptions)
+    generate: bool = True
+    seed: int = 42
+    steps: int | None = Field(default=None, ge=1, le=50)
+
+
 def decode_image(value: str) -> Image.Image:
     try:
         encoded = value.split(",", 1)[1] if value.startswith("data:") else value
@@ -195,6 +226,11 @@ def encode_image(image: Image.Image, mime: str = "image/jpeg") -> str:
     return f"data:{mime};base64,{base64.b64encode(output.getvalue()).decode()}"
 
 
+def encode_png(data: bytes) -> str:
+    """이미 PNG 바이트인 결과물(투명 크롭·오버레이)을 그대로 data URL로."""
+    return "data:image/png;base64," + base64.b64encode(data).decode()
+
+
 def cuda_info() -> tuple[bool, str | None]:
     try:
         import torch
@@ -214,6 +250,17 @@ class FluxImageEngine:
         "shoes": "pair of shoes",
         "bag": "bag",
         "accessory": "fashion accessory",
+    }
+    # 세그멘테이션은 옷장 카테고리(한국어)로 결과를 낸다. 위 CATEGORY_LABELS는
+    # 프론트가 보내는 영문 키용이라 그대로 쓸 수 없어 따로 둔다.
+    CLOSET_CATEGORY_LABELS = {
+        "상의": "upper-body garment (top)",
+        "아우터": "outerwear jacket or coat",
+        "하의": "lower-body garment (pants or skirt)",
+        "원피스": "one-piece dress",
+        "신발": "pair of shoes",
+        "가방": "bag",
+        "액세서리": "fashion accessory",
     }
 
     def __init__(self, pipeline_factory=None) -> None:
@@ -281,16 +328,27 @@ class FluxImageEngine:
             details.append(f"waist-to-hip ratio {data.waist / data.hip:.2f}")
         return ", ".join(details)
 
-    def _run(self, *, prompt: str, seed: int, images: list[Image.Image] | None = None) -> Image.Image:
+    def _run(
+        self,
+        *,
+        prompt: str,
+        seed: int,
+        images: list[Image.Image] | None = None,
+        size: tuple[int, int] | None = None,
+        steps: int | None = None,
+    ) -> Image.Image:
+        """size는 (너비, 높이). 전신 결과물은 세로로 길지만 옷 한 벌은 정사각이라
+        아바타 해상도를 그대로 쓰면 옷이 늘어난 채 생성된다."""
         import torch
 
+        width, height = size or INFERENCE_SIZE
         pipe = self._load()
         inputs = {
             "prompt": prompt,
-            "height": INFERENCE_SIZE[1],
-            "width": INFERENCE_SIZE[0],
+            "height": height,
+            "width": width,
             "guidance_scale": GUIDANCE_SCALE,
-            "num_inference_steps": INFERENCE_STEPS,
+            "num_inference_steps": steps or INFERENCE_STEPS,
             "generator": torch.Generator(device="cuda").manual_seed(seed),
         }
         if images:
@@ -298,7 +356,7 @@ class FluxImageEngine:
         with GPU_LOCK, torch.inference_mode():
             output = pipe(**inputs).images[0]
             torch.cuda.empty_cache()
-        return output.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
+        return output.resize((width, height), Image.Resampling.LANCZOS)
 
     def generate_avatar(self, data: Measurements) -> tuple[Image.Image, str]:
         has_cuda, _ = cuda_info()
@@ -336,6 +394,35 @@ class FluxImageEngine:
             )
             return self._run(prompt=prompt, seed=request.seed, images=[person, *garments]), self.engine_name
         return self.fallback_tryon(person, request.garments), "tryon-preview-fallback"
+
+    def refine_garment(self, garment: Image.Image, category: str, name: str, seed: int, steps: int | None = None):
+        """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
+
+        입력은 이미 흰 배경에 얹은 정규화 이미지지만, 팔에 가려졌던 자리는 여전히
+        비어 있다. 형태학 연산으로는 없는 픽셀을 만들 수 없어서 그 복원을 여기서
+        시킨다. 그래서 프롬프트가 "구멍을 메우고 끊어진 부분을 잇되 색·패턴·재단은
+        그대로"라는 말을 반드시 담아야 한다 — 자유롭게 그리라고 하면 다른 옷이 온다.
+        """
+        has_cuda, _ = cuda_info()
+        if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
+            prompt = (
+                f"Reference image 1 is a {self.CLOSET_CATEGORY_LABELS.get(category, 'garment')} named '{name}' that was "
+                "automatically cut out of a full-body photo, so its shape is damaged: the cutout has holes where arms, "
+                "hair, straps or other garments covered it, some pieces are detached, and the edges are ragged. "
+                "Redraw it as one clean e-commerce product photo of that same single item. Fill every hole, reconnect "
+                "the detached pieces, and rebuild the parts that were occluded so the silhouette is complete and "
+                "naturally symmetric. Keep exactly the same color, print, pattern placement, fabric texture, sheen, "
+                "neckline, sleeve length, hem, closure, and overall cut as the reference — do not restyle it, do not "
+                "change its proportions, and do not add garments or details that are not visible in the reference. "
+                "Present the item alone, centered and upright, gently filled out as if worn by an invisible body, on a "
+                "plain pure white background with soft even studio lighting and a subtle contact shadow. "
+                "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
+                "no text, no watermark, no collage, no split screen, no duplicated item."
+            )
+            return self._run(prompt=prompt, seed=seed, images=[garment], size=REFINE_SIZE, steps=steps), self.engine_name
+        # GPU가 없어도 랩이 돌아야 한다. 정규화 이미지를 그대로 최종본으로 쓰면
+        # 구멍은 남지만 흰 배경·정사각 규격이라는 나머지 단계는 눈으로 확인된다.
+        return garment.resize(REFINE_SIZE, Image.Resampling.LANCZOS), "refine-passthrough-fallback"
 
     @property
     def engine_name(self) -> str:
@@ -562,7 +649,7 @@ def segment_closet_photo(request: SegmentationRequest):
                     "id": f"segment-{int(time.time() * 1000)}-{index}",
                     "name": f"{request.name} - {item['category']}",
                     "category": item["category"],
-                    "image": "data:image/png;base64," + base64.b64encode(item["png_bytes"]).decode(),
+                    "image": encode_png(item["png_bytes"]),
                     "label": item["label"],
                     "confidence": item["confidence"],
                 }
@@ -640,9 +727,9 @@ def compare_segmentation_models(request: SegmentCompareRequest):
                 })
                 continue
             masks_by_model[key] = analysis.pop("_masks")
-            analysis["overlay"] = "data:image/png;base64," + base64.b64encode(analysis.pop("overlay_png_bytes")).decode()
+            analysis["overlay"] = encode_png(analysis.pop("overlay_png_bytes"))
             for item in analysis["items"]:
-                item["image"] = "data:image/png;base64," + base64.b64encode(item.pop("png_bytes")).decode()
+                item["image"] = encode_png(item.pop("png_bytes"))
             results.append(analysis)
 
         return {
@@ -681,6 +768,104 @@ def pairwise_agreement(masks_by_model: dict, iou) -> list[dict]:
                     scores[category] = {"onlyIn": left if category in left_masks else right}
             rows.append({"left": left, "right": right, "categories": scores})
     return rows
+
+
+@app.post("/api/dev/closet/refine")
+def refine_closet_photo(request: ClosetRefineRequest):
+    """전신샷 -> 세그멘테이션 -> 마스크 보수 -> FLUX 재생성을 한 요청에서 전부 돌린다.
+
+    Refine Lab이 단계별 중간 산출물을 나란히 놓고 보기 위한 개발용 경로다. 옷 한 벌씩
+    독립 실패를 허용한다 — 한 벌의 생성이 실패했다고 나머지 단계 결과까지 버리면
+    무엇이 문제였는지 볼 수가 없다.
+    """
+    require_dev_tools()
+    unknown = [category for category in request.categories if category not in segment_models.CATEGORIES]
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"알 수 없는 카테고리: {', '.join(unknown)}")
+
+    acquire_inference_slot()
+    started = time.perf_counter()
+    try:
+        import numpy as np
+
+        image = decode_image(request.image)
+        source = io.BytesIO()
+        image.save(source, format="PNG")
+        import refine_service
+        import segment_service
+
+        analysis = segment_service.analyze(source.getvalue(), request.model or segment_models.PRODUCTION_MODEL)
+        masks = analysis.pop("_masks")
+        image_np = np.array(image)
+
+        wanted = [
+            item for item in analysis["items"]
+            if (item["accepted"] or request.includeRejected)
+            and (not request.categories or item["category"] in request.categories)
+        ]
+        skipped = len(wanted) - MAX_REFINE_ITEMS
+        options = request.repair.model_dump()
+
+        items = []
+        for item in wanted[:MAX_REFINE_ITEMS]:
+            item.pop("png_bytes", None)  # 스테이지 크롭을 따로 만든다 — 같은 그림을 두 번 싣지 않는다
+            repair_started = time.perf_counter()
+            stages = refine_service.build_stages(image_np, masks[item["category"]], options)
+            item["diagnosis"] = stages["diagnosis"]
+            item["repair"] = stages["repair"]
+            item["repairSeconds"] = round(time.perf_counter() - repair_started, 2)
+            item["stages"] = {
+                "crop": encode_png(stages["cropPng"]),
+                "defects": encode_png(stages["defectPng"]),
+                "repaired": encode_png(stages["repairedPng"]),
+                "normalized": encode_png(stages["normalizedPng"]),
+                "closet": None,
+            }
+            item["generation"] = None
+            item["generationError"] = None
+            if request.generate:
+                generate_started = time.perf_counter()
+                try:
+                    closet, engine = image_engine.refine_garment(
+                        stages["image"], item["category"], f"{request.name} {item['category']}",
+                        request.seed, request.steps,
+                    )
+                    item["stages"]["closet"] = encode_image(closet)
+                    item["generation"] = {
+                        "engine": engine,
+                        "seed": request.seed,
+                        "steps": request.steps or INFERENCE_STEPS,
+                        "seconds": round(time.perf_counter() - generate_started, 2),
+                    }
+                except Exception as error:
+                    logging.exception("Closet refinement failed for %s", item["category"])
+                    item["generationError"] = str(error) or "생성에 실패했습니다"
+            items.append(item)
+
+        return {
+            "name": request.name,
+            "model": analysis["model"],
+            "device": analysis["device"],
+            "imageSize": analysis["imageSize"],
+            "segmentSeconds": analysis["inferenceSeconds"],
+            "loadSeconds": analysis["loadSeconds"],
+            "overlay": encode_png(analysis["overlay_png_bytes"]),
+            "detectedCount": len(analysis["items"]),
+            "skippedCount": max(0, skipped),
+            "items": items,
+            "totalSeconds": round(time.perf_counter() - started, 2),
+        }
+    except KeyError as error:
+        raise HTTPException(status_code=422, detail=str(error.args[0])) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except HTTPException:
+        raise
+    except Exception as error:
+        logging.exception("Closet refinement pipeline failed")
+        raise HTTPException(status_code=503, detail="Refinement pipeline is unavailable") from error
+    finally:
+        INFERENCE_GATE.release()
 
 
 @app.post("/api/tryon")

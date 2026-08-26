@@ -20,6 +20,7 @@
         <button class="nav-link" data-view="wardrobe">내 옷장 <span id="wardrobeCount">200</span></button>
         <button class="nav-link" data-view="discover">코디 추천</button>
         <button class="nav-link nav-dev" data-view="seglab" id="segLabNavLink" hidden>Seg Lab</button>
+        <button class="nav-link nav-dev" data-view="refinelab" id="refineLabNavLink" hidden>Refine Lab</button>
       </nav>
       <div class="top-actions">
         <button class="weather-pill" id="weatherButton" aria-label="Weather details">
@@ -169,6 +170,73 @@
         <div class="seg-lab-results" id="segLabResults"></div>
         <div class="seg-lab-agreement" id="segLabAgreement"></div>
       </section>
+
+      <!-- 개발용 파이프라인 탭(전신샷 → 분리 → 마스크 보수 → FLUX 재생성). refine-lab.js가 노출한다. -->
+      <section class="view seg-lab refine-lab" id="refinelabView">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">개발용 · 전신샷에서 옷장 이미지까지</p>
+            <h1>잘라낸 옷을<br /><em>옷장에 넣을 그림으로 바꿔요.</em></h1>
+            <p class="lede">세그멘테이션이 남긴 구멍과 떨어져 나온 조각을 재고, 보수하고, FLUX로 다시 그리는 과정을 단계마다 나란히 보여줘요.</p>
+          </div>
+          <div class="seg-lab-health" id="refineLabHealth"><span class="seg-dot"></span><small>백엔드 확인 중…</small></div>
+        </div>
+
+        <ol class="refine-flow">
+          <li><b>1</b><strong>전신샷</strong><small id="refineFlowSource">사진 한 장</small></li>
+          <li><b>2</b><strong>세그멘테이션</strong><small id="refineFlowSegment">옷 픽셀을 카테고리로</small></li>
+          <li><b>3</b><strong>결함 진단</strong><small id="refineFlowDiagnose">구멍·조각 세기</small></li>
+          <li><b>4</b><strong>마스크 보수</strong><small id="refineFlowRepair">닫기·구멍 메우기·조각 정리</small></li>
+          <li><b>5</b><strong>FLUX 재생성</strong><small id="refineFlowGenerate">흰 배경 상품컷</small></li>
+        </ol>
+
+        <div class="seg-lab-controls refine-controls">
+          <div class="seg-lab-field">
+            <span>백엔드</span>
+            <div class="refine-presets" id="refineLabPresets"></div>
+            <input id="refineLabEndpoint" type="url" spellcheck="false" placeholder="http://127.0.0.1:8787" />
+            <label for="refineLabModel">세그멘테이션 모델</label>
+            <select id="refineLabModel"></select>
+          </div>
+          <div class="seg-lab-field">
+            <span>마스크 보수 단계</span>
+            <div class="refine-switches">
+              <label class="refine-switch"><input type="checkbox" id="refineOptClose" checked /><span><b>닫기</b><small>팽창 후 침식으로 좁은 틈과 톱니를 메운다</small></span></label>
+              <label class="refine-switch"><input type="checkbox" id="refineOptHoles" checked /><span><b>구멍 메우기</b><small>마스크가 둘러싼 빈 자리만 채운다</small></span></label>
+              <label class="refine-switch"><input type="checkbox" id="refineOptStrays" checked /><span><b>조각 정리</b><small>가장 큰 조각 대비 기준 미만인 부스러기를 버린다</small></span></label>
+            </div>
+            <div class="refine-sliders">
+              <label>닫기 커널 <output id="refineCloseValue">1.2%</output><input type="range" id="refineCloseScale" min="0" max="4" step="0.1" value="1.2" /></label>
+              <label>조각 기준 <output id="refineStrayValue">8%</output><input type="range" id="refineStrayRatio" min="0" max="50" step="1" value="8" /></label>
+            </div>
+          </div>
+          <div class="seg-lab-field">
+            <span>재생성</span>
+            <div class="refine-switches">
+              <label class="refine-switch"><input type="checkbox" id="refineOptGenerate" checked /><span><b>FLUX로 다시 그리기</b><small>끄면 보수·정규화까지만 — GPU 없이도 돌아간다</small></span></label>
+            </div>
+            <div class="refine-numbers">
+              <label>seed <input type="number" id="refineSeed" value="42" min="0" max="999999" /></label>
+              <label>steps <input type="number" id="refineSteps" placeholder="기본" min="1" max="50" /></label>
+            </div>
+            <div class="refine-categories" id="refineCategories"></div>
+          </div>
+        </div>
+
+        <label class="drop-zone seg-lab-drop" id="refineLabDropZone">
+          <input id="refineLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
+          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>분리한 옷마다 FLUX를 한 번씩 돌리므로 시간이 걸려요</small>
+        </label>
+
+        <div class="seg-lab-run">
+          <figure class="seg-lab-source" id="refineLabSource" hidden><img alt="변환할 원본 사진" /><figcaption></figcaption></figure>
+          <button class="primary-button" id="refineLabRun" disabled>파이프라인 실행</button>
+        </div>
+
+        <div class="seg-lab-status" id="refineLabStatus" hidden></div>
+        <div class="refine-summary" id="refineLabSummary"></div>
+        <div class="refine-results" id="refineLabResults"></div>
+      </section>
     </main>
 
     <dialog id="preferenceDialog" class="preference-dialog">
@@ -303,5 +371,6 @@
     <script src="qwen-vlm.js"></script>
     <script src="app.js"></script>
     <script src="seg-lab.js"></script>
+    <script src="refine-lab.js"></script>
   </body>
 </html>

@@ -69,6 +69,7 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/body`
 - `POST /api/warmup`
 - `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (아래 Seg Lab 참고)
+- `POST /api/dev/closet/refine` (아래 Refine Lab 참고)
 
 모델 추론 endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
@@ -88,8 +89,10 @@ window.WEARWELL_CONFIG = {
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
 - `SEGMENTATION_DEVICE`: `auto`(기본), `cuda`, `cpu` 중 하나. `auto`는 GPU가 있으면 GPU를 사용
 - `WEARWELL_API_TOKEN`: API bearer token
-- `WEARWELL_DEV_TOOLS`: `1`(기본)이면 Seg Lab endpoint를 노출. 공개 터널에서는 `0` 권장
+- `WEARWELL_DEV_TOOLS`: `1`이면 Seg Lab·Refine Lab endpoint(`/api/dev/*`)를 노출. **`main` 기준 기본값은 `0`이고 Colab 노트북도 `0`을 넘깁니다**(공개 터널에 dev 도구를 열지 않기 위해). 랩을 쓸 때는 명시적으로 켜세요
 - `SEGMENT_MODEL_CACHE_SIZE`: 동시에 메모리에 올려둘 세그멘테이션 모델 수, 기본값 `3`
+- `REFINE_WIDTH`, `REFINE_HEIGHT`: 옷 상품컷 생성 해상도, 기본값 `768`, `768`(정사각)
+- `MAX_REFINE_ITEMS`: Refine Lab 요청 한 번에 재생성할 옷의 최대 개수, 기본값 `4`
 
 ## Seg Lab — 옷 분리 모델 비교 (개발용)
 
@@ -115,11 +118,13 @@ ATR 라벨에는 아우터 클래스가 없어 코트도 `Upper-clothes`로 나�
 ```bash
 # 1) 백엔드 (GPU가 없으면 SEGMENTATION_DEVICE=cpu로 자동 폴백)
 cd backend
-WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --host 127.0.0.1 --port 8787
+WEARWELL_DEV_TOOLS=1 WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --host 127.0.0.1 --port 8787
 
 # 2) 정적 프론트엔드
 python -m http.server 8000 --bind 127.0.0.1
 ```
+
+`WEARWELL_DEV_TOOLS=1`을 빼면 `/api/dev/*`가 404가 되어 두 랩 탭의 모델 목록이 비어 있습니다.
 
 `local-config.js`의 `LOCAL_API_TOKEN`을 위 `WEARWELL_API_TOKEN`과 같게 맞춘 뒤
 `http://127.0.0.1:8000`을 열면 상단에 **Seg Lab** 탭이 나옵니다. 탭은 `localhost`/`127.0.0.1`
@@ -139,6 +144,70 @@ python -m http.server 8000 --bind 127.0.0.1
 ```bash
 cd backend && pytest tests -q          # 백엔드 라우트와 레지스트리
 node scripts/seg-lab-test.mjs          # 두 서버가 뜬 상태에서 탭 전체 E2E
+```
+
+## Refine Lab — 잘라낸 옷을 옷장 이미지로 (개발용)
+
+세그멘테이션 결과를 그대로 옷장에 넣기 어렵다는 문제를 다루는 개발 탭입니다.
+argmax는 픽셀마다 라벨을 하나만 주기 때문에 **팔이 몸통을 가리면 상의 마스크에 구멍이
+뚫리고, 가려진 옷은 조각으로 끊어집니다.** 이 탭은 전신샷 한 장을 다음 순서로 돌리고
+각 단계의 중간 산출물을 나란히 보여줍니다.
+
+```
+전신샷
+  → 세그멘테이션 (Seg Lab과 같은 모델 레지스트리)
+  → 결함 진단      구멍·조각을 세고 빨강/파랑으로 칠한다
+  → 마스크 보수    닫기 → 구멍 메우기 → 부스러기 조각 정리
+  → 정규화        메운 자리를 옷 대표색으로 칠하고 흰 배경 정사각으로
+  → FLUX 재생성    가려졌던 형태와 질감을 채워 상품컷으로
+```
+
+**보수와 재생성의 역할이 다릅니다.** 형태학 연산은 없는 픽셀을 만들지 못하므로
+팔에 가려졌던 자리는 여전히 비어 있습니다. 보수 단계는 실루엣을 온전하게 만들어
+생성 모델에게 좋은 입력을 주는 것이 목적이고, 실제로 그 자리를 그리는 것은 FLUX입니다.
+그래서 프롬프트가 색·패턴·재단을 그대로 유지하라고 반복해서 못박습니다 —
+자유롭게 그리라고 하면 다른 옷이 나옵니다.
+
+메운 자리를 옷의 중앙값 색으로 칠하는 이유도 같습니다. 알파로만 채우면 그 자리의
+팔·머리카락·뒷배경 픽셀이 옷 안에 남고, 생성 모델이 그 살색을 옷의 일부로 읽습니다.
+
+관련 코드: [`backend/refine_service.py`](backend/refine_service.py)(진단·보수·정규화, torch 불필요),
+`FluxImageEngine.refine_garment`([`backend/app.py`](backend/app.py)), 탭: [`refine-lab.js`](refine-lab.js)
+
+### 어느 백엔드를 쓰나
+
+5단계(FLUX)는 GPU가 있어야 하므로 **`local-config.js`의 `API_BASE`(Colab 터널)를 기본값으로 씁니다.**
+탭 상단에서 `Colab GPU` / `로컬 백엔드`를 눌러 바꿀 수 있고, 주소마다 토큰이 다르므로
+(`API_TOKEN` vs `LOCAL_API_TOKEN`) 선택한 주소에 맞는 토큰을 자동으로 실어 보냅니다.
+Seg Lab은 세그멘테이션만 보므로 기존대로 로컬이 기본이며, 두 탭은 주소를 따로 기억합니다.
+
+Colab 백엔드를 쓰려면 두 가지가 모두 필요합니다.
+
+1. **노트북이 `WEARWELL_DEV_TOOLS=1`을 넘겨야 합니다.** 노트북은 기본적으로 `0`을 넘기므로
+   세그멘테이션·FLUX가 GPU에 멀쩡히 올라가 있어도 `/api/dev/*`는 전부 404입니다.
+2. **노트북이 `/api/dev/closet/refine`이 있는 코드를 받아야 합니다.** 노트북은 저장소 기본
+   브랜치를 `git pull` 하므로 이 기능이 머지되기 전에는 그 라우트가 없습니다.
+
+헬스 배지는 둘 중 무엇에 걸렸는지 구분해서 알려줍니다 — `/api/health`의 `devTools` 값을
+먼저 읽기 때문에 "dev 도구가 꺼져 있어요"와 "이 백엔드에는 dev 라우트가 없어요"가 다르게 뜨고,
+세그멘테이션이 그 백엔드에서 정상 동작 중이면 모델·디바이스를 함께 표시합니다.
+
+### 조작
+
+- **마스크 보수 단계**를 하나씩 꺼 보면서 각 단계가 무슨 일을 하는지 확인합니다
+- **닫기 커널**은 크롭 짧은 변에 대한 비율입니다(기본 1.2%). 키우면 옷 모양이 뭉개집니다
+- **조각 기준**은 가장 큰 조각 대비 비율입니다(기본 8%). "가장 큰 것만 남기기"가 아닌
+  이유는 신발 한 켤레가 정상적으로 두 조각이기 때문입니다
+- **FLUX로 다시 그리기**를 끄면 4단계까지만 돌아 GPU 없이도 사용할 수 있습니다
+
+한 요청에서 옷 한 벌마다 FLUX를 한 번씩 돌리므로 `MAX_REFINE_ITEMS`(기본 4)까지만
+처리하고, 카테고리 칩으로 대상을 좁힐 수 있습니다.
+
+### 테스트
+
+```bash
+node scripts/refine-lab-test.mjs                       # 1~4단계 (GPU 불필요)
+REFINE_LAB_GENERATE=1 node scripts/refine-lab-test.mjs # 5단계까지
 ```
 
 ## 개발 검증
