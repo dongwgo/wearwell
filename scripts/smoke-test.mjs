@@ -104,6 +104,16 @@ const expression = `
   };
   const duplicateCategoryMatch = buildInfluencerMatch(duplicateCategoryLook);
   const unanalyzedMatch = buildInfluencerMatch({ analysisReady: false, weather: [], pieces: duplicateCategoryLook.pieces });
+  segmentBatches = [{ image: 'data:image/jpeg;base64,AA==', name: '테스트 전신샷', items: [
+    { id: 'seg-upper', image: 'assets/lookbook/look-001.jpg', name: '상의', category: '상의', sourceCategory: '상의', confidence: .9, refine: true },
+    { id: 'seg-lower', image: 'assets/lookbook/look-002.jpg', name: '하의', category: '하의', sourceCategory: '하의', confidence: .8, refine: false }
+  ] }];
+  renderSegmentChoices();
+  const segmentCards = document.querySelectorAll('[data-segment-choice]');
+  segmentCards[0].querySelector('[data-segment-refine]').click();
+  const categorySelect = segmentCards[0].querySelector('[data-segment-category]');
+  categorySelect.value = '아우터';
+  categorySelect.dispatchEvent(new Event('change', { bubbles: true }));
   return ({
     profile: JSON.parse(localStorage.getItem('오늘옷-profile')),
     look: document.querySelector('#lookTitle').textContent,
@@ -128,7 +138,10 @@ const expression = `
     duplicateCategoryMatches: duplicateCategoryMatch.fulfilled,
     duplicateCategoryUniqueItems: new Set(duplicateCategoryMatch.matches.filter(Boolean).map(entry => entry.item.id)).size,
     unanalyzedTotal: unanalyzedMatch.total,
-    photoAvatarReady
+    photoAvatarReady,
+    segmentChoices: segmentCards.length,
+    segmentRefineToggle: segmentBatches[0].items[0].refine,
+    segmentCategoryChange: segmentBatches[0].items[0].category
   });
   })()
 `;
@@ -142,7 +155,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0) {
+if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
 console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 2벌 ↔ 서로 다른 내 옷 ${value.duplicateCategoryUniqueItems}벌 / 미분석 추천 ${value.unanalyzedTotal}벌`);

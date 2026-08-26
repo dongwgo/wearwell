@@ -49,6 +49,9 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["modelLoaded"] is False
     assert result["vlmModel"] == "Qwen/Qwen3-VL-8B-Instruct"
     assert result["vlmLoaded"] is False
+    assert result["embeddingModel"] == "google/siglip-base-patch16-224"
+    assert result["embeddingLoaded"] is False
+    assert result["embeddingWarmupVerified"] is False
     assert result["vlmQuantization"] == "nf4"
     assert result["segmentationModel"] == "sayeed99/segformer_b3_clothes"
     assert result["segmentationModelKey"] == "b3_clothes"
@@ -117,6 +120,29 @@ def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypat
     assert all(call[0] == (64, 96) for call in calls)
     assert len({call[1] for call in calls}) == 3
     assert "bbox" in backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
+
+
+def test_embedding_route_returns_siglip_vector(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    calls = []
+    monkeypatch.setattr(
+        backend_app.embedding_engine,
+        "embed",
+        lambda image: calls.append(image.size) or [0.25, -0.5, 0.75],
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/embedding",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload()},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "model": "google/siglip-base-patch16-224",
+        "vector": [0.25, -0.5, 0.75],
+    }
+    assert calls == [(64, 96)]
 
 
 def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -386,8 +412,12 @@ def test_agreement_flags_categories_only_one_model_detected(backend_app):
     assert rows[0]["categories"]["아우터"] == {"onlyIn": "b3_fashion"}
 
 
+ARM = (slice(30, 45), slice(22, 40))       # 몸통을 가려 마스크에 구멍으로 남은 자리
+FOREARM = (slice(50, 70), slice(14, 28))   # 아랫자락을 가로질러 바깥까지 이어진 자리
+
+
 def damaged_mask(category_offset: int = 0):
-    """세그멘테이션이 실제로 내놓는 모양 — 구멍 하나와 떨어져 나온 조각 하나.
+    """세그멘테이션이 실제로 내놓는 모양 — 구멍, 가려서 파먹힌 자리, 떨어져 나온 조각.
 
     image_payload()가 만드는 64x96 사진과 크기를 맞춘다(numpy는 (높이, 너비)).
     """
@@ -395,13 +425,33 @@ def damaged_mask(category_offset: int = 0):
 
     mask = np.zeros((96, 64), dtype=bool)
     mask[10 + category_offset:70 + category_offset, 8:56] = True
-    mask[30:45, 22:40] = False  # 팔이 가려서 뚫린 구멍
-    mask[90:94, 2:6] = True     # 경계 부스러기
+    mask[ARM] = False       # 팔이 가려서 뚫린 구멍
+    mask[FOREARM] = False   # 옷 밖까지 이어져 '구멍'으로는 세지지 않는 파먹힌 자리
+    mask[90:94, 2:6] = True  # 경계 부스러기
     return mask
 
 
+def stub_parse(mask):
+    """세그멘테이션 라벨맵. 마스크에서 빠진 두 자리가 팔로 찍혀 있다.
+
+    이게 없으면 파먹힌 자리를 배경과 구분할 수 없어 가림 진단이 통째로 빠진다.
+    """
+    import numpy as np
+
+    arm = np.zeros_like(mask)
+    arm[ARM] = True
+    arm[FOREARM] = True
+    return {
+        "pred": np.where(arm, 14, np.where(mask, 4, 0)).astype(np.int16),
+        "names": {0: "Background", 4: "Upper-clothes", 14: "Left-arm"},
+        "background": [0],
+    }
+
+
 def stub_refine_analysis(category: str = "상의"):
-    analysis = stub_analysis(category, damaged_mask())
+    mask = damaged_mask()
+    analysis = stub_analysis(category, mask)
+    analysis["_parse"] = stub_parse(mask)
     analysis["items"][0].update(
         label="Upper-clothes", rejectReason=None, areaRatio=0.42, fillRatio=0.61, confidence=0.91,
         thresholds={"minArea": 0.012, "minFill": 0.25, "minConfidence": 0.55},
@@ -434,7 +484,7 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     monkeypatch.setattr(
         backend_app.image_engine,
         "refine_garment",
-        lambda garment, category, name, seed, steps: calls.append((garment.size, category, name, seed, steps))
+        lambda garment, category, name, seed, steps, hint="": calls.append((garment.size, category, name, seed, steps, hint))
         or (Image.new("RGB", (768, 768), "white"), "stub-flux"),
     )
 
@@ -461,10 +511,40 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     assert item["generation"] == {"engine": "stub-flux", "seed": 7, "steps": 4, "seconds": item["generation"]["seconds"]}
     assert item["generationError"] is None
     # 생성 모델에는 보수·정규화를 마친 정사각 이미지가 들어간다.
-    assert calls == [((768, 768), "상의", "스냅 상의", 7, None)]
+    assert [call[:5] for call in calls] == [((768, 768), "상의", "스냅 상의", 7, None)]
+    # 어디가 무엇에 가려져 비었는지 함께 넘겨야 모델이 메운 자리를 원단으로 잇는다.
+    assert "left arm" in calls[0][5]
     assert payload["overlay"].startswith("data:image/png;base64,")
     # 같은 그림을 두 번 싣지 않는다 — analyze()가 만든 크롭은 버리고 스테이지 크롭만 쓴다.
     assert "png_bytes" not in item
+
+
+def test_refine_route_reports_and_fills_what_the_arm_covered(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """구멍 진단만으로는 '멀쩡함'이 나오던 사진. 라벨맵이 있으면 파먹힌 자리가 잡힌다."""
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+
+    item = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "generate": False},
+    ).json()["items"][0]
+
+    assert item["diagnosis"]["occludedRatio"] > 0.02
+    assert item["diagnosis"]["occludedBy"][0]["label"] == "Left-arm"
+    assert item["diagnosis"]["solidity"] < 1.0
+    assert [step["step"] for step in item["repair"]["steps"]].count("fillOccluded") == 1
+    assert item["repair"]["occlusion"]["acceptedCount"] >= 1
+    # 가림을 끄면 같은 사진에서 그 단계만 빠져야 한다 — 무엇이 무슨 일을 했는지 비교가 된다.
+    without = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "generate": False, "repair": {"fillOccluded": False}},
+    ).json()["items"][0]
+
+    assert "fillOccluded" not in [step["step"] for step in without["repair"]["steps"]]
+    assert without["repair"]["pixelsAfter"] < item["repair"]["pixelsAfter"]
 
 
 def test_refine_route_stays_open_when_dev_tools_are_disabled(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -577,6 +657,29 @@ def test_refine_route_rejects_unknown_category(backend_app):
     )
 
     assert response.status_code == 422
+
+
+def test_refine_route_applies_category_override_to_generation(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+    calls = []
+    monkeypatch.setattr(
+        backend_app.image_engine,
+        "refine_garment",
+        lambda garment, category, name, seed, steps, hint="": calls.append((category, name))
+        or (Image.new("RGB", (32, 32), "white"), "stub-flux"),
+    )
+
+    payload = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "categoryOverrides": {"상의": "아우터"}},
+    ).json()
+
+    assert payload["items"][0]["sourceCategory"] == "상의"
+    assert payload["items"][0]["category"] == "아우터"
+    assert calls == [("아우터", "full-body photo 아우터")]
 
 
 def test_garment_generation_uses_a_square_canvas(backend_app, monkeypatch: pytest.MonkeyPatch):

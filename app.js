@@ -85,6 +85,7 @@ let selectedInfluencerLookIds = new Set();
 let selectedPriorities = new Set(["날씨에 잘 맞기"]);
 let uploadFiles = [];
 let segmentFiles = [];
+let segmentBatches = [];
 let savedLooks = new Set(JSON.parse(localStorage.getItem("오늘옷-saved") || "[]"));
 let selectedWardrobeItem = null;
 let matchVariation = 0;
@@ -1351,8 +1352,11 @@ async function addUploadsToWardrobe() {
 
 function handleSegmentUploads(files) {
   segmentFiles = [...files].filter(file => file.type.startsWith("image/")).slice(0, 6);
+  segmentBatches = [];
   $("#segmentPreview").innerHTML = segmentFiles.map(file => `<div class="upload-thumb"><img src="${URL.createObjectURL(file)}" alt="전신샷 미리보기" /></div>`).join("");
   $("#addSegmentPhotos").disabled = segmentFiles.length === 0;
+  $("#addSegmentPhotos").textContent = "옷 찾기";
+  $("#segmentDialogHint").textContent = "먼저 옷을 찾은 뒤, 옷마다 FLUX 변환 여부와 카테고리를 고를 수 있어요";
 }
 
 async function fetchSegmentation(payload) {
@@ -1371,47 +1375,123 @@ async function fetchSegmentation(payload) {
   }
 }
 
-async function addSegmentPhotosToWardrobe() {
+function renderSegmentChoices() {
+  const categoryOptions = categories.filter(category => category !== "전체");
+  $("#segmentPreview").innerHTML = segmentBatches.flatMap((batch, batchIndex) =>
+    batch.items.map((detected, itemIndex) => `
+      <article class="segment-choice" data-segment-choice="${batchIndex}:${itemIndex}">
+        <img src="${escapeHtml(detected.image)}" alt="${escapeHtml(detected.name)}" />
+        <div><strong>${escapeHtml(detected.name)}</strong><small>${Math.round((detected.confidence || 0) * 100)}% 확신</small>
+          <label class="segment-refine-check"><input type="checkbox" data-segment-refine ${detected.refine ? "checked" : ""} /> FLUX로 다듬기</label>
+          <label class="segment-category">카테고리<select data-segment-category>${categoryOptions.map(category => `<option ${category === detected.category ? "selected" : ""}>${escapeHtml(category)}</option>`).join("")}</select></label>
+        </div>
+      </article>`)
+  ).join("");
+  $$('[data-segment-choice]').forEach(card => {
+    const [batchIndex, itemIndex] = card.dataset.segmentChoice.split(":").map(Number);
+    const detected = segmentBatches[batchIndex].items[itemIndex];
+    card.querySelector("[data-segment-refine]").addEventListener("change", event => {
+      const checkedInBatch = segmentBatches[batchIndex].items.filter(item => item.refine).length;
+      if (event.target.checked && checkedInBatch >= 4) {
+        event.target.checked = false;
+        return showToast("한 사진에서는 최대 4벌까지 FLUX로 다듬을 수 있어요");
+      }
+      detected.refine = event.target.checked;
+      card.classList.toggle("refining", detected.refine);
+    });
+    card.querySelector("[data-segment-category]").addEventListener("change", event => { detected.category = event.target.value; });
+    card.classList.toggle("refining", detected.refine);
+  });
+}
+
+async function findSegmentedGarments() {
   const files = segmentFiles;
   $("#addSegmentPhotos").disabled = true;
   $("#segmentFileInput").disabled = true;
-  const added = [];
   let failures = 0;
   for (let index = 0; index < files.length; index++) {
     const file = files[index];
     $("#segmentPreview").innerHTML = `<div class="generation-loader"><span></span><strong>${index + 1}/${files.length}장 분석 중</strong><small>옷의 경계를 찾고 있어요…</small></div>`;
     try {
-      const result = await fetchSegmentation({ image: await resizeBodyPhoto(file), name: file.name.replace(/\.[^.]+$/, "") || "전신샷" });
-      for (const detected of result.items || []) {
-        const item = {
-          id: `${detected.id}-${Math.random().toString(36).slice(2, 7)}`,
-          image: detected.image,
-          gender: selectedGender || "all",
-          category: detected.category,
-          name: detected.name,
-          color: "색상 미분류",
-          worn: 0,
-          userAdded: true,
-          segmentation: { label: detected.label, confidence: detected.confidence }
-        };
-        item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
-        wardrobe.unshift(item);
-        added.push(item);
-        await persistGarment(item);
-      }
+      const image = await resizeBodyPhoto(file);
+      const name = file.name.replace(/\.[^.]+$/, "") || "전신샷";
+      const result = await fetchSegmentation({ image, name });
+      segmentBatches.push({ image, name, items: (result.items || []).map((detected, itemIndex) => ({
+        ...detected, sourceCategory: detected.category, refine: itemIndex < 4,
+      })) });
     } catch (error) {
       failures += 1;
       showToast(`${file.name}: ${error.message}`);
     }
   }
+  $("#segmentFileInput").disabled = false;
+  if (!segmentBatches.some(batch => batch.items.length)) {
+    $("#addSegmentPhotos").disabled = false;
+    return showToast(failures ? "사진에서 옷을 찾지 못했어요" : "분리할 옷을 찾지 못했어요");
+  }
+  renderSegmentChoices();
+  $("#addSegmentPhotos").textContent = "선택한 방식으로 옷장에 추가";
+  $("#addSegmentPhotos").disabled = false;
+  $("#segmentDialogHint").textContent = "체크를 끄면 분리된 이미지를 그대로 저장해요. 카테고리도 여기서 바꿀 수 있어요.";
+}
+
+async function commitSegmentedGarments() {
+  $("#addSegmentPhotos").disabled = true;
+  const added = [];
+  let refineFailures = 0;
+  for (let batchIndex = 0; batchIndex < segmentBatches.length; batchIndex++) {
+    const batch = segmentBatches[batchIndex];
+    const selected = batch.items.filter(item => item.refine);
+    let refinedBySource = new Map();
+    if (selected.length) {
+      $("#segmentPreview").innerHTML = `<div class="generation-loader"><span></span><strong>${batchIndex + 1}/${segmentBatches.length}장 옷 다듬는 중</strong><small>구멍과 가려진 부분을 메우고 FLUX로 다시 그리고 있어요…</small></div>`;
+      try {
+        const refined = await fetchGpuJson("/api/closet/refine", {
+          image: batch.image,
+          name: batch.name,
+          categories: selected.map(item => item.sourceCategory),
+          categoryOverrides: Object.fromEntries(selected.map(item => [item.sourceCategory, item.category])),
+          generate: true,
+        });
+        refinedBySource = new Map((refined.items || []).map(item => [item.sourceCategory || item.category, item]));
+      } catch (error) {
+        refineFailures += selected.length;
+        console.warn("옷 보수·재생성 실패, segmentation 결과로 폴백", error);
+      }
+    }
+    for (const detected of batch.items) {
+      const refined = detected.refine ? refinedBySource.get(detected.sourceCategory) : null;
+      const item = {
+        id: `${detected.id}-${Math.random().toString(36).slice(2, 7)}`,
+        image: refined?.stages?.closet || refined?.stages?.normalized || detected.image,
+        gender: selectedGender || "all",
+        category: detected.category,
+        name: detected.category === detected.sourceCategory ? detected.name : `${batch.name} - ${detected.category}`,
+        color: "색상 미분류",
+        worn: 0,
+        userAdded: true,
+        segmentation: { label: detected.label, confidence: detected.confidence, refined: Boolean(refined?.stages?.closet), sourceCategory: detected.sourceCategory }
+      };
+      item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
+      wardrobe.unshift(item);
+      added.push(item);
+      await persistGarment(item);
+    }
+  }
   segmentFiles = [];
+  segmentBatches = [];
   $("#segmentFileInput").disabled = false;
   $("#segmentPreview").innerHTML = "";
+  $("#addSegmentPhotos").textContent = "옷 찾기";
   closeDialogs();
   activeCategory = categories[0];
   renderCategoryFilters();
   renderWardrobe();
-  showToast(added.length ? `옷 ${added.length}벌을 분리해 저장했어요${failures ? ` (${failures}장 실패)` : ""}` : "분리할 옷을 찾지 못했어요");
+  showToast(added.length ? `옷 ${added.length}벌을 저장했어요${refineFailures ? ` · ${refineFailures}벌은 분리본으로 저장` : ""}` : "분리할 옷을 찾지 못했어요");
+}
+
+async function addSegmentPhotosToWardrobe() {
+  return segmentBatches.length ? commitSegmentedGarments() : findSegmentedGarments();
 }
 
 async function restoreWardrobeDatabase() {

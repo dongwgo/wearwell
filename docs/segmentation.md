@@ -48,6 +48,11 @@ VLM 분석과 코디 추천까지 그대로 전파되기 때문이다. 그래서
 합치지 않으면 신발 한 켤레가 옷장에 두 벌로 등록된다.
 ([`_category_masks`](../backend/segment_service.py#L136-L155))
 
+**매핑되지 않은 라벨도 버리지 않는다**: `Left-arm`, `Hair`, `Bag`은 옷장 카테고리가
+없어 여기서 빠지지만, `analyze()`는 라벨맵 원본을 `_parse`로 함께 싣는다. "이 빈 자리가
+배경인지 팔에 덮인 옷인지"를 가르는 근거가 그 라벨뿐이기 때문이다 —
+[refine-lab-pipeline.md](refine-lab-pipeline.md)의 2단계 가림 판정이 이걸 쓴다.
+
 ---
 
 ## 3. 왜 임계값 단계가 필요한가

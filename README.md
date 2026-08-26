@@ -152,6 +152,7 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/lookbook`
 - `POST /api/vlm/body`
 - `POST /api/vlm/tryon-judge`
+- `POST /api/embedding` — SigLIP 이미지 벡터 생성 (옷장·룩북 유사도 비교)
 - `POST /api/warmup`
 - `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (아래 Seg Lab 참고)
 - `GET /api/closet/models`, `POST /api/closet/refine` (아래 Refine Lab 참고)
@@ -162,6 +163,7 @@ window.WEARWELL_CONFIG = {
 
 - `IMAGE_MODEL`: 기본값 `black-forest-labs/FLUX.2-klein-4B`
 - `VLM_MODEL`: 기본값 `Qwen/Qwen3-VL-8B-Instruct`
+- `SIGLIP_MODEL`: 기본값 `google/siglip-base-patch16-224`
 - `VLM_LOAD_IN_4BIT`: L4에서는 `1` 권장
 - `VLM_MAX_PIXELS`: VLM 입력 이미지 최대 픽셀 수, 기본값 `1048576`
 - `GPU_QUEUE_TIMEOUT`: 앞선 GPU 작업을 기다리는 최대 시간(초), 기본값 `300`

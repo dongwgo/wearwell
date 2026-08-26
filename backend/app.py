@@ -32,6 +32,7 @@ from tryon_prompt import build_tryon_prompt, build_tryon_view_prompt, order_garm
 
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+SIGLIP_MODEL = os.getenv("SIGLIP_MODEL", "google/siglip-base-patch16-224")
 SEGMENTATION_MODEL = os.getenv("SEGMENTATION_MODEL", "sayeed99/segformer_b3_clothes")
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
 VLM_MAX_PIXELS = int(os.getenv("VLM_MAX_PIXELS", str(1024 * 1024)))
@@ -77,6 +78,7 @@ RATE_LOCK = threading.Lock()
 REQUEST_TIMES: dict[str, deque[float]] = defaultdict(deque)
 WARMUP_VERIFIED = False
 VLM_WARMUP_VERIFIED = False
+EMBEDDING_WARMUP_VERIFIED = False
 SEGMENTATION_WARMUP_VERIFIED = False
 
 
@@ -203,6 +205,10 @@ class VLMImageRequest(BaseModel):
     gender: Literal["women", "men"] | None = None
 
 
+class EmbeddingRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+
+
 class TryOnJudgeRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
     # 입히기로 한 아이템 목록을 사람이 읽는 문장으로. 심판은 이 목록과 사진만 본다.
@@ -226,9 +232,14 @@ class RepairOptions(BaseModel):
 
     close: bool = True
     fillHoles: bool = True
+    # 팔·가방에 가려진 자리를 세그멘테이션 라벨을 근거로 메운다. 구멍과 달리 바깥과
+    # 이어진 결손이라 형태학 연산으로는 되돌릴 수 없다.
+    fillOccluded: bool = True
     dropStrays: bool = True
+    smooth: bool = True
     closeScale: float = Field(default=0.012, ge=0.0, le=0.05)
     strayRatio: float = Field(default=0.08, ge=0.0, le=1.0)
+    occlusionEnclosure: float = Field(default=0.6, ge=0.0, le=1.0)
 
 
 class ClosetRefineRequest(BaseModel):
@@ -237,6 +248,9 @@ class ClosetRefineRequest(BaseModel):
     model: str | None = Field(default=None, max_length=60)
     # 비우면 품질 필터를 통과한 카테고리 전부.
     categories: list[str] = Field(default_factory=list, max_length=len(segment_models.CATEGORIES))
+    # 검출 카테고리 -> 옷장에 저장하고 FLUX 프롬프트에 사용할 카테고리.
+    # 일반 옷장 UI에서 사용자가 잘못 분류된 옷을 고칠 때 쓴다.
+    categoryOverrides: dict[str, str] = Field(default_factory=dict)
     # 걸러진 후보까지 파이프라인에 태운다. 왜 걸러졌는지를 생성 결과로 확인할 때 쓴다.
     includeRejected: bool = False
     repair: RepairOptions = Field(default_factory=RepairOptions)
@@ -584,13 +598,20 @@ class FluxImageEngine:
             engine += f"+lora:{self.lora_name}"
         return results, engine, ordered
 
-    def refine_garment(self, garment: Image.Image, category: str, name: str, seed: int, steps: int | None = None):
+    def refine_garment(
+        self, garment: Image.Image, category: str, name: str, seed: int,
+        steps: int | None = None, hint: str = "",
+    ):
         """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
 
-        입력은 이미 흰 배경에 얹은 정규화 이미지지만, 팔에 가려졌던 자리는 여전히
-        비어 있다. 형태학 연산으로는 없는 픽셀을 만들 수 없어서 그 복원을 여기서
-        시킨다. 그래서 프롬프트가 "구멍을 메우고 끊어진 부분을 잇되 색·패턴·재단은
+        입력은 이미 흰 배경에 얹은 정규화 이미지지만, 가려졌던 자리는 실루엣만
+        메워져 대표색으로 평평하게 칠해져 있다. 그 안의 질감·주름을 그리는 게 여기
+        일이다. 그래서 프롬프트가 "구멍을 메우고 끊어진 부분을 잇되 색·패턴·재단은
         그대로"라는 말을 반드시 담아야 한다 — 자유롭게 그리라고 하면 다른 옷이 온다.
+
+        `hint`는 2단계 진단이 만든 한 문장이다(`refine_service.generation_hint`).
+        "어디가 무엇에 가려져 비었는지"를 알려주지 않으면 모델은 평평한 색면을
+        무지 패널로, 파먹힌 실루엣을 원래 디자인으로 읽는다.
         """
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
@@ -607,6 +628,7 @@ class FluxImageEngine:
                 "plain pure white background with soft even studio lighting and a subtle contact shadow. "
                 "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
                 "no text, no watermark, no collage, no split screen, no duplicated item."
+                f"{hint}"
             )
             return self._run(prompt=prompt, seed=seed, images=[garment], size=REFINE_SIZE, steps=steps), self.engine_name
         # GPU가 없어도 랩이 돌아야 한다. 정규화 이미지를 그대로 최종본으로 쓰면
@@ -661,8 +683,8 @@ class FluxImageEngine:
 
 
 class QwenVLMEngine:
-    GARMENT_PROMPT = """이 사진에서 주된 옷 한 벌만 분석해 한국어 JSON으로만 답해. 보이지 않는 정보는 추측하지 말고 '확인 어려움'으로 써. 스키마: {"category":"상의/하의/아우터/원피스/신발/가방/액세서리","subcategory":"구체 종류","primaryColor":"주색","secondaryColors":["보조색"],"material":"소재 추정","texture":"표면 질감","fit":"슬림/레귤러/세미오버/오버/스트레이트/세미와이드/와이드/커브드","silhouette":"실루엣","wrinkle":"주름의 정도와 형태","finish":"광택·워싱·표면 마감","construction":["봉제선·단추·지퍼·포켓·밑단 등 보이는 디테일"],"pattern":"패턴","season":["계절"],"weather":["어울리는 날씨"],"summary":"한 문장 요약"}"""
-    LOOKBOOK_PROMPT = """이 패션 룩북에서 가장 크게 보이는 한 사람의 착장을 분석해. 착장 전체를 한 항목으로 요약하지 말고 눈에 보이는 옷을 실제 경계대로 각각 분리해 한국어 JSON으로만 답해. 재킷 안에 셔츠가 있으면 아우터와 상의를 별도 pieces 항목으로 쓰고 같은 카테고리의 레이어도 합치지 마. 보이지 않는 옷이나 색은 추측하지 말고 색상은 각 옷 자체의 주조색부터 최대 2개만 써. 신발·가방도 충분히 보일 때만 별도 항목으로 써. bbox는 전체 이미지 왼쪽 위를 0,0, 오른쪽 아래를 1000,1000으로 본 옷의 경계야. 스키마: {"summary":"색·실루엣·레이어링 한 문장","mood":"스타일 무드","pieces":[{"pieceId":"고유 번호","label":"화이트 셔츠처럼 옷을 구별하는 이름","layer":"아우터/이너/단독/하의/신발/가방","category":"상의/하의/아우터/원피스/신발/가방/액세서리","bbox":[0,0,1000,1000],"colors":["정확한 주조색"],"materials":["소재 추정"],"fits":["핏"],"details":["주름·마감·봉제·형태 디테일"],"confidence":0.0}]}"""
+    GARMENT_PROMPT = """이 사진에서 주된 옷 한 벌만 분석해 한국어 JSON으로만 답해. 보이지 않는 정보는 추측하지 말고 '확인 어려움'으로 써. 스키마: {"category":"상의/하의/아우터/원피스/신발/가방/액세서리","subcategory":"구체 종류","primaryColor":"주색","secondaryColors":["보조색"],"material":"소재 추정","texture":"표면 질감","fit":"슬림/레귤러/세미오버/오버/스트레이트/세미와이드/와이드/커브드","sleeveLength":"민소매/반팔/긴팔/확인 어려움","length":"상의:크롭/기본/롱, 하의:반바지/긴바지/확인 어려움","neckline":"라운드넥/카라·폴로/브이넥/터틀넥/확인 어려움","silhouette":"실루엣","wrinkle":"주름의 정도와 형태","finish":"광택·워싱·표면 마감","construction":["봉제선·단추·지퍼·포켓·밑단 등 보이는 디테일"],"pattern":"패턴","season":["계절"],"weather":["어울리는 날씨"],"summary":"한 문장 요약"}"""
+    LOOKBOOK_PROMPT = """이 패션 룩북에서 가장 크게 보이는 한 사람의 착장을 분석해. 착장 전체를 한 항목으로 요약하지 말고 눈에 보이는 옷을 실제 경계대로 각각 분리해 한국어 JSON으로만 답해. 재킷 안에 셔츠가 있으면 아우터와 상의를 별도 pieces 항목으로 쓰고 같은 카테고리의 레이어도 합치지 마. 보이지 않는 옷이나 색은 추측하지 말고 색상은 각 옷 자체의 주조색부터 최대 2개만 써. 신발·가방도 충분히 보일 때만 별도 항목으로 써. bbox는 전체 이미지 왼쪽 위를 0,0, 오른쪽 아래를 1000,1000으로 본 옷의 경계야. 스키마: {"summary":"색·실루엣·레이어링 한 문장","mood":"스타일 무드","pieces":[{"pieceId":"고유 번호","label":"화이트 셔츠처럼 옷을 구별하는 이름","layer":"아우터/이너/단독/하의/신발/가방","category":"상의/하의/아우터/원피스/신발/가방/액세서리","bbox":[0,0,1000,1000],"colors":["정확한 주조색"],"materials":["소재 추정"],"fits":["핏"],"sleeveLength":"민소매/반팔/긴팔/확인 어려움","length":"상의:크롭/기본/롱, 하의:반바지/긴바지/확인 어려움","subcategory":"폴로 셔츠/티셔츠/쇼츠/데님 팬츠처럼 구체 종류","pattern":"무지/스트라이프/체크/그래픽/확인 어려움","neckline":"라운드넥/카라·폴로/브이넥/확인 어려움","details":["주름·마감·봉제·형태 디테일"],"confidence":0.0}]}"""
     # 착장 결과 자동 채점용. 정답 이미지가 없는 태스크라 픽셀 지표(SSIM/LPIPS)로는
     # "상의가 아우터 안쪽인가"를 잴 수 없어서 VLM 이진 판정을 쓴다.
     # 근거를 먼저 쓰게 하면 판정이 눈에 띄게 안정된다 — 결론부터 내라고 하면
@@ -788,8 +810,56 @@ class QwenVLMEngine:
         return f"qwen3-vl-8b-{mode}-cuda"
 
 
+class SigLIPEmbeddingEngine:
+    """Lazy, thread-safe SigLIP image encoder used by wardrobe similarity."""
+
+    def __init__(self, model_factory=None, processor_factory=None) -> None:
+        self.model = None
+        self.processor = None
+        self.model_factory = model_factory
+        self.processor_factory = processor_factory
+        self.device: str | None = None
+        self._load_lock = threading.Lock()
+        self._inference_lock = threading.Lock()
+
+    def _load(self):
+        if self.model is not None and self.processor is not None:
+            return self.model, self.processor
+        with self._load_lock:
+            if self.model is not None and self.processor is not None:
+                return self.model, self.processor
+            import torch
+            from transformers import AutoModel, AutoProcessor
+
+            model_factory = self.model_factory or AutoModel
+            processor_factory = self.processor_factory or AutoProcessor
+            options = {"low_cpu_mem_usage": True}
+            if HF_TOKEN:
+                options["token"] = HF_TOKEN
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.processor = processor_factory.from_pretrained(
+                SIGLIP_MODEL, **({"token": HF_TOKEN} if HF_TOKEN else {})
+            )
+            self.model = model_factory.from_pretrained(SIGLIP_MODEL, **options).to(self.device).eval()
+        return self.model, self.processor
+
+    def embed(self, image: Image.Image) -> list[float]:
+        import torch
+
+        model, processor = self._load()
+        inputs = processor(images=image.convert("RGB"), return_tensors="pt").to(self.device)
+        with self._inference_lock, torch.inference_mode():
+            if hasattr(model, "get_image_features"):
+                features = model.get_image_features(**inputs)
+            else:
+                features = model(**inputs).pooler_output
+            features = torch.nn.functional.normalize(features.float(), dim=-1)
+        return features[0].detach().cpu().tolist()
+
+
 image_engine = FluxImageEngine()
 vlm_engine = QwenVLMEngine()
+embedding_engine = SigLIPEmbeddingEngine()
 
 
 def acquire_inference_slot() -> None:
@@ -822,10 +892,14 @@ def health():
         "devTools": DEV_TOOLS_ENABLED,
         "tryonModel": IMAGE_MODEL,
         "vlmModel": VLM_MODEL,
+        "embeddingModel": SIGLIP_MODEL,
         "modelLoaded": image_engine.pipe is not None,
         "vlmLoaded": vlm_engine.model is not None,
+        "embeddingLoaded": embedding_engine.model is not None,
         "warmupVerified": WARMUP_VERIFIED,
         "vlmWarmupVerified": VLM_WARMUP_VERIFIED,
+        "embeddingWarmupVerified": EMBEDDING_WARMUP_VERIFIED,
+        "embeddingDevice": embedding_engine.device,
         "dtype": image_engine.dtype,
         "vlmDtype": vlm_engine.dtype,
         "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
@@ -935,8 +1009,14 @@ def refine_closet_photo(request: ClosetRefineRequest):
     버리면 무엇이 문제였는지 볼 수가 없다.
     """
     unknown = [category for category in request.categories if category not in segment_models.CATEGORIES]
+    unknown += [
+        category
+        for pair in request.categoryOverrides.items()
+        for category in pair
+        if category not in segment_models.CATEGORIES
+    ]
     if unknown:
-        raise HTTPException(status_code=422, detail=f"알 수 없는 카테고리: {', '.join(unknown)}")
+        raise HTTPException(status_code=422, detail=f"알 수 없는 카테고리: {', '.join(dict.fromkeys(unknown))}")
 
     acquire_inference_slot()
     started = time.perf_counter()
@@ -951,6 +1031,9 @@ def refine_closet_photo(request: ClosetRefineRequest):
 
         analysis = segment_service.analyze(source.getvalue(), request.model or segment_models.PRODUCTION_MODEL)
         masks = analysis.pop("_masks")
+        # 라벨맵이 있어야 "여기는 배경이 아니라 팔에 가려진 옷"을 가릴 수 있다.
+        # 예전 백엔드·테스트 스텁은 주지 않으므로 없으면 가림 진단만 빠진다.
+        parse = analysis.pop("_parse", None)
         image_np = np.array(image)
 
         wanted = [
@@ -963,9 +1046,13 @@ def refine_closet_photo(request: ClosetRefineRequest):
 
         items = []
         for item in wanted[:MAX_REFINE_ITEMS]:
+            source_category = item["category"]
+            target_category = request.categoryOverrides.get(source_category, source_category)
+            item["sourceCategory"] = source_category
+            item["category"] = target_category
             item.pop("png_bytes", None)  # 스테이지 크롭을 따로 만든다 — 같은 그림을 두 번 싣지 않는다
             repair_started = time.perf_counter()
-            stages = refine_service.build_stages(image_np, masks[item["category"]], options)
+            stages = refine_service.build_stages(image_np, masks[source_category], options, parse)
             item["diagnosis"] = stages["diagnosis"]
             item["repair"] = stages["repair"]
             item["repairSeconds"] = round(time.perf_counter() - repair_started, 2)
@@ -982,8 +1069,10 @@ def refine_closet_photo(request: ClosetRefineRequest):
                 generate_started = time.perf_counter()
                 try:
                     closet, engine = image_engine.refine_garment(
-                        stages["image"], item["category"], f"{request.name} {item['category']}",
+                        stages["image"], target_category, f"{request.name} {target_category}",
                         request.seed, request.steps,
+                        # 2단계가 알아낸 것을 넘기지 않으면 모델은 메운 자리를 "원래 그런 디자인"으로 읽는다.
+                        refine_service.generation_hint(item["diagnosis"]),
                     )
                     item["stages"]["closet"] = encode_image(closet)
                     item["generation"] = {
@@ -1076,6 +1165,7 @@ def compare_segmentation_models(request: SegmentCompareRequest):
                 results.append({"model": segment_models.MODELS[key].as_dict(), "error": str(error) or "모델 실행에 실패했습니다"})
                 continue
             masks_by_model[key] = analysis.pop("_masks")
+            analysis.pop("_parse", None)  # 라벨맵은 refine 경로에서만 쓴다 — 직렬화도 되지 않는다
             analysis["overlay"] = encode_png(analysis.pop("overlay_png_bytes"))
             for item in analysis["items"]:
                 item["image"] = encode_png(item.pop("png_bytes"))
@@ -1146,6 +1236,21 @@ def run_vlm_request(request: VLMImageRequest, prompt: str, max_new_tokens: int) 
         INFERENCE_GATE.release()
 
 
+@app.post("/api/embedding")
+def create_embedding(request: EmbeddingRequest):
+    acquire_inference_slot()
+    try:
+        vector = embedding_engine.embed(decode_image(request.image))
+        return {"model": SIGLIP_MODEL, "vector": vector}
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("SigLIP embedding failed")
+        raise HTTPException(status_code=500, detail="SigLIP embedding failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
 @app.post("/api/vlm/garment")
 def analyze_garment(request: VLMImageRequest):
     context = f"\n사용자 레이블: name={request.name}, category={request.category or '미지정'}. 레이블은 참고만 하고 사진을 우선해."
@@ -1172,7 +1277,7 @@ def judge_tryon(request: TryOnJudgeRequest):
 
 @app.post("/api/warmup")
 def warmup_model():
-    global WARMUP_VERIFIED, VLM_WARMUP_VERIFIED, SEGMENTATION_WARMUP_VERIFIED
+    global WARMUP_VERIFIED, VLM_WARMUP_VERIFIED, EMBEDDING_WARMUP_VERIFIED, SEGMENTATION_WARMUP_VERIFIED
     available, _ = cuda_info()
     if not available:
         raise HTTPException(status_code=503, detail="CUDA GPU is unavailable")
@@ -1180,6 +1285,8 @@ def warmup_model():
     try:
         vlm_engine._load()
         VLM_WARMUP_VERIFIED = True
+        embedding_engine._load()
+        EMBEDDING_WARMUP_VERIFIED = True
         image_engine._load()
         WARMUP_VERIFIED = True
         import segment_service
@@ -1192,6 +1299,8 @@ def warmup_model():
             "model": IMAGE_MODEL,
             "dtype": image_engine.dtype,
             "vlmModel": VLM_MODEL,
+            "embeddingModel": SIGLIP_MODEL,
+            "embeddingDevice": embedding_engine.device,
             "vlmDtype": vlm_engine.dtype,
             "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
             "segmentationModel": segmentation["model"],
