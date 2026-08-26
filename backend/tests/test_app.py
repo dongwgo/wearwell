@@ -127,6 +127,8 @@ def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypa
     assert calls[0]["seed"] == 77
     for value in ("181 cm", "76 kg", "49 cm", "103 cm", "82 cm", "96 cm", "83 cm"):
         assert value in calls[0]["prompt"]
+    for composition_instruction in ("soles of both feet", "floor beneath them", "75 percent", "Do not crop"):
+        assert composition_instruction in calls[0]["prompt"]
 
 
 def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: pytest.MonkeyPatch):
