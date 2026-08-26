@@ -215,7 +215,8 @@ def test_padding_creates_empty_space_below_a_body_that_ran_off_the_edge():
 
     padded = pad_for_full_body(cropped)
 
-    assert padded.size == (768, 1152)
+    assert abs(padded.width / padded.height - cropped.width / cropped.height) < 0.001
+    assert padded.height > cropped.height
     top, bottom = _body_rows(padded)
     # 위아래 모두 배경이 남아야 모델이 "여기까지가 화면"이라고 읽는다.
     assert top > 0

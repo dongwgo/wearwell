@@ -222,17 +222,39 @@ def _edge_colour(pixels: np.ndarray, rows: slice, keep_fraction: float) -> tuple
     return tuple(int(v) for v in np.median(outer.reshape(-1, 3), axis=0))
 
 
+def has_room_below(image: Image.Image, threshold: float = 0.012) -> bool:
+    """맨 아래가 균일한 배경이면 이미 발밑 여백이 있다고 본다."""
+    pixels = np.asarray(image.convert("RGB"), dtype=np.float32)
+    strip = pixels[-max(2, int(pixels.shape[0] * 0.02)):]
+    return float(strip.reshape(-1, 3).std(axis=0).mean()) / 255.0 < threshold
+
+
+def fit_generation_size(image: Image.Image, budget=RENDER_SIZE, step: int = 16) -> tuple[int, int]:
+    """원본 비율과 기준 픽셀 수를 유지하는 확산 모델용 크기를 계산한다."""
+    width, height = image.size
+    if not width or not height:
+        return budget
+    scale = math.sqrt((budget[0] * budget[1]) / (width * height))
+    return (
+        max(step, int(round(width * scale / step)) * step),
+        max(step, int(round(height * scale / step)) * step),
+    )
+
+
 def pad_for_full_body(
-    image: Image.Image, headroom: float = 0.05, footroom: float = 0.12, size=RENDER_SIZE
+    image: Image.Image, headroom: float = 0.05, footroom: float = 0.12
 ) -> Image.Image:
-    """인물 사진 위아래에 배경색 여백을 덧대고 목표 크기로 되돌린다.
+    """인물 사진 둘레에 비율을 보존하며 발 생성을 위한 배경 여백을 덧댄다.
 
     착장 결과에서 발이 잘리는 문제는 프롬프트만으로 잘 잡히지 않는다 —
     FLUX.2는 참조 이미지의 **구도**를 그대로 따라가는 성향이 강해서, 넣어준
     사람 사진이 종아리에서 끝나면 결과도 종아리에서 끝난다. 문장으로 부탁하는
     대신 참조 이미지에 실제로 빈 공간을 만들어 "여기까지가 화면"이라고 보여준다.
-    아래쪽을 위쪽보다 넉넉히 잡는 건 신발이 발밑으로 더 자라기 때문이다.
+    세로에 붙인 만큼 가로에도 여백을 붙여 사람이 눌리거나 넓어지지 않게 한다.
     """
+    if has_room_below(image):
+        return image.convert("RGB")
+
     pixels = np.asarray(image.convert("RGB"))
     height, width = pixels.shape[:2]
     strip = max(2, int(height * 0.03))
@@ -241,20 +263,24 @@ def pad_for_full_body(
 
     top_pad = int(height * headroom)
     bottom_pad = int(height * footroom)
-    canvas = Image.new("RGB", (width, height + top_pad + bottom_pad), top_colour)
+    side_pad = int(round(width * (top_pad + bottom_pad) / (2 * height)))
+    canvas = Image.new("RGB", (width + 2 * side_pad, height + top_pad + bottom_pad), top_colour)
+    draw = ImageDraw.Draw(canvas)
     if bottom_pad:
-        ImageDraw.Draw(canvas).rectangle(
-            (0, top_pad + height, width, canvas.height), fill=bottom_colour
-        )
-    canvas.paste(image.convert("RGB"), (0, top_pad))
+        draw.rectangle((0, top_pad + height, canvas.width, canvas.height), fill=bottom_colour)
+    if side_pad:
+        for x0, x1 in ((0, side_pad), (canvas.width - side_pad, canvas.width)):
+            draw.rectangle((x0, 0, x1, top_pad + height // 2), fill=top_colour)
+            draw.rectangle((x0, top_pad + height // 2, x1, canvas.height), fill=bottom_colour)
+    canvas.paste(image.convert("RGB"), (side_pad, top_pad))
     # 이어붙인 자리에 생기는 가로줄을 없앤다. 띠 부분만 흐리게 문질러서 배경이
     # 자연스럽게 이어지도록 하고, 인물 영역은 건드리지 않는다.
     for y0, y1 in ((0, top_pad), (top_pad + height, canvas.height)):
         if y1 - y0 < 4:
             continue
-        seam = (0, max(0, y0 - 6), width, min(canvas.height, y1 + 6))
+        seam = (0, max(0, y0 - 6), canvas.width, min(canvas.height, y1 + 6))
         canvas.paste(canvas.crop(seam).filter(ImageFilter.GaussianBlur(5)), seam[:2])
-    return canvas.resize(size, Image.Resampling.LANCZOS)
+    return canvas
 
 
 def rotate_y(vertices: np.ndarray, degrees: float) -> np.ndarray:
@@ -526,3 +552,20 @@ def build_avatar_prompt(
     parts.append(f"{VIEW_DIRECTION[view]}. {FRAMING}.")
     parts.append(STYLING)
     return " ".join(parts)
+
+
+PHOTO_AVATAR_PROMPT = (
+    "Reference image 1 is a photograph of a real person. Redraw that same person as a clean full-length "
+    "studio catalog photograph. Keep their identity exactly: the same face and facial features, the same "
+    "hairstyle and hair colour, the same skin tone, the same body build and proportions, and the same "
+    "clothes they are wearing in the photograph, reproduced in their real colours and cut. "
+    "Place them standing upright and front-facing in a relaxed symmetrical A-pose with arms slightly away "
+    "from the torso and both feet flat on the ground. Replace the original surroundings with a clean warm-grey "
+    "seamless studio backdrop under soft even lighting. Full body from the top of the head to the soles of the "
+    "shoes inside the frame, with clear empty background above the head and below the feet, eye-level camera, "
+    "85 mm catalog lens. Photorealistic single frame, clean image with no lettering."
+)
+
+
+def build_photo_avatar_prompt() -> str:
+    return PHOTO_AVATAR_PROMPT

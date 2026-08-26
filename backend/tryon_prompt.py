@@ -604,7 +604,7 @@ def build_tryon_prompt(garments: list[GarmentLike]) -> str:
 
 # --- 다른 시점에서 본 착장 ---------------------------------------------------
 
-VIEW_DIRECTION = {
+ROTATION_DIRECTION = {
     "side": (
         "an exact left profile, the body turned 90 degrees so only one side faces the camera, "
         "arms hanging relaxed beside the torso"
@@ -617,28 +617,37 @@ VIEW_DIRECTION = {
 
 
 def build_tryon_view_prompt(view: str, garments: list[GarmentLike]) -> str:
-    """이미 옷을 다 입힌 정면 결과를 다른 시점으로 돌리는 지시문.
-
-    측면·후면을 만들 때 옷 사진들을 다시 참조로 넣지 않는다. 완성된 정면
-    결과에 착장이 이미 조립돼 있으므로, 그것 하나만 넘기고 "같은 사람, 같은
-    옷, 각도만 다르게"라고 시키는 편이 참조 수도 적고 옷 일관성도 낫다.
-    옷 이름을 다시 불러 주는 건 회전 중에 아이템이 사라지는 걸 막기 위해서다.
-    """
-    if view not in VIEW_DIRECTION:
+    """완성 정면을 첫 참조로 두고 같은 옷을 유지하며 시점을 회전한다."""
+    if view not in ROTATION_DIRECTION:
         raise ValueError(f"unknown view: {view}")
-    names = ", ".join(f"'{(item.name or '').strip()}'" for item in garments if (item.name or "").strip())
-    worn = f" The outfit is {names}, and every one of those items stays on the body." if names else ""
-
-    return (
-        "Rotate the camera around a dressed person. Reference image 1 is a body-shape guide showing the "
-        f"pose and proportions from the {view}. Reference image 2 is the finished photograph of this person "
-        "wearing the complete outfit, seen from the front — same person, same face structure, same hair, "
-        "same body, same clothes, same studio lighting and background."
-        f"{worn}"
-        f" Draw that identical person in that identical outfit {VIEW_DIRECTION[view]}. "
-        "Every garment keeps its exact colour, fabric, print and cut, and the layering order stays the same "
-        "with the outer layers still outside the inner ones. "
+    roles = []
+    for index, item in enumerate(garments):
+        name = (item.name or "").strip()
+        worn = resolve_spec(item.category, name)
+        label = worn.label if worn and worn.label else CATEGORY_SPECS[item.category].label
+        roles.append(
+            f"Reference image {index + 2} is the same {label} '{name or label}' that the person is "
+            f"already wearing, {resolve_placement(item.category, name)}."
+        )
+    parts = [
+        "Rotate the camera around a dressed person. Reference image 1 is the finished photograph of this "
+        "person wearing the complete outfit, seen from the front. Keep that exact person and exact outfit: "
+        "same face, hair, body, garments, studio lighting and background."
+    ]
+    if roles:
+        parts.append(" ".join(roles))
+        parts.append(
+            "Each item stays the same object as in its own reference image: same shape, colour, fabric, "
+            "print and hardware, worn at the same place while the camera moves around it."
+        )
+    parts.append(
+        f"Draw that identical person in that identical outfit {ROTATION_DIRECTION[view]}. The layering order "
+        "is unchanged, with the outer layers still outside the inner ones, and every item visible from the "
+        "front is still on the body from this angle."
+    )
+    parts.append(
         "Frame the shot as a complete full-length photograph: the top of the head and the soles of the shoes "
         "are both inside the picture, with clear empty background above the head and below the feet. "
         "Photorealistic full-body Korean fashion e-commerce photograph, single frame, clean image with no lettering."
     )
+    return " ".join(parts)

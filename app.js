@@ -239,6 +239,12 @@ function createRotatableView(element, altPrefix, emptyHtml = "") {
         ? `<span class="avatar-view-label">${AVATAR_VIEW_LABELS[view]} · 드래그해서 돌리기</span>`
           + `<span class="avatar-view-dots">${views.map((_, i) => `<i class="${i === state.index ? "active" : ""}"></i>`).join("")}</span>`
         : "");
+    const image = element.querySelector("img");
+    image.addEventListener("load", () => {
+      if (image.naturalWidth && image.naturalHeight) {
+        element.style.setProperty("--stage-aspect", `${image.naturalWidth} / ${image.naturalHeight}`);
+      }
+    }, { once: true });
   };
 
   const step = index => {
@@ -491,6 +497,9 @@ function orderGarmentsForTryon(items) {
 
 // 측면·후면을 나중에 만들 때 필요한 요청 정보. 착장이 성공해야 채워진다.
 let tryonContext = null;
+let photoAvatarImage = null;
+let tryonModes = { photo: null, avatar: null };
+let tryonMode = "photo";
 
 function renderTryonStage(reference, output = null, loading = false) {
   const stage = $("#tryonStage");
@@ -509,6 +518,7 @@ function renderTryonStage(reference, output = null, loading = false) {
     stage.innerHTML = `
     <figure><div><img src="${escapeHtml(reference.image)}" alt="${escapeHtml(reference.title || "룩북 원본")}" /></div><figcaption><b>룩북 원본</b><span>${escapeHtml(reference.title || "")}</span></figcaption></figure>
     <figure><div>${resultPane}</div><figcaption><b>내 아바타 + 내 옷</b><span>${loading ? "생성 중" : "내 옷장으로 재현"}</span></figcaption></figure>`;
+    updateTryonModeButton();
     return;
   }
 
@@ -517,6 +527,7 @@ function renderTryonStage(reference, output = null, loading = false) {
     stage.classList.remove("rotatable");
     stage.innerHTML = '<div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div>';
     if (rotateButton) rotateButton.hidden = true;
+    updateTryonModeButton();
     return;
   }
   tryonViewer?.set(views);
@@ -524,6 +535,56 @@ function renderTryonStage(reference, output = null, loading = false) {
   // 돌릴 기준이 없으므로 버튼을 내린다.
   if (rotateButton) {
     rotateButton.hidden = Object.keys(views).length > 1 || availableAvatarViews().length < 2 || !tryonContext;
+  }
+  updateTryonModeButton();
+}
+
+function updateTryonModeButton() {
+  const button = $("#tryonAvatarButton");
+  if (!button) return;
+  const photoBased = Boolean(avatarMeasurements?.photoBased) && Boolean(fullBodyPhoto);
+  button.hidden = !photoBased || !tryonContext;
+  button.textContent = tryonMode === "photo" ? "✦ 아바타로 보기" : "✦ 원본 사진으로 보기";
+}
+
+async function toggleTryonMode() {
+  if (!tryonContext) return;
+  const context = tryonContext;
+  const target = tryonMode === "photo" ? "avatar" : "photo";
+  if (tryonModes[target]) {
+    tryonMode = target;
+    renderTryonStage(null, tryonModes[target]);
+    $("#tryonStatusText").textContent = target === "avatar"
+      ? "내 사진을 스튜디오 아바타로 바꿔 입힌 결과예요."
+      : "원본 전신사진에 그대로 입힌 결과예요.";
+    return;
+  }
+  if (target === "photo") return;
+
+  const button = $("#tryonAvatarButton");
+  button.disabled = true;
+  $("#tryonStatusText").textContent = "내 사진을 스튜디오 아바타로 바꾸고 있어요…";
+  interactiveGpuRequests += 1;
+  try {
+    if (!photoAvatarImage) {
+      const made = await fetchGpuJson("/api/avatar/from-photo", { image: fullBodyPhoto });
+      if (context.requestId !== tryonRequestId) return;
+      photoAvatarImage = made.image;
+    }
+    const result = await fetchGpuJson("/api/tryon", { ...context.payload, avatar: photoAvatarImage });
+    if (context.requestId !== tryonRequestId) return;
+    tryonModes.avatar = result.views || { front: result.image };
+    tryonMode = "avatar";
+    renderTryonStage(null, tryonModes.avatar);
+    $("#tryonStatusText").textContent = "내 사진을 스튜디오 아바타로 바꿔 입힌 결과예요.";
+  } catch {
+    if (context.requestId === tryonRequestId) {
+      $("#tryonStatusText").textContent = "지금은 아바타 버전을 만들지 못했어요. 잠시 후 다시 시도해주세요.";
+    }
+  } finally {
+    interactiveGpuRequests = Math.max(0, interactiveGpuRequests - 1);
+    button.disabled = false;
+    updateTryonModeButton();
   }
 }
 
@@ -605,7 +666,9 @@ async function runTryOnItems(items, comparison = null) {
   $("#tryonStatusText").textContent = "선택한 옷의 색과 형태를 살려 조합하고 있어요.";
   openDialog($("#avatarTryonDialog"));
   if (tryonCache.has(cacheKey)) {
-    renderTryonStage(comparison, tryonCache.get(cacheKey));
+    tryonModes = { photo: tryonCache.get(cacheKey), avatar: null };
+    tryonMode = "photo";
+    renderTryonStage(comparison, tryonModes.photo);
     return;
   }
   try {
@@ -630,6 +693,8 @@ async function runTryOnItems(items, comparison = null) {
     if (isStale()) return;
 
     const views = result.views || { front: result.image };
+    tryonModes = { photo: views, avatar: null };
+    tryonMode = "photo";
     rememberTryon(cacheKey, views);
     // 측면·후면은 시간이 3배로 드니 기본으로는 만들지 않는다. 결과가 나온 뒤
     // 사용자가 버튼을 누르면 이 컨텍스트로 이어서 만든다.
@@ -1599,6 +1664,7 @@ function initEvents() {
     "<span>내 아바타가<br />여기에 만들어져요</span>");
   tryonViewer = createRotatableView($("#tryonStage"), "AI 착장 결과");
   $("#tryonRotateButton")?.addEventListener("click", generateTryonViews);
+  $("#tryonAvatarButton")?.addEventListener("click", toggleTryonMode);
   $("#nextBody").addEventListener("click", async () => { if (!avatarImage) await generateAvatar(); renderPreferenceChoices(); updatePreferenceCount(); showPreferenceStep(3); });
   $("#backGender").addEventListener("click", () => showPreferenceStep(2));
   $("#nextPreferences").addEventListener("click", () => showPreferenceStep(4));

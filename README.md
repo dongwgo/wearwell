@@ -146,6 +146,7 @@ window.WEARWELL_CONFIG = {
 
 - `GET /api/health`
 - `POST /api/avatar` — `views: ["front","side","back"]`로 시점을 요청 (기본 `["front"]`)
+- `POST /api/avatar/from-photo` — 전신사진을 같은 인물의 스튜디오 아바타로 변환
 - `POST /api/closet/segment`
 - `POST /api/tryon` — `views`, `avatarViews`로 시점별 착장 생성
 - `POST /api/vlm/garment`

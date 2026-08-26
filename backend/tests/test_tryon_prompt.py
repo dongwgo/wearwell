@@ -225,8 +225,8 @@ def test_large_accessories_do_not_trigger_the_small_item_clause():
 
 def test_view_prompt_rotates_the_finished_outfit_instead_of_redressing():
     prompt = build_tryon_view_prompt("side", [Garment("upper", "셔츠"), Garment("outer", "코트")])
-    assert "Reference image 2 is the finished photograph" in prompt
-    assert "The outfit is '셔츠', '코트'" in prompt
+    assert "Reference image 1 is the finished photograph" in prompt
+    assert "body-shape guide" not in prompt
     assert "exact left profile" in prompt
     # 회전 중에 레이어가 뒤집히지 않도록 순서를 다시 못 박는다.
     assert "outer layers still outside the inner ones" in prompt

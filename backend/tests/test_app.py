@@ -145,6 +145,16 @@ def test_embedding_route_returns_siglip_vector(backend_app, monkeypatch: pytest.
     assert calls == [(64, 96)]
 
 
+def test_siglip_v5_pooling_output_is_unwrapped(backend_app):
+    pooled = object()
+    output = SimpleNamespace(
+        pooler_output=pooled,
+        last_hidden_state=object(),
+    )
+
+    assert backend_app.SigLIPEmbeddingEngine._feature_tensor(output) is pooled
+
+
 def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
     calls = []
@@ -214,12 +224,12 @@ def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: 
     monkeypatch.setitem(
         sys.modules,
         "segment_service",
-        SimpleNamespace(segment=lambda raw, model_key: calls.append(model_key) or [{
-            "category": "상의",
-            "label": "Upper-clothes",
-            "confidence": 0.91,
-            "png_bytes": b"transparent-png",
-        }]),
+        SimpleNamespace(analyze=lambda raw, model_key: calls.append(model_key) or {
+            "model": {"key": model_key}, "inferenceSeconds": 0.1,
+            "items": [{"category": "상의", "label": "Upper-clothes", "confidence": 0.91,
+                       "accepted": True, "png_bytes": b"transparent-png"}],
+            "_masks": {}, "_parse": None,
+        }),
     )
     response = TestClient(backend_app.app).post(
         "/api/closet/segment",
@@ -235,8 +245,25 @@ def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: 
     # 모델을 지정하지 않으면 프로덕션 기본값으로 돈다.
     import segment_models
 
-    assert calls == [None]
+    assert calls == [segment_models.PRODUCTION_MODEL]
     assert response.json()["model"]["key"] == segment_models.PRODUCTION_MODEL
+
+
+def test_segmentation_preview_is_reused_by_refine(backend_app, monkeypatch: pytest.MonkeyPatch):
+    calls = []
+    analysis = {"model": {"key": "b3_clothes"}, "items": [], "_masks": {}, "_parse": None}
+    monkeypatch.setitem(
+        sys.modules, "segment_service",
+        SimpleNamespace(analyze=lambda raw, key: calls.append(key) or analysis),
+    )
+    raw = b"same-normalized-photo"
+
+    first, first_hit = backend_app.segmentation_analysis(raw)
+    second, second_hit = backend_app.segmentation_analysis(raw)
+
+    assert first is second
+    assert (first_hit, second_hit) == (False, True)
+    assert calls == ["b3_clothes"]
 
 
 def test_segmentation_route_rejects_unknown_model(backend_app):
@@ -977,10 +1004,11 @@ def test_tryon_pads_the_person_reference_so_the_feet_survive(backend_app, monkey
 
     engine.generate_tryon(request)
 
-    # 사람 참조는 원본 그대로가 아니라 위아래 여백을 덧댄 뒤 목표 크기로 들어간다.
+    # 여백을 붙여도 입력 사진 비율은 유지하고, 생성 크기도 그 비율을 따른다.
     person = calls[0]["images"][0]
-    assert person.size == backend_app.INFERENCE_SIZE
-    assert person is not None
+    assert abs(person.width / person.height - 64 / 96) < 0.01
+    width, height = calls[0]["size"]
+    assert abs(width / height - person.width / person.height) < 0.02
 
 
 def test_tryon_rotates_the_finished_front_for_other_views(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -1006,20 +1034,20 @@ def test_tryon_rotates_the_finished_front_for_other_views(backend_app, monkeypat
     images, _, _ = engine.generate_tryon(request)
 
     assert set(images) == {"front", "side", "back"}
-    # 정면은 사람 + 옷 2장, 측면·후면은 체형 가이드 + 완성된 정면 결과만 받는다.
-    assert [len(call["images"]) for call in calls] == [3, 2, 2]
+    assert [len(call["images"]) for call in calls] == [3, 3, 3]
     for call in calls[1:]:
-        assert call["images"][1] is images["front"]
-        assert "Reference image 2 is the finished photograph" in call["prompt"]
+        assert call["images"][0] is images["front"]
+        assert "Reference image 1 is the finished photograph" in call["prompt"]
     assert "exact left profile" in calls[1]["prompt"]
     assert "directly behind" in calls[2]["prompt"]
+    assert len({call["size"] for call in calls}) == 1
 
 
-def test_tryon_skips_views_without_an_avatar_image(backend_app, monkeypatch: pytest.MonkeyPatch):
+def test_tryon_rotates_without_a_separate_side_avatar(backend_app, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
     engine = backend_app.FluxImageEngine()
     monkeypatch.setattr(engine, "_run", lambda **k: Image.new("RGB", backend_app.INFERENCE_SIZE))
-    # 측면 아바타 없이 측면 착장을 요청해도 조용히 정면만 만든다.
+    # 완성된 정면과 옷 참조가 있으므로 별도 측면 아바타 없이도 회전한다.
     request = backend_app.TryOnRequest(
         avatar=image_payload("gray"),
         garments=[{"image": image_payload("white"), "category": "upper"}],
@@ -1028,7 +1056,7 @@ def test_tryon_skips_views_without_an_avatar_image(backend_app, monkeypatch: pyt
 
     images, _, _ = engine.generate_tryon(request)
 
-    assert set(images) == {"front"}
+    assert set(images) == {"front", "side"}
 
 
 def test_tryon_route_returns_every_generated_view(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -1144,8 +1172,8 @@ def test_tryon_survives_an_unreadable_side_avatar(backend_app, monkeypatch: pyte
 
     images, _, _ = engine.generate_tryon(request)
 
-    # 측면 아바타가 깨져도 정면 착장은 살아남는다.
-    assert set(images) == {"front"}
+    # 측면 아바타가 깨져도 완성 정면을 기준으로 측면을 만든다.
+    assert set(images) == {"front", "side"}
 
 
 def test_pipeline_is_only_built_once_under_concurrent_load(backend_app, monkeypatch: pytest.MonkeyPatch):

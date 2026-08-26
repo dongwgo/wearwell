@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import gc
+import hashlib
 import hmac
 import io
 import json
@@ -12,6 +13,7 @@ import re
 import threading
 import time
 from collections import defaultdict, deque
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Request
@@ -26,6 +28,8 @@ from avatar_body import (
     BodyTarget,
     build_avatar_prompt,
     build_body_reference,
+    build_photo_avatar_prompt,
+    fit_generation_size,
     pad_for_full_body,
 )
 from tryon_prompt import build_tryon_prompt, build_tryon_view_prompt, order_garments
@@ -80,6 +84,10 @@ WARMUP_VERIFIED = False
 VLM_WARMUP_VERIFIED = False
 EMBEDDING_WARMUP_VERIFIED = False
 SEGMENTATION_WARMUP_VERIFIED = False
+SEGMENTATION_CACHE_MAX = max(1, int(os.getenv("SEGMENTATION_CACHE_MAX", "4")))
+SEGMENTATION_CACHE: dict[str, dict] = {}
+SEGMENTATION_CACHE_ORDER: deque[str] = deque()
+SEGMENTATION_CACHE_LOCK = threading.Lock()
 
 
 class BodyLimitMiddleware:
@@ -207,6 +215,11 @@ class VLMImageRequest(BaseModel):
 
 class EmbeddingRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
+
+
+class PhotoAvatarRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    seed: int = 20260825
 
 
 class TryOnJudgeRequest(BaseModel):
@@ -570,33 +583,44 @@ class FluxImageEngine:
         if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
             return {"front": self.fallback_tryon(person_views["front"], ordered)}, "tryon-preview-fallback", ordered
 
-        requested = [view for view in dict.fromkeys(["front", *request.views]) if view in person_views]
+        requested = list(dict.fromkeys(["front", *request.views]))
+        person = pad_for_full_body(person_views["front"])
+        size = fit_generation_size(person)
         results: dict[str, Image.Image] = {}
         for view in requested:
             if view == "front":
-                # 넣어준 사람 사진이 종아리에서 끝나면 결과도 거기서 끝난다.
-                # 참조에 실제 여백을 만들어 "여기까지가 화면"이라고 보여준다.
-                person = pad_for_full_body(person_views["front"])
                 results["front"] = self._run(
                     prompt=build_tryon_prompt(ordered),
                     seed=request.seed,
                     images=[person, *garments],
                     steps=TRYON_STEPS,
+                    size=size,
                     use_tryon_lora=True,
                 )
                 continue
-            guide = pad_for_full_body(person_views[view])
             results[view] = self._run(
                 prompt=build_tryon_view_prompt(view, ordered),
                 seed=request.seed,
-                images=[guide, results["front"]],
+                images=[results["front"], *garments],
                 steps=TRYON_STEPS,
+                size=size,
                 use_tryon_lora=True,
             )
         engine = self.engine_name
         if self.lora_name:
             engine += f"+lora:{self.lora_name}"
         return results, engine, ordered
+
+    def avatarize_photo(self, request: PhotoAvatarRequest) -> tuple[Image.Image, str]:
+        photo = pad_for_full_body(decode_image(request.image))
+        has_cuda, _ = cuda_info()
+        if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
+            return photo, "photo-passthrough"
+        image = self._run(
+            prompt=build_photo_avatar_prompt(), seed=request.seed,
+            images=[photo], size=fit_generation_size(photo),
+        )
+        return image, f"{self.engine_name}+photo-avatar"
 
     def refine_garment(
         self, garment: Image.Image, category: str, name: str, seed: int,
@@ -664,10 +688,10 @@ class FluxImageEngine:
 
     @staticmethod
     def fallback_tryon(person: Image.Image, garments: list[GarmentInput]) -> Image.Image:
-        person = person.resize(INFERENCE_SIZE)
+        person = person.convert("RGB")
         draw = ImageDraw.Draw(person, "RGBA")
         colors = [(255, 113, 91, 110), (55, 83, 120, 115), (238, 238, 232, 125), (45, 45, 45, 100)]
-        width, height = INFERENCE_SIZE
+        width, height = person.size
         regions = {
             "upper": (int(width * .29), int(height * .23), int(width * .71), int(height * .54)),
             "lower": (int(width * .31), int(height * .51), int(width * .69), int(height * .91)),
@@ -852,9 +876,31 @@ class SigLIPEmbeddingEngine:
             if hasattr(model, "get_image_features"):
                 features = model.get_image_features(**inputs)
             else:
-                features = model(**inputs).pooler_output
+                features = model(**inputs)
+            features = self._feature_tensor(features)
             features = torch.nn.functional.normalize(features.float(), dim=-1)
         return features[0].detach().cpu().tolist()
+
+    @staticmethod
+    def _feature_tensor(output):
+        """transformers 4.x의 Tensor와 5.x의 ModelOutput을 모두 받는다."""
+        if hasattr(output, "float") and hasattr(output, "shape"):
+            return output
+        for name in ("image_embeds", "pooler_output"):
+            value = getattr(output, name, None)
+            if value is not None:
+                return value
+        hidden = getattr(output, "last_hidden_state", None)
+        if hidden is not None:
+            return hidden.mean(dim=1)
+        if isinstance(output, (tuple, list)):
+            # BaseModelOutputWithPooling의 tuple 순서는 hidden state, pooled output이다.
+            if len(output) > 1 and output[1] is not None:
+                return output[1]
+            if output:
+                value = output[0]
+                return value.mean(dim=1) if getattr(value, "ndim", 0) == 3 else value
+        raise TypeError(f"Unsupported SigLIP output: {type(output).__name__}")
 
 
 image_engine = FluxImageEngine()
@@ -933,6 +979,48 @@ def generate_avatar(data: Measurements):
         INFERENCE_GATE.release()
 
 
+@app.post("/api/avatar/from-photo")
+def avatarize_photo(request: PhotoAvatarRequest):
+    acquire_inference_slot()
+    try:
+        image, engine = image_engine.avatarize_photo(request)
+        _, gpu = cuda_info()
+        return {"image": encode_image(image), "engine": engine, "gpu": gpu}
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("Photo avatar generation failed")
+        raise HTTPException(status_code=500, detail="Photo avatar generation failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+def segmentation_analysis(image_bytes: bytes, model_key: str | None = None) -> tuple[dict, bool]:
+    """같은 업로드의 preview/refine 사이에서 비싼 segmentation 추론을 재사용한다."""
+    import segment_service
+
+    resolved = segment_models.resolve(model_key).key
+    cache_key = hashlib.sha256(resolved.encode() + b"\0" + image_bytes).hexdigest()
+    with SEGMENTATION_CACHE_LOCK:
+        cached = SEGMENTATION_CACHE.get(cache_key)
+        if cached is not None:
+            try:
+                SEGMENTATION_CACHE_ORDER.remove(cache_key)
+            except ValueError:
+                pass
+            SEGMENTATION_CACHE_ORDER.append(cache_key)
+            return cached, True
+
+    analysis = segment_service.analyze(image_bytes, resolved)
+    with SEGMENTATION_CACHE_LOCK:
+        SEGMENTATION_CACHE[cache_key] = analysis
+        SEGMENTATION_CACHE_ORDER.append(cache_key)
+        while len(SEGMENTATION_CACHE_ORDER) > SEGMENTATION_CACHE_MAX:
+            expired = SEGMENTATION_CACHE_ORDER.popleft()
+            SEGMENTATION_CACHE.pop(expired, None)
+    return analysis, False
+
+
 @app.post("/api/closet/segment")
 def segment_closet_photo(request: SegmentationRequest):
     acquire_inference_slot()
@@ -940,11 +1028,12 @@ def segment_closet_photo(request: SegmentationRequest):
         image = decode_image(request.image)
         source = io.BytesIO()
         image.save(source, format="PNG")
-        import segment_service
-
-        detections = segment_service.segment(source.getvalue(), request.model)
+        analysis, cache_hit = segmentation_analysis(source.getvalue(), request.model)
+        detections = [item for item in analysis["items"] if item["accepted"]]
         return {
-            "model": segment_models.resolve(request.model).as_dict(),
+            "model": analysis["model"],
+            "segmentSeconds": 0 if cache_hit else analysis["inferenceSeconds"],
+            "segmentationCacheHit": cache_hit,
             "items": [
                 {
                     "id": f"segment-{int(time.time() * 1000)}-{index}",
@@ -1027,13 +1116,13 @@ def refine_closet_photo(request: ClosetRefineRequest):
         source = io.BytesIO()
         image.save(source, format="PNG")
         import refine_service
-        import segment_service
-
-        analysis = segment_service.analyze(source.getvalue(), request.model or segment_models.PRODUCTION_MODEL)
-        masks = analysis.pop("_masks")
+        analysis, segmentation_cache_hit = segmentation_analysis(
+            source.getvalue(), request.model or segment_models.PRODUCTION_MODEL
+        )
+        masks = analysis["_masks"]
         # 라벨맵이 있어야 "여기는 배경이 아니라 팔에 가려진 옷"을 가릴 수 있다.
         # 예전 백엔드·테스트 스텁은 주지 않으므로 없으면 가림 진단만 빠진다.
-        parse = analysis.pop("_parse", None)
+        parse = analysis.get("_parse")
         image_np = np.array(image)
 
         wanted = [
@@ -1045,6 +1134,7 @@ def refine_closet_photo(request: ClosetRefineRequest):
         options = request.repair.model_dump()
 
         items = []
+        generation_jobs = []
         for item in wanted[:MAX_REFINE_ITEMS]:
             source_category = item["category"]
             target_category = request.categoryOverrides.get(source_category, source_category)
@@ -1066,32 +1156,42 @@ def refine_closet_photo(request: ClosetRefineRequest):
             item["generation"] = None
             item["generationError"] = None
             if request.generate:
-                generate_started = time.perf_counter()
+                generation_jobs.append((item, stages["image"], target_category))
+            items.append(item)
+
+        def generate_one(job):
+            item, normalized, category = job
+            generate_started = time.perf_counter()
+            closet, engine = image_engine.refine_garment(
+                normalized, category, f"{request.name} {category}", request.seed, request.steps,
+                refine_service.generation_hint(item["diagnosis"]),
+            )
+            return item, closet, engine, round(time.perf_counter() - generate_started, 2)
+
+        # G4에서는 독립 FLUX pipeline 두 개가 이미 준비돼 있다. 한 요청 안에서도
+        # 두 벌씩 보내야 worker pool이 실제로 병렬 사용된다.
+        with ThreadPoolExecutor(max_workers=min(GPU_CONCURRENCY, 2, len(generation_jobs) or 1)) as executor:
+            futures = {executor.submit(generate_one, job): job[0] for job in generation_jobs}
+            for future in as_completed(futures):
+                item = futures[future]
                 try:
-                    closet, engine = image_engine.refine_garment(
-                        stages["image"], target_category, f"{request.name} {target_category}",
-                        request.seed, request.steps,
-                        # 2단계가 알아낸 것을 넘기지 않으면 모델은 메운 자리를 "원래 그런 디자인"으로 읽는다.
-                        refine_service.generation_hint(item["diagnosis"]),
-                    )
+                    item, closet, engine, seconds = future.result()
                     item["stages"]["closet"] = encode_image(closet)
                     item["generation"] = {
-                        "engine": engine,
-                        "seed": request.seed,
-                        "steps": request.steps or INFERENCE_STEPS,
-                        "seconds": round(time.perf_counter() - generate_started, 2),
+                        "engine": engine, "seed": request.seed,
+                        "steps": request.steps or INFERENCE_STEPS, "seconds": seconds,
                     }
                 except Exception as error:
                     logging.exception("Closet refinement failed for %s", item["category"])
                     item["generationError"] = str(error) or "생성에 실패했습니다"
-            items.append(item)
 
         return {
             "name": request.name,
             "model": analysis["model"],
             "device": analysis["device"],
             "imageSize": analysis["imageSize"],
-            "segmentSeconds": analysis["inferenceSeconds"],
+            "segmentSeconds": 0 if segmentation_cache_hit else analysis["inferenceSeconds"],
+            "segmentationCacheHit": segmentation_cache_hit,
             "loadSeconds": analysis["loadSeconds"],
             "overlay": encode_png(analysis["overlay_png_bytes"]),
             "detectedCount": len(analysis["items"]),
