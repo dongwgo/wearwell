@@ -284,6 +284,8 @@ def test_dev_routes_are_hidden_when_dev_tools_are_disabled(backend_app, monkeypa
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload()},
     ).status_code == 404
+    # 모델 목록 자체는 상수라 dev 도구와 함께 닫을 이유가 없다. Refine Lab이 여기서 읽는다.
+    assert client.get("/api/closet/models").status_code == 200
 
 
 def stub_analysis(category: str, mask):
@@ -380,6 +382,217 @@ def test_agreement_flags_categories_only_one_model_detected(backend_app):
 
     assert rows[0]["categories"]["상의"] == 1.0
     assert rows[0]["categories"]["아우터"] == {"onlyIn": "b3_fashion"}
+
+
+def damaged_mask(category_offset: int = 0):
+    """세그멘테이션이 실제로 내놓는 모양 — 구멍 하나와 떨어져 나온 조각 하나.
+
+    image_payload()가 만드는 64x96 사진과 크기를 맞춘다(numpy는 (높이, 너비)).
+    """
+    import numpy as np
+
+    mask = np.zeros((96, 64), dtype=bool)
+    mask[10 + category_offset:70 + category_offset, 8:56] = True
+    mask[30:45, 22:40] = False  # 팔이 가려서 뚫린 구멍
+    mask[90:94, 2:6] = True     # 경계 부스러기
+    return mask
+
+
+def stub_refine_analysis(category: str = "상의"):
+    analysis = stub_analysis(category, damaged_mask())
+    analysis["items"][0].update(
+        label="Upper-clothes", rejectReason=None, areaRatio=0.42, fillRatio=0.61, confidence=0.91,
+        thresholds={"minArea": 0.012, "minFill": 0.25, "minConfidence": 0.55},
+    )
+    return analysis
+
+
+def install_segment_stub(monkeypatch: pytest.MonkeyPatch, build=stub_refine_analysis):
+    """analyze()만 갈아끼운다.
+
+    호출마다 새 분석 결과를 만든다 — 라우트가 응답을 만들면서 analyze()가 준 dict를
+    비워 쓰기 때문에(마스크와 크롭 바이트) 같은 dict를 두 번 주면 두 번째 호출이 깨진다.
+    refine_service는 진짜 모듈이라 먼저 적재해 둔다 — stub으로 덮은 뒤에 처음
+    import하면 refine_service가 shrink를 못 찾는다.
+    """
+    import refine_service  # noqa: F401
+
+    monkeypatch.setitem(
+        sys.modules,
+        "segment_service",
+        SimpleNamespace(analyze=lambda raw, key: build(), loaded_keys=lambda: []),
+    )
+
+
+def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+    calls = []
+    monkeypatch.setattr(
+        backend_app.image_engine,
+        "refine_garment",
+        lambda garment, category, name, seed, steps: calls.append((garment.size, category, name, seed, steps))
+        or (Image.new("RGB", (768, 768), "white"), "stub-flux"),
+    )
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "name": "스냅", "seed": 7},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    item = payload["items"][0]
+    # 네 단계가 전부 실려야 파이프라인을 눈으로 따라갈 수 있다.
+    assert item["stages"]["crop"].startswith("data:image/png;base64,")
+    assert item["stages"]["defects"].startswith("data:image/png;base64,")
+    assert item["stages"]["repaired"].startswith("data:image/png;base64,")
+    assert item["stages"]["normalized"].startswith("data:image/png;base64,")
+    assert item["stages"]["closet"].startswith("data:image/jpeg;base64,")
+    # 세그멘테이션이 남긴 결함과 보수 결과가 숫자로 함께 와야 왜 다시 그렸는지 설명된다.
+    assert item["diagnosis"]["holeCount"] == 1
+    assert item["diagnosis"]["componentCount"] == 2
+    assert item["repair"]["holesAfter"] == 0
+    assert item["repair"]["componentsAfter"] == 1
+    assert item["generation"] == {"engine": "stub-flux", "seed": 7, "steps": 4, "seconds": item["generation"]["seconds"]}
+    assert item["generationError"] is None
+    # 생성 모델에는 보수·정규화를 마친 정사각 이미지가 들어간다.
+    assert calls == [((768, 768), "상의", "스냅 상의", 7, None)]
+    assert payload["overlay"].startswith("data:image/png;base64,")
+    # 같은 그림을 두 번 싣지 않는다 — analyze()가 만든 크롭은 버리고 스테이지 크롭만 쓴다.
+    assert "png_bytes" not in item
+
+
+def test_refine_route_stays_open_when_dev_tools_are_disabled(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """Colab 공개 터널은 dev 도구를 끄고 뜬다. 거기서도 Refine Lab이 돌아야 한다."""
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "DEV_TOOLS_ENABLED", False)
+    install_segment_stub(monkeypatch)
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "generate": False},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["items"][0]["stages"]["normalized"].startswith("data:image/png;base64,")
+
+
+def test_closet_model_listing_matches_the_dev_listing(backend_app):
+    """Refine Lab은 공개 경로를, Seg Lab은 dev 경로를 읽는다 — 내용이 갈리면 안 된다."""
+    from fastapi.testclient import TestClient
+
+    client = TestClient(backend_app.app)
+
+    assert client.get("/api/closet/models").json() == client.get("/api/dev/segment/models").json()
+
+
+def test_refine_route_keeps_the_earlier_stages_when_generation_fails(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """FLUX가 실패해도 세그멘테이션·보수 결과는 살려야 어디서 깨졌는지 알 수 있다."""
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+
+    def explode(*args):
+        raise RuntimeError("CUDA out of memory")
+
+    monkeypatch.setattr(backend_app.image_engine, "refine_garment", explode)
+
+    payload = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload()},
+    ).json()
+
+    item = payload["items"][0]
+    assert item["generationError"] == "CUDA out of memory"
+    assert item["stages"]["closet"] is None
+    assert item["stages"]["repaired"].startswith("data:image/png;base64,")
+
+
+def test_refine_route_can_stop_before_the_generation_step(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """GPU 없이 마스크 보수만 확인할 수 있어야 한다 — 로컬 CPU에서 쓰는 경로."""
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+    monkeypatch.setattr(
+        backend_app.image_engine, "refine_garment",
+        lambda *args: pytest.fail("generate=false인데 생성 모델을 불렀다"),
+    )
+
+    payload = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "generate": False},
+    ).json()
+
+    assert payload["items"][0]["stages"]["closet"] is None
+    assert payload["items"][0]["generation"] is None
+    assert payload["items"][0]["repair"]["pixelsAfter"] > 0
+
+
+def test_refine_route_skips_rejected_candidates_unless_asked(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    def rejected():
+        analysis = stub_refine_analysis()
+        analysis["items"][0].update(accepted=False, rejectReason="면적 0.30% < 기준 1.20%")
+        return analysis
+
+    install_segment_stub(monkeypatch, rejected)
+    monkeypatch.setattr(
+        backend_app.image_engine, "refine_garment",
+        lambda *args: (Image.new("RGB", (8, 8), "white"), "stub-flux"),
+    )
+    client = TestClient(backend_app.app)
+
+    default = client.post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload()},
+    ).json()
+    asked = client.post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "includeRejected": True},
+    ).json()
+
+    assert default["items"] == []
+    assert asked["items"][0]["rejectReason"].startswith("면적")
+
+
+def test_refine_route_rejects_unknown_category(backend_app):
+    from fastapi.testclient import TestClient
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "categories": ["모자"]},
+    )
+
+    assert response.status_code == 422
+
+
+def test_garment_generation_uses_a_square_canvas(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """아바타용 768x1152를 그대로 쓰면 옷이 세로로 늘어난 채 생성된다."""
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    captured = {}
+    monkeypatch.setattr(
+        backend_app.image_engine,
+        "_run",
+        lambda **kwargs: captured.update(kwargs) or Image.new("RGB", (8, 8)),
+    )
+
+    backend_app.image_engine.refine_garment(Image.new("RGB", (768, 768)), "상의", "스냅 상의", 7, None)
+
+    assert captured["size"] == backend_app.REFINE_SIZE == (768, 768)
+    # 옷을 "다시 상상"하지 않도록 원본 유지 지시가 프롬프트에 남아 있어야 한다.
+    assert "same color" in captured["prompt"]
+    assert "upper-body garment" in captured["prompt"]
 
 
 def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monkeypatch: pytest.MonkeyPatch):

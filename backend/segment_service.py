@@ -206,7 +206,7 @@ def _reject_reason(stats, thresholds):
     return None
 
 
-def _shrink(image, max_px):
+def shrink(image, max_px):
     """긴 변이 max_px를 넘으면 줄인다. max_px가 없으면 그대로."""
     if not max_px or max(image.size) <= max_px:
         return image
@@ -225,7 +225,7 @@ def _crop_png(img_np, mask, bbox, max_px=None):
     x0, y0, x1, y1 = bbox
     rgba = np.dstack([img_np[y0:y1, x0:x1], (mask[y0:y1, x0:x1] * 255).astype(np.uint8)])
     buf = io.BytesIO()
-    _shrink(Image.fromarray(rgba, mode="RGBA"), max_px).save(buf, format="PNG", optimize=True)
+    shrink(Image.fromarray(rgba, mode="RGBA"), max_px).save(buf, format="PNG", optimize=True)
     return buf.getvalue()
 
 
@@ -272,7 +272,7 @@ def _overlay_png(img_np, masks):
         canvas[mask] = img_np[mask] * 0.4 + color * 0.6
     buf = io.BytesIO()
     # 마스크 경계가 비교 대상이라 JPEG 링잉을 피해 PNG로 두고, 크기는 축소로 줄인다.
-    _shrink(Image.fromarray(canvas.astype(np.uint8), mode="RGB"), PREVIEW_OVERLAY_PX).save(buf, format="PNG", optimize=True)
+    shrink(Image.fromarray(canvas.astype(np.uint8), mode="RGB"), PREVIEW_OVERLAY_PX).save(buf, format="PNG", optimize=True)
     return buf.getvalue()
 
 

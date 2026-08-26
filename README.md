@@ -147,7 +147,8 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/body`
 - `POST /api/vlm/tryon-judge`
 - `POST /api/warmup`
-- `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (개발용 Seg Lab)
+- `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (아래 Seg Lab 참고)
+- `GET /api/closet/models`, `POST /api/closet/refine` (아래 Refine Lab 참고)
 
 모델 추론 endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
@@ -177,6 +178,9 @@ window.WEARWELL_CONFIG = {
 - `SEGMENT_MODEL_CACHE_SIZE`: 메모리에 유지할 세그멘테이션 모델 수. 기본값은 `3`
 - `WEARWELL_API_TOKEN`: API bearer token
 - `GPU_CONCURRENCY`: 동시에 처리할 GPU 요청 및 FLUX 파이프라인 수 (기본 `2`; 96GB VRAM 권장값)
+- `WEARWELL_DEV_TOOLS`: `1`이면 Seg Lab endpoint(`/api/dev/*`)와 Seg Lab·Refine Lab 탭을 노출. 공개 Colab에서는 기본 `0`
+- `REFINE_WIDTH`, `REFINE_HEIGHT`: 옷 상품컷 생성 해상도, 기본값 `768`, `768`(정사각)
+- `MAX_REFINE_ITEMS`: Refine Lab 요청 한 번에 재생성할 옷의 최대 개수, 기본값 `4`
 
 ## Seg Lab — 옷 분리 모델 비교
 
@@ -196,9 +200,91 @@ ATR 라벨에는 아우터가 없어 코트도 상의로 분류될 수 있습니
 ```bash
 cd backend
 WEARWELL_DEV_TOOLS=1 WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --host 127.0.0.1 --port 8787
+
+# 2) 정적 프론트엔드
+python -m http.server 8000 --bind 127.0.0.1
 ```
 
-`local-config.js`의 `LOCAL_API_TOKEN`을 같은 토큰으로 설정하고 <http://127.0.0.1:8000/?dev=1>을 엽니다. 처음 실행하는 모델은 가중치를 다운로드하므로 시간이 걸릴 수 있습니다.
+`WEARWELL_DEV_TOOLS=1`을 빼면 `/api/dev/*`가 404가 되어 두 랩 탭의 모델 목록이 비어 있습니다.
+
+`local-config.js`의 `LOCAL_API_TOKEN`을 위 `WEARWELL_API_TOKEN`과 같게 맞춘 뒤
+`http://127.0.0.1:8000`을 열면 상단에 **Seg Lab** 탭이 나옵니다. 탭은 `localhost`/`127.0.0.1`
+에서 열었거나 `?dev=1`을 붙였을 때만 보입니다.
+
+비교 결과에는 통과한 아이템뿐 아니라 **품질 필터에 걸러진 후보와 그 이유**(면적·채움·확신도
+중 어느 기준을 못 넘었는지), 모델이 예측한 원본 라벨 분포, 카테고리별 오버레이,
+모델 쌍별 IoU가 함께 나옵니다. 오버레이 색은 모델이 아니라 카테고리로 고정되어 있어
+나란히 놓고 눈으로 비교할 수 있습니다.
+
+세그멘테이션 자체는 원본 해상도로 돌리고, 응답에 싣는 이미지만 줄입니다(오버레이 860px,
+크롭 420px). 처음 쓰는 모델은 가중치를 내려받느라 오래 걸리며, 적재 시간은 추론 시간과
+구분해서 표시합니다.
+
+### 테스트
+
+```bash
+cd backend && pytest tests -q          # 백엔드 라우트와 레지스트리
+node scripts/seg-lab-test.mjs          # 두 서버가 뜬 상태에서 탭 전체 E2E
+```
+
+## Refine Lab — 잘라낸 옷을 옷장 이미지로 (개발용)
+
+세그멘테이션 결과를 그대로 옷장에 넣기 어렵다는 문제를 다루는 개발 탭입니다.
+argmax는 픽셀마다 라벨을 하나만 주기 때문에 **팔이 몸통을 가리면 상의 마스크에 구멍이
+뚫리고, 가려진 옷은 조각으로 끊어집니다.** 이 탭은 전신샷 한 장을 다음 순서로 돌리고
+각 단계의 중간 산출물을 나란히 보여줍니다.
+
+```
+전신샷
+  → 세그멘테이션 (Seg Lab과 같은 모델 레지스트리)
+  → 결함 진단      구멍·조각을 세고 빨강/파랑으로 칠한다
+  → 마스크 보수    닫기 → 구멍 메우기 → 부스러기 조각 정리
+  → 정규화        메운 자리를 옷 대표색으로 칠하고 흰 배경 정사각으로
+  → FLUX 재생성    가려졌던 형태와 질감을 채워 상품컷으로
+```
+
+**보수와 재생성의 역할이 다릅니다.** 형태학 연산은 없는 픽셀을 만들지 못하므로
+팔에 가려졌던 자리는 여전히 비어 있습니다. 보수 단계는 실루엣을 온전하게 만들어
+생성 모델에게 좋은 입력을 주는 것이 목적이고, 실제로 그 자리를 그리는 것은 FLUX입니다.
+그래서 프롬프트가 색·패턴·재단을 그대로 유지하라고 반복해서 못박습니다 —
+자유롭게 그리라고 하면 다른 옷이 나옵니다.
+
+메운 자리를 옷의 중앙값 색으로 칠하는 이유도 같습니다. 알파로만 채우면 그 자리의
+팔·머리카락·뒷배경 픽셀이 옷 안에 남고, 생성 모델이 그 살색을 옷의 일부로 읽습니다.
+
+관련 코드: [`backend/refine_service.py`](backend/refine_service.py)(진단·보수·정규화, torch 불필요),
+`FluxImageEngine.refine_garment`([`backend/app.py`](backend/app.py)), 탭: [`refine-lab.js`](refine-lab.js)
+
+### 어느 백엔드를 쓰나
+
+5단계(FLUX)는 GPU가 있어야 하므로 **`local-config.js`의 `API_BASE`(Colab 터널)를 기본값으로 씁니다.**
+탭 상단에서 `Colab GPU` / `로컬 백엔드`를 눌러 바꿀 수 있고, 주소마다 토큰이 다르므로
+(`API_TOKEN` vs `LOCAL_API_TOKEN`) 선택한 주소에 맞는 토큰을 자동으로 실어 보냅니다.
+Seg Lab은 세그멘테이션만 보므로 기존대로 로컬이 기본이며, 두 탭은 주소를 따로 기억합니다.
+
+Colab에서는 `WEARWELL_DEV_TOOLS=0`이어도 `/api/closet/models`와
+`/api/closet/refine`이 동작합니다. 공개 프론트엔드에서 Refine Lab 탭을 보려면 주소 끝에
+`?dev=1`을 붙이세요. `/api/dev/*`의 모델 비교 기능만 `WEARWELL_DEV_TOOLS=1`이 필요합니다.
+노트북은 저장소의 기본 브랜치를 `git pull`하므로, 이 기능이 main에 반영된 이후의 코드를
+받아야 합니다.
+
+### 조작
+
+- **마스크 보수 단계**를 하나씩 꺼 보면서 각 단계가 무슨 일을 하는지 확인합니다
+- **닫기 커널**은 크롭 짧은 변에 대한 비율입니다(기본 1.2%). 키우면 옷 모양이 뭉개집니다
+- **조각 기준**은 가장 큰 조각 대비 비율입니다(기본 8%). "가장 큰 것만 남기기"가 아닌
+  이유는 신발 한 켤레가 정상적으로 두 조각이기 때문입니다
+- **FLUX로 다시 그리기**를 끄면 4단계까지만 돌아 GPU 없이도 사용할 수 있습니다
+
+한 요청에서 옷 한 벌마다 FLUX를 한 번씩 돌리므로 `MAX_REFINE_ITEMS`(기본 4)까지만
+처리하고, 카테고리 칩으로 대상을 좁힐 수 있습니다.
+
+### 테스트
+
+```bash
+node scripts/refine-lab-test.mjs                       # 1~4단계 (GPU 불필요)
+REFINE_LAB_GENERATE=1 node scripts/refine-lab-test.mjs # 5단계까지
+```
 
 ## 개발 검증
 
