@@ -180,7 +180,44 @@ const raceExpression = `
 
   fetchGpuJson = original;
   const shown = document.querySelector("#tryonStage img")?.getAttribute("src") || "";
-  return { shown: atob(shown.split(",")[1] || "").includes("result-B") ? "B" : "A" };
+  const race = atob(shown.split(",")[1] || "").includes("result-B") ? "B" : "A";
+
+  // 결과 비율은 원본 사진을 따라간다. 3:4 휴대폰 사진을 2:3 상자에 넣으면
+  // 사람과 배경이 세로로 늘어나 보인다 — 상자가 이미지 비율을 따라야 한다.
+  const sized = (w, h) =>
+    "data:image/svg+xml;base64," + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '"><rect fill="#ccc" width="' + w + '" height="' + h + '"/></svg>');
+  const stage = document.querySelector("#tryonStage");
+  renderTryonStage(null, { front: sized(1080, 1440) });   // 3:4
+  await new Promise(resolve => setTimeout(resolve, 250));
+  const box = stage.getBoundingClientRect();
+  const stageAspect = box.width / box.height;
+  const image = stage.querySelector("img").getBoundingClientRect();
+
+  // "아바타로 보기"는 전신사진으로 시작한 경우에만 뜬다. 치수로 만든 아바타는
+  // 이미 스튜디오 컷이라 바꿀 것이 없다.
+  const modeButton = document.querySelector("#tryonAvatarButton");
+  tryonContext = { payload: {}, cacheKey: "x", requestId: tryonRequestId };
+  avatarMeasurements = { gender: "men", height: 175, weight: 70 };
+  fullBodyPhoto = null;
+  renderTryonStage(null, { front: sized(768, 1152) });
+  const hiddenForMeasurements = modeButton.hidden;
+
+  avatarMeasurements = { gender: "men", height: 175, weight: 70, photoBased: true };
+  fullBodyPhoto = sized(1080, 1440);
+  renderTryonStage(null, { front: sized(1080, 1440) });
+  const shownForPhoto = !modeButton.hidden;
+  const modeLabel = modeButton.textContent;
+
+  return {
+    race,
+    hiddenForMeasurements,
+    shownForPhoto,
+    modeLabel,
+    // 상자가 3:4(0.75)를 따라가야 한다.
+    stageFollowsImage: Math.abs(stageAspect - 0.75) < 0.03,
+    // 그래야 이미지가 상자를 꽉 채우고 레터박스가 생기지 않는다.
+    noLetterbox: Math.abs(image.width - box.width) < 3 && Math.abs(image.height - box.height) < 3,
+  };
 })()
 `;
 
@@ -190,7 +227,15 @@ const value = result.result?.result?.value;
 const raceResult = await send("Runtime.evaluate", {
   expression: raceExpression, returnByValue: true, awaitPromise: true,
 });
-if (value) value.race = raceResult.result?.result?.value?.shown ?? null;
+const raceValue = raceResult.result?.result?.value ?? {};
+if (value) {
+  value.race = raceValue.race ?? null;
+  value.stageFollowsImage = raceValue.stageFollowsImage ?? null;
+  value.noLetterbox = raceValue.noLetterbox ?? null;
+  value.hiddenForMeasurements = raceValue.hiddenForMeasurements ?? null;
+  value.shownForPhoto = raceValue.shownForPhoto ?? null;
+  value.modeLabel = raceValue.modeLabel ?? null;
+}
 // Browser.close는 응답을 돌려주기 전에 소켓이 끊길 수 있다. 응답을 기다리다
 // 프로세스가 매달리지 않도록 짧은 타임아웃을 건다.
 await Promise.race([send("Browser.close"), new Promise(resolve => setTimeout(resolve, 1000))]);
@@ -221,6 +266,13 @@ const expected = {
   singleViewNoDots: true,
   // 늦게 도착한 예전 요청이 최신 결과를 덮어쓰지 않는다.
   race: "B",
+  // 3:4 사진을 넣으면 상자도 3:4가 된다 — 늘어남도 레터박스도 없다.
+  stageFollowsImage: true,
+  noLetterbox: true,
+  // 아바타 모드 전환 버튼은 전신사진으로 시작한 경우에만.
+  hiddenForMeasurements: true,
+  shownForPhoto: true,
+  modeLabel: "✦ 아바타로 보기",
 };
 
 const failures = Object.entries(expected)

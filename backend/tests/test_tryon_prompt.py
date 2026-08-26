@@ -223,13 +223,24 @@ def test_large_accessories_do_not_trigger_the_small_item_clause():
     assert "small in the frame" not in prompt
 
 
-def test_view_prompt_rotates_the_finished_outfit_instead_of_redressing():
+def test_view_prompt_puts_the_finished_front_first():
+    # 회색 마네킹 가이드를 1번에 두면 "옷 없는 인체"가 착장을 밀어낸다 —
+    # 후면에서 패딩이 통째로 사라지던 원인. 완성된 정면이 1번이어야 한다.
     prompt = build_tryon_view_prompt("side", [Garment("upper", "셔츠"), Garment("outer", "코트")])
-    assert "Reference image 2 is the finished photograph" in prompt
-    assert "The outfit is '셔츠', '코트'" in prompt
+    assert "Reference image 1 is the finished photograph" in prompt
+    assert "body-shape guide" not in prompt
     assert "exact left profile" in prompt
     # 회전 중에 레이어가 뒤집히지 않도록 순서를 다시 못 박는다.
     assert "outer layers still outside the inner ones" in prompt
+
+
+def test_view_prompt_supplies_each_garment_again_so_items_do_not_morph():
+    # 토트백이 백팩으로 바뀌던 문제. 옷 참조를 다시 넣어야 근거가 생긴다.
+    prompt = build_tryon_view_prompt("back", [Garment("upper", "셔츠"), Garment("bag", "미니 토트백")])
+    assert "Reference image 2 is the same upper-body top '셔츠'" in prompt
+    assert "Reference image 3 is the same bag '미니 토트백'" in prompt
+    assert "held in one hand" in prompt  # 가방 종류에 맞는 착용 지점도 다시 준다
+    assert "stays the same object it is in its own reference image" in prompt
 
 
 def test_view_prompt_rejects_an_unknown_view():

@@ -604,7 +604,7 @@ def build_tryon_prompt(garments: list[GarmentLike]) -> str:
 
 # --- 다른 시점에서 본 착장 ---------------------------------------------------
 
-VIEW_DIRECTION = {
+ROTATION_DIRECTION = {
     "side": (
         "an exact left profile, the body turned 90 degrees so only one side faces the camera, "
         "arms hanging relaxed beside the torso"
@@ -617,28 +617,52 @@ VIEW_DIRECTION = {
 
 
 def build_tryon_view_prompt(view: str, garments: list[GarmentLike]) -> str:
-    """이미 옷을 다 입힌 정면 결과를 다른 시점으로 돌리는 지시문.
+    """완성된 정면 착장을 다른 시점으로 돌리는 지시문.
 
-    측면·후면을 만들 때 옷 사진들을 다시 참조로 넣지 않는다. 완성된 정면
-    결과에 착장이 이미 조립돼 있으므로, 그것 하나만 넘기고 "같은 사람, 같은
-    옷, 각도만 다르게"라고 시키는 편이 참조 수도 적고 옷 일관성도 낫다.
-    옷 이름을 다시 불러 주는 건 회전 중에 아이템이 사라지는 걸 막기 위해서다.
+    참조 순서가 중요하다. 예전에는 체형 가이드(회색 마네킹)를 참조 1번에 두고
+    완성된 정면을 2번에 뒀는데, FLUX.2는 1번 참조를 가장 강하게 따라가서
+    "옷 없는 회색 인체"가 착장을 밀어냈다 — 후면에서 패딩이 통째로 사라지거나
+    토트백이 백팩으로 바뀌는 결과가 여기서 나왔다.
+
+    그래서 이제 **완성된 정면이 참조 1번**이고, 옷 사진들을 다시 뒤에 붙인다.
+    옷 참조를 다시 넣는 게 낭비 같지만, 회전 중에 아이템이 다른 물건으로
+    바뀌는 것을 막는 유일한 근거다. 마네킹 가이드는 아예 빼 버렸다 — 체형
+    정보는 이미 정면 사진 안에 다 들어 있다.
     """
-    if view not in VIEW_DIRECTION:
+    if view not in ROTATION_DIRECTION:
         raise ValueError(f"unknown view: {view}")
-    names = ", ".join(f"'{(item.name or '').strip()}'" for item in garments if (item.name or "").strip())
-    worn = f" The outfit is {names}, and every one of those items stays on the body." if names else ""
 
-    return (
-        "Rotate the camera around a dressed person. Reference image 1 is a body-shape guide showing the "
-        f"pose and proportions from the {view}. Reference image 2 is the finished photograph of this person "
-        "wearing the complete outfit, seen from the front — same person, same face structure, same hair, "
-        "same body, same clothes, same studio lighting and background."
-        f"{worn}"
-        f" Draw that identical person in that identical outfit {VIEW_DIRECTION[view]}. "
-        "Every garment keeps its exact colour, fabric, print and cut, and the layering order stays the same "
-        "with the outer layers still outside the inner ones. "
-        "Frame the shot as a complete full-length photograph: the top of the head and the soles of the shoes "
-        "are both inside the picture, with clear empty background above the head and below the feet. "
-        "Photorealistic full-body Korean fashion e-commerce photograph, single frame, clean image with no lettering."
+    roles = []
+    for index, item in enumerate(garments):
+        name = (item.name or "").strip()
+        worn = resolve_spec(item.category, name)
+        label = (worn.label if worn and worn.label else CATEGORY_SPECS[item.category].label)
+        roles.append(
+            f"Reference image {index + 2} is the same {label} '{name or label}' that the person is "
+            f"already wearing, {resolve_placement(item.category, name)}."
+        )
+
+    parts = [
+        "Rotate the camera around a dressed person. Reference image 1 is the finished photograph of "
+        "this person wearing the complete outfit, seen from the front. Keep that exact person and that "
+        "exact outfit: same face structure, same hair, same body, same garments, same studio lighting "
+        "and background.",
+    ]
+    if roles:
+        parts.append(" ".join(roles))
+        parts.append(
+            "Each of those items stays the same object it is in its own reference image — same shape, "
+            "colour, fabric, print and hardware, worn the same way — while the camera moves around it."
+        )
+    parts.append(
+        f"Draw that identical person in that identical outfit {ROTATION_DIRECTION[view]}. "
+        "The layering order is unchanged, with the outer layers still outside the inner ones, and every "
+        "item that is visible from the front is still on the body from this angle."
     )
+    parts.append(
+        "Frame the shot as a complete full-length photograph: the top of the head and the soles of the "
+        "shoes are both inside the picture, with clear empty background above the head and below the feet. "
+        "Photorealistic full-body Korean fashion e-commerce photograph, single frame, clean image with "
+        "no lettering."
+    )
+    return " ".join(parts)

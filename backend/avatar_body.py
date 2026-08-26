@@ -222,17 +222,53 @@ def _edge_colour(pixels: np.ndarray, rows: slice, keep_fraction: float) -> tuple
     return tuple(int(v) for v in np.median(outer.reshape(-1, 3), axis=0))
 
 
+def has_room_below(image: Image.Image, threshold: float = 0.012) -> bool:
+    """아래쪽에 이미 빈 배경이 있는가.
+
+    맨 아랫줄이 배경 한 가지 색으로 균일하면 인물이 프레임 안에서 끝났다는
+    뜻이고, 여백을 더 붙일 이유가 없다. 실제 사진처럼 바닥·가구가 이어지는
+    경우에는 색이 흩어지므로 여백을 붙여 준다.
+    """
+    pixels = np.asarray(image.convert("RGB"), dtype=np.float32)
+    strip = pixels[-max(2, int(pixels.shape[0] * 0.02)):]
+    return float(strip.reshape(-1, 3).std(axis=0).mean()) / 255.0 < threshold
+
+
+def fit_generation_size(image: Image.Image, budget=RENDER_SIZE, step: int = 16) -> tuple[int, int]:
+    """원본 비율을 지키면서 비슷한 픽셀 수를 갖는 생성 크기.
+
+    출력 크기를 768x1152로 못 박아 두면 3:4 사진이 2:3으로 늘어난다 —
+    실제 사진에 옷을 입히면 사람과 배경이 세로로 길쭉해지는 이유가 이것이다.
+    확산 모델은 보통 16의 배수 크기를 요구하므로 그 격자에 맞춰 반올림한다.
+    """
+    width, height = image.size
+    if not width or not height:
+        return budget
+    pixels = budget[0] * budget[1]
+    scale = math.sqrt(pixels / (width * height))
+    fitted = (
+        max(step, int(round(width * scale / step)) * step),
+        max(step, int(round(height * scale / step)) * step),
+    )
+    return fitted
+
+
 def pad_for_full_body(
-    image: Image.Image, headroom: float = 0.05, footroom: float = 0.12, size=RENDER_SIZE
+    image: Image.Image, headroom: float = 0.05, footroom: float = 0.12
 ) -> Image.Image:
-    """인물 사진 위아래에 배경색 여백을 덧대고 목표 크기로 되돌린다.
+    """인물 사진 위아래에 배경색 여백을 덧댄다. 가로세로 비율은 그대로 둔다.
 
     착장 결과에서 발이 잘리는 문제는 프롬프트만으로 잘 잡히지 않는다 —
     FLUX.2는 참조 이미지의 **구도**를 그대로 따라가는 성향이 강해서, 넣어준
     사람 사진이 종아리에서 끝나면 결과도 종아리에서 끝난다. 문장으로 부탁하는
     대신 참조 이미지에 실제로 빈 공간을 만들어 "여기까지가 화면"이라고 보여준다.
-    아래쪽을 위쪽보다 넉넉히 잡는 건 신발이 발밑으로 더 자라기 때문이다.
+
+    세로로만 늘린 뒤 원래 크기로 되돌리면 사람이 눌려서 넓어 보인다(실측 17%).
+    가로에도 같은 비율로 여백을 붙여 비율을 유지한다.
     """
+    if has_room_below(image):
+        return image.convert("RGB")
+
     pixels = np.asarray(image.convert("RGB"))
     height, width = pixels.shape[:2]
     strip = max(2, int(height * 0.03))
@@ -241,20 +277,27 @@ def pad_for_full_body(
 
     top_pad = int(height * headroom)
     bottom_pad = int(height * footroom)
-    canvas = Image.new("RGB", (width, height + top_pad + bottom_pad), top_colour)
+    # 세로가 늘어난 만큼 가로도 늘려야 비율이 유지된다.
+    side_pad = int(round(width * (top_pad + bottom_pad) / (2 * height)))
+
+    canvas = Image.new("RGB", (width + 2 * side_pad, height + top_pad + bottom_pad), top_colour)
+    draw = ImageDraw.Draw(canvas)
     if bottom_pad:
-        ImageDraw.Draw(canvas).rectangle(
-            (0, top_pad + height, width, canvas.height), fill=bottom_colour
-        )
-    canvas.paste(image.convert("RGB"), (0, top_pad))
-    # 이어붙인 자리에 생기는 가로줄을 없앤다. 띠 부분만 흐리게 문질러서 배경이
+        draw.rectangle((0, top_pad + height, canvas.width, canvas.height), fill=bottom_colour)
+    if side_pad:
+        # 좌우 띠는 위아래 색을 세로로 이어 붙여 배경 흐름을 끊지 않는다.
+        for x0, x1 in ((0, side_pad), (canvas.width - side_pad, canvas.width)):
+            draw.rectangle((x0, 0, x1, top_pad + height // 2), fill=top_colour)
+            draw.rectangle((x0, top_pad + height // 2, x1, canvas.height), fill=bottom_colour)
+    canvas.paste(image.convert("RGB"), (side_pad, top_pad))
+    # 이어붙인 자리에 생기는 경계선을 없앤다. 띠 부분만 흐리게 문질러서 배경이
     # 자연스럽게 이어지도록 하고, 인물 영역은 건드리지 않는다.
     for y0, y1 in ((0, top_pad), (top_pad + height, canvas.height)):
         if y1 - y0 < 4:
             continue
-        seam = (0, max(0, y0 - 6), width, min(canvas.height, y1 + 6))
+        seam = (0, max(0, y0 - 6), canvas.width, min(canvas.height, y1 + 6))
         canvas.paste(canvas.crop(seam).filter(ImageFilter.GaussianBlur(5)), seam[:2])
-    return canvas.resize(size, Image.Resampling.LANCZOS)
+    return canvas
 
 
 def rotate_y(vertices: np.ndarray, degrees: float) -> np.ndarray:
@@ -526,3 +569,30 @@ def build_avatar_prompt(
     parts.append(f"{VIEW_DIRECTION[view]}. {FRAMING}.")
     parts.append(STYLING)
     return " ".join(parts)
+
+
+# --- 전신사진 -> 스튜디오 아바타 ---------------------------------------------
+
+PHOTO_AVATAR_PROMPT = (
+    "Reference image 1 is a photograph of a real person. Redraw that same person as a clean full-length "
+    "studio catalog photograph. Keep their identity exactly: the same face and facial features, the same "
+    "hairstyle and hair colour, the same skin tone, the same body build and proportions, and the same "
+    "clothes they are wearing in the photograph, reproduced in their real colours and cut. "
+    "Place them standing upright and front-facing in a relaxed symmetrical A-pose with arms slightly away "
+    "from the torso and both feet flat on the ground. "
+    "Replace the original surroundings with a clean warm-grey seamless studio backdrop under soft even "
+    "lighting, so the person stands alone in the frame. "
+    "Full body from the top of the head to the soles of the shoes inside the frame, with clear empty "
+    "background above the head and below the feet, eye-level camera, 85 mm catalog lens. "
+    "Photorealistic single frame, clean image with no lettering."
+)
+
+
+def build_photo_avatar_prompt() -> str:
+    """실제 사진을 스튜디오 아바타로 바꾸는 지시문.
+
+    체형 가이드가 없다 — 체형 정보가 이미 사진 안에 있고, 마네킹을 끼워 넣으면
+    오히려 그 인물의 실제 몸을 밀어낸다. 사진의 배경과 포즈만 갈아끼우고
+    사람은 그대로 두는 편집이다.
+    """
+    return PHOTO_AVATAR_PROMPT

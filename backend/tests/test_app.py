@@ -463,10 +463,12 @@ def test_tryon_pads_the_person_reference_so_the_feet_survive(backend_app, monkey
 
     engine.generate_tryon(request)
 
-    # 사람 참조는 원본 그대로가 아니라 위아래 여백을 덧댄 뒤 목표 크기로 들어간다.
+    # 사람 참조는 위아래 여백을 덧대되 가로세로 비율은 그대로여야 한다.
     person = calls[0]["images"][0]
-    assert person.size == backend_app.INFERENCE_SIZE
-    assert person is not None
+    assert abs(person.width / person.height - 64 / 96) < 0.01
+    # 생성 크기도 그 비율을 따라간다 — 고정 크기로 뽑으면 사진이 늘어난다.
+    width, height = calls[0]["size"]
+    assert abs(width / height - person.width / person.height) < 0.02
 
 
 def test_tryon_rotates_the_finished_front_for_other_views(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -492,13 +494,17 @@ def test_tryon_rotates_the_finished_front_for_other_views(backend_app, monkeypat
     images, _, _ = engine.generate_tryon(request)
 
     assert set(images) == {"front", "side", "back"}
-    # 정면은 사람 + 옷 2장, 측면·후면은 체형 가이드 + 완성된 정면 결과만 받는다.
-    assert [len(call["images"]) for call in calls] == [3, 2, 2]
+    # 세 호출 모두 사람/정면 1장 + 옷 2장. 회전에서도 옷 참조를 다시 넣어야
+    # 가방이 백팩으로 바뀌는 식의 변형이 줄어든다.
+    assert [len(call["images"]) for call in calls] == [3, 3, 3]
     for call in calls[1:]:
-        assert call["images"][1] is images["front"]
-        assert "Reference image 2 is the finished photograph" in call["prompt"]
+        # 완성된 정면이 참조 1번이다 — 여기가 뒤바뀌면 착장이 밀려난다.
+        assert call["images"][0] is images["front"]
+        assert "Reference image 1 is the finished photograph" in call["prompt"]
     assert "exact left profile" in calls[1]["prompt"]
     assert "directly behind" in calls[2]["prompt"]
+    # 시점마다 크기가 달라지면 드래그로 돌릴 때 화면이 튄다.
+    assert len({call["size"] for call in calls}) == 1
 
 
 def test_tryon_skips_views_without_an_avatar_image(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -651,3 +657,36 @@ def test_pipeline_is_only_built_once_under_concurrent_load(backend_app, monkeypa
         thread.join()
 
     assert len(builds) == 1
+
+
+def test_photo_avatar_route_turns_a_photo_into_a_studio_shot(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    monkeypatch.setattr(
+        backend_app.image_engine, "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", kwargs.get("size") or (64, 96)),
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/avatar/from-photo",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload("gray")},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["engine"].endswith("photo-avatar")
+    prompt = calls[0]["prompt"]
+    # 체형 가이드를 끼우지 않는다 — 체형은 이미 사진 안에 있고, 마네킹을 넣으면
+    # 그 사람의 실제 몸을 밀어낸다.
+    assert len(calls[0]["images"]) == 1
+    assert "same face and facial features" in prompt
+    assert "seamless studio backdrop" in prompt
+
+
+def test_photo_avatar_falls_back_to_the_photo_without_a_gpu(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (False, None))
+    request = backend_app.PhotoAvatarRequest(image=image_payload("gray"))
+    image, engine = backend_app.image_engine.avatarize_photo(request)
+    assert engine == "photo-passthrough"
+    assert image.size[0] > 0

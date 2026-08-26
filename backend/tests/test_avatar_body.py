@@ -215,7 +215,10 @@ def test_padding_creates_empty_space_below_a_body_that_ran_off_the_edge():
 
     padded = pad_for_full_body(cropped)
 
-    assert padded.size == (768, 1152)
+    # 세로로만 늘린 뒤 원래 크기로 되돌리면 사람이 눌려 넓어 보인다(실측 17%).
+    # 가로에도 같은 비율로 여백을 붙여 비율을 지켜야 한다.
+    assert abs(padded.width / padded.height - cropped.width / cropped.height) < 0.001
+    assert padded.height > cropped.height
     top, bottom = _body_rows(padded)
     # 위아래 모두 배경이 남아야 모델이 "여기까지가 화면"이라고 읽는다.
     assert top > 0
@@ -236,10 +239,25 @@ def test_padding_samples_the_background_not_the_body():
     assert abs(pixel[0] - background[0]) < 40 and pixel[0] > pixel[1]
 
 
-def test_padding_keeps_a_body_that_already_had_margins():
+def test_padding_is_skipped_when_there_is_already_room_below():
     from PIL import Image, ImageDraw
 
+    # 이미 발밑에 배경이 있으면 여백을 더 붙일 이유가 없다. 실제 사진에서는
+    # 덧댄 띠가 눈에 보이는 회색 줄로 남기 때문에 붙이지 않는 편이 낫다.
     image = Image.new("RGB", (768, 1152), (240, 240, 240))
     ImageDraw.Draw(image).rectangle((300, 100, 470, 1000), fill=(40, 40, 40))
-    top, bottom = _body_rows(pad_for_full_body(image))
-    assert top > 0 and bottom < 1152
+    assert pad_for_full_body(image).size == image.size
+
+
+def test_generation_size_follows_the_source_aspect_ratio():
+    from PIL import Image
+
+    from avatar_body import fit_generation_size
+
+    for size in [(768, 1152), (1080, 1440), (1170, 2532), (1000, 1000)]:
+        fitted = fit_generation_size(Image.new("RGB", size))
+        assert abs(fitted[0] / fitted[1] - size[0] / size[1]) < 0.02, size
+        assert fitted[0] % 16 == 0 and fitted[1] % 16 == 0, size
+        # 픽셀 수가 크게 벗어나면 VRAM이나 속도가 흔들린다.
+        budget = 768 * 1152
+        assert 0.6 * budget < fitted[0] * fitted[1] < 1.6 * budget, size

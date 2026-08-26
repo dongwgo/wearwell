@@ -24,6 +24,8 @@ from avatar_body import (
     BodyTarget,
     build_avatar_prompt,
     build_body_reference,
+    build_photo_avatar_prompt,
+    fit_generation_size,
     pad_for_full_body,
 )
 from tryon_prompt import build_tryon_prompt, build_tryon_view_prompt, order_garments
@@ -184,6 +186,13 @@ class VLMImageRequest(BaseModel):
     gender: Literal["women", "men"] | None = None
 
 
+class PhotoAvatarRequest(BaseModel):
+    """전신사진 -> 스튜디오 아바타. 치수가 아니라 사진이 입력이다."""
+
+    image: str = Field(min_length=1, max_length=8_000_000)
+    seed: int = 20260825
+
+
 class TryOnJudgeRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
     # 입히기로 한 아이템 목록을 사람이 읽는 문장으로. 심판은 이 목록과 사진만 본다.
@@ -338,14 +347,22 @@ class FluxImageEngine:
         seed: int,
         images: list[Image.Image] | None = None,
         steps: int | None = None,
+        size: tuple[int, int] | None = None,
     ) -> Image.Image:
+        """size를 주면 그 크기로 생성한다.
+
+        예전에는 항상 768x1152로 뽑고 마지막에 그 크기로 resize까지 했다.
+        3:4 휴대폰 사진에 옷을 입히면 사람과 배경이 세로로 늘어나 보였던 게
+        이 때문이다. 이제 호출부가 원본 비율에 맞는 크기를 넘긴다.
+        """
         import torch
 
+        width, height = size or INFERENCE_SIZE
         pipe = self._load()
         inputs = {
             "prompt": prompt,
-            "height": INFERENCE_SIZE[1],
-            "width": INFERENCE_SIZE[0],
+            "height": height,
+            "width": width,
             "guidance_scale": GUIDANCE_SCALE,
             "num_inference_steps": steps or INFERENCE_STEPS,
             "generator": torch.Generator(device="cuda").manual_seed(seed),
@@ -355,7 +372,9 @@ class FluxImageEngine:
         with GPU_LOCK, torch.inference_mode():
             output = pipe(**inputs).images[0]
             torch.cuda.empty_cache()
-        return output.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
+        # 파이프라인이 요청 크기를 지키지 않는 경우에만 맞춰 준다. 비율이 같은
+        # 크기라 늘어나지 않는다.
+        return output if output.size == (width, height) else output.resize((width, height), Image.Resampling.LANCZOS)
 
     def generate_avatar(self, data: Measurements) -> tuple[dict[str, Image.Image], str, dict]:
         """치수 -> 시점별 아바타 이미지, 엔진 이름, 치수 정확도 리포트.
@@ -455,27 +474,53 @@ class FluxImageEngine:
             return {"front": self.fallback_tryon(person_views["front"], ordered)}, "tryon-preview-fallback", ordered
 
         requested = [view for view in dict.fromkeys(["front", *request.views]) if view in person_views]
+        # 넣어준 사람 사진이 종아리에서 끝나면 결과도 거기서 끝난다. 참조에
+        # 실제 여백을 만들어 "여기까지가 화면"이라고 보여준다.
+        person = pad_for_full_body(person_views["front"])
+        # 출력 비율은 정면 사진을 따라간다. 고정 크기로 뽑으면 휴대폰 사진이
+        # 세로로 늘어난다. 모든 시점이 같은 크기여야 드래그로 돌릴 때 튀지 않는다.
+        size = fit_generation_size(person)
+
         results: dict[str, Image.Image] = {}
         for view in requested:
             if view == "front":
-                # 넣어준 사람 사진이 종아리에서 끝나면 결과도 거기서 끝난다.
-                # 참조에 실제 여백을 만들어 "여기까지가 화면"이라고 보여준다.
-                person = pad_for_full_body(person_views["front"])
                 results["front"] = self._run(
                     prompt=build_tryon_prompt(ordered),
                     seed=request.seed,
                     images=[person, *garments],
                     steps=TRYON_STEPS,
+                    size=size,
                 )
                 continue
-            guide = pad_for_full_body(person_views[view])
+            # 회전에서는 완성된 정면이 가장 강한 근거라 참조 1번에 둔다. 옷
+            # 사진도 다시 넣어야 가방이 백팩으로 바뀌는 식의 변형이 줄어든다.
             results[view] = self._run(
                 prompt=build_tryon_view_prompt(view, ordered),
                 seed=request.seed,
-                images=[guide, results["front"]],
+                images=[results["front"], *garments],
                 steps=TRYON_STEPS,
+                size=size,
             )
         return results, self.engine_name, ordered
+
+    def avatarize_photo(self, request: PhotoAvatarRequest) -> tuple[Image.Image, str]:
+        """실제 전신사진을 같은 인물의 스튜디오 아바타로 바꾼다.
+
+        사진에 직접 옷을 입히면 배경과 포즈가 그대로라 현실감이 좋지만,
+        룩북 비교나 정면 착장에는 깨끗한 스튜디오 컷이 더 낫다. 두 가지를
+        모두 쓸 수 있게 별도 경로로 둔다.
+        """
+        photo = pad_for_full_body(decode_image(request.image))
+        has_cuda, _ = cuda_info()
+        if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
+            return photo, "photo-passthrough"
+        image = self._run(
+            prompt=build_photo_avatar_prompt(),
+            seed=request.seed,
+            images=[photo],
+            size=fit_generation_size(photo),
+        )
+        return image, f"{self.engine_name}+photo-avatar"
 
     @property
     def engine_name(self) -> str:
@@ -507,10 +552,11 @@ class FluxImageEngine:
 
     @staticmethod
     def fallback_tryon(person: Image.Image, garments: list[GarmentInput]) -> Image.Image:
-        person = person.resize(INFERENCE_SIZE)
+        # 원본 크기를 그대로 쓴다. 고정 크기로 맞추면 휴대폰 사진이 늘어난다.
+        person = person.convert("RGB")
         draw = ImageDraw.Draw(person, "RGBA")
         colors = [(255, 113, 91, 110), (55, 83, 120, 115), (238, 238, 232, 125), (45, 45, 45, 100)]
-        width, height = INFERENCE_SIZE
+        width, height = person.size
         regions = {
             "upper": (int(width * .29), int(height * .23), int(width * .71), int(height * .54)),
             "lower": (int(width * .31), int(height * .51), int(width * .69), int(height * .91)),
@@ -643,6 +689,25 @@ class QwenVLMEngine:
         })
         return result
 
+    def avatarize_photo(self, request: PhotoAvatarRequest) -> tuple[Image.Image, str]:
+        """실제 전신사진을 같은 인물의 스튜디오 아바타로 바꾼다.
+
+        사진에 직접 옷을 입히면 배경과 포즈가 그대로라 현실감이 좋지만,
+        룩북 비교나 정면 착장에는 깨끗한 스튜디오 컷이 더 낫다. 두 가지를
+        모두 쓸 수 있게 별도 경로로 둔다.
+        """
+        photo = pad_for_full_body(decode_image(request.image))
+        has_cuda, _ = cuda_info()
+        if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
+            return photo, "photo-passthrough"
+        image = self._run(
+            prompt=build_photo_avatar_prompt(),
+            seed=request.seed,
+            images=[photo],
+            size=fit_generation_size(photo),
+        )
+        return image, f"{self.engine_name}+photo-avatar"
+
     @property
     def engine_name(self) -> str:
         mode = "nf4" if VLM_LOAD_IN_4BIT else self.dtype or "auto"
@@ -705,6 +770,23 @@ def generate_avatar(data: Measurements):
     except Exception as error:
         logging.exception("Avatar generation failed")
         raise HTTPException(status_code=500, detail="Avatar generation failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+@app.post("/api/avatar/from-photo")
+def avatarize_photo(request: PhotoAvatarRequest):
+    """전신사진을 스튜디오 아바타로 바꿔 준다. 착장에 그대로 쓸 수 있다."""
+    acquire_inference_slot()
+    try:
+        image, engine = image_engine.avatarize_photo(request)
+        _, gpu = cuda_info()
+        return {"image": encode_image(image), "engine": engine, "gpu": gpu}
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("Photo avatar generation failed")
+        raise HTTPException(status_code=500, detail="Photo avatar generation failed") from error
     finally:
         INFERENCE_GATE.release()
 
