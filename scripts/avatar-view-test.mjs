@@ -193,6 +193,36 @@ const raceExpression = `
   const stageAspect = box.width / box.height;
   const image = stage.querySelector("img").getBoundingClientRect();
 
+<<<<<<< Updated upstream
+=======
+  // 캐시 키가 아바타를 식별해야 한다. 사진 모드에서 avatarMeasurements는
+  // 성별로만 정해지는 고정 값이라, 사진을 바꿔도 키가 같아서 앞사람의 착장
+  // 결과가 뒷사람 것으로 표시됐다.
+  const stubTryon = tag => {
+    fetchGpuJson = async () => ({ image: pixel(tag), views: { front: pixel(tag) } });
+  };
+  const shownTag = () => {
+    const src = document.querySelector("#tryonStage img")?.getAttribute("src") || "";
+    return atob(src.split(",")[1] || "").match(/<desc>([^<]*)/)?.[1] || "";
+  };
+  const sameOutfit = [{ id: "shirt", name: "셔츠", category: "상의", image: pixel("g") }];
+
+  avatarMeasurements = { gender: "men", height: 175, weight: 70, photoBased: true };
+  fullBodyPhoto = pixel("photo-A");
+  avatarImage = pixel("photo-A");
+  stubTryon("worn-on-A");
+  await runTryOnItems(sameOutfit);
+  const firstPerson = shownTag();
+
+  // 같은 옷, 다른 사람. 캐시가 아바타를 무시하면 A의 결과가 그대로 나온다.
+  fullBodyPhoto = pixel("photo-B");
+  avatarImage = pixel("photo-B");
+  stubTryon("worn-on-B");
+  await runTryOnItems(sameOutfit);
+  const secondPerson = shownTag();
+  fetchGpuJson = original;
+
+>>>>>>> Stashed changes
   // "아바타로 보기"는 전신사진으로 시작한 경우에만 뜬다. 치수로 만든 아바타는
   // 이미 스튜디오 컷이라 바꿀 것이 없다.
   const modeButton = document.querySelector("#tryonAvatarButton");
@@ -208,8 +238,26 @@ const raceExpression = `
   const shownForPhoto = !modeButton.hidden;
   const modeLabel = modeButton.textContent;
 
+<<<<<<< Updated upstream
   return {
     race,
+=======
+  // 비교 모드에서는 아바타 전환 버튼이 숨어야 하고, 드래그가 비교 화면을
+  // 덮어쓰면 안 된다.
+  tryonViewer.set({ front: pixel("a"), side: pixel("b"), back: pixel("c") });
+  renderTryonStage({ image: pixel("look"), title: "룩북" }, { front: pixel("t") });
+  const modeHiddenWhileComparing = modeButton.hidden;
+  stage.dispatchEvent(new PointerEvent("pointerdown", { clientX: 0, pointerId: 9, bubbles: true }));
+  stage.dispatchEvent(new PointerEvent("pointermove", { clientX: 60, pointerId: 9, bubbles: true }));
+  stage.dispatchEvent(new PointerEvent("pointerup", { clientX: 60, pointerId: 9, bubbles: true }));
+  const comparisonSurvivesDrag = stage.querySelectorAll("figure").length === 2;
+
+  return {
+    race,
+    cacheSeparatesAvatars: firstPerson === "worn-on-A" && secondPerson === "worn-on-B",
+    modeHiddenWhileComparing,
+    comparisonSurvivesDrag,
+>>>>>>> Stashed changes
     hiddenForMeasurements,
     shownForPhoto,
     modeLabel,
@@ -227,11 +275,23 @@ const value = result.result?.result?.value;
 const raceResult = await send("Runtime.evaluate", {
   expression: raceExpression, returnByValue: true, awaitPromise: true,
 });
+<<<<<<< Updated upstream
+=======
+if (raceResult.result?.exceptionDetails) {
+  console.error("race expression threw:", JSON.stringify(raceResult.result.exceptionDetails.exception?.description || raceResult.result.exceptionDetails).slice(0, 900));
+}
+>>>>>>> Stashed changes
 const raceValue = raceResult.result?.result?.value ?? {};
 if (value) {
   value.race = raceValue.race ?? null;
   value.stageFollowsImage = raceValue.stageFollowsImage ?? null;
   value.noLetterbox = raceValue.noLetterbox ?? null;
+<<<<<<< Updated upstream
+=======
+  value.cacheSeparatesAvatars = raceValue.cacheSeparatesAvatars ?? null;
+  value.modeHiddenWhileComparing = raceValue.modeHiddenWhileComparing ?? null;
+  value.comparisonSurvivesDrag = raceValue.comparisonSurvivesDrag ?? null;
+>>>>>>> Stashed changes
   value.hiddenForMeasurements = raceValue.hiddenForMeasurements ?? null;
   value.shownForPhoto = raceValue.shownForPhoto ?? null;
   value.modeLabel = raceValue.modeLabel ?? null;
@@ -269,6 +329,14 @@ const expected = {
   // 3:4 사진을 넣으면 상자도 3:4가 된다 — 늘어남도 레터박스도 없다.
   stageFollowsImage: true,
   noLetterbox: true,
+<<<<<<< Updated upstream
+=======
+  // 캐시가 아바타를 구분해야 한다 — 사진을 바꾸면 다시 생성해야 한다.
+  cacheSeparatesAvatars: true,
+  // 비교 모드에서는 전환 버튼을 숨기고, 드래그가 비교 화면을 지우지 않는다.
+  modeHiddenWhileComparing: true,
+  comparisonSurvivesDrag: true,
+>>>>>>> Stashed changes
   // 아바타 모드 전환 버튼은 전신사진으로 시작한 경우에만.
   hiddenForMeasurements: true,
   shownForPhoto: true,

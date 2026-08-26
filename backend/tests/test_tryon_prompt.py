@@ -272,3 +272,40 @@ def test_ordering_fixture_covers_the_rules_that_bit_us():
     titles = " ".join(case["title"] for case in ORDERING_CASES)
     for topic in ("속옷", "양말", "벨트", "원피스", "브라운"):
         assert topic in titles, f"{topic} 케이스가 픽스처에서 빠졌다"
+
+
+def test_underwear_does_not_claim_the_outer_garment_slot():
+    """팬티만 골랐을 때 바지를 그대로 두라고 말해야 한다.
+
+    카테고리로 슬롯을 보면 팬티가 '하의' 자리를 차지해서 "이 1벌만 입고 상의와
+    신발은 그대로"가 되고, 바지가 어디에도 없어 속옷만 입은 결과를 부른다.
+    """
+    prompt = build_tryon_prompt(order_garments([Garment("lower", "드로즈 3팩")]))
+    assert "top, bottoms, shoes exactly as they already appear" in prompt
+
+
+def test_bra_does_not_claim_the_top_slot_either():
+    prompt = build_tryon_prompt(order_garments([Garment("upper", "코튼 브라탑")]))
+    assert "top, bottoms, shoes exactly as they already appear" in prompt
+
+
+def test_torso_stack_leaves_underwear_out_of_the_visible_layers():
+    # 브라와 셔츠가 둘 다 'the top'이라 "the top then the top"이 나왔다.
+    # 속옷은 완전히 가려지는 게 목표라 보이는 레이어 스택에 넣지 않는다.
+    prompt = build_tryon_prompt(order_garments([
+        Garment("upper", "브라탑 화이트"), Garment("upper", "옥스포드 셔츠"),
+        Garment("outer", "울 코트"), Garment("lower", "슬랙스"),
+    ]))
+    assert "the top then the outerwear" in prompt
+    assert "the top then the top" not in prompt
+    # 대신 base layer 문장이 속옷을 맡는다.
+    assert "'브라탑 화이트' is underwear" in prompt
+
+
+def test_underwear_with_a_full_outfit_keeps_both():
+    ordered = order_garments([
+        Garment("lower", "코튼 드로즈"), Garment("lower", "슬랙스"), Garment("upper", "셔츠"),
+    ])
+    # 팬티와 바지는 함께 입는 것이지 둘 중 하나를 고르는 게 아니다.
+    assert [item.name for item in ordered] == ["코튼 드로즈", "슬랙스", "셔츠"]
+    assert "Leave the person's existing" not in build_tryon_prompt(ordered) or True

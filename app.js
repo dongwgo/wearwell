@@ -279,7 +279,9 @@ function createRotatableView(element, altPrefix, emptyHtml = "") {
     render,
     available,
     set(views) { state.views = views || {}; state.index = 0; render(); },
-    clear() { state.views = {}; state.index = 0; render(); },
+    // 상태만 버린다. 비교 모드나 로딩 화면이 직접 그린 마크업을 지우면 안 되므로
+    // render()를 부르지 않는다.
+    clear() { state.views = {}; state.index = 0; element.classList.remove("rotatable"); },
   };
 }
 
@@ -316,6 +318,8 @@ function showAvatar(image, engine = "", views = null) {
 
 async function generateAvatarViews() {
   if (!avatarMeasurements || avatarMeasurements.photoBased) return showToast("먼저 치수로 아바타를 만들어주세요");
+  const requestId = ++avatarRequestId;
+  const isStale = () => requestId !== avatarRequestId;
   const button = $("#generateAvatarViews");
   const card = $("#avatarGeneratorCard");
   card.classList.add("generating");
@@ -324,11 +328,13 @@ async function generateAvatarViews() {
   interactiveGpuRequests += 1;
   try {
     const result = await fetchGpuJson("/api/avatar", { ...avatarMeasurements, views: ["front", "side", "back"] }, () => {
-      $("#avatarEngineStatus").textContent = "앞선 작업이 끝나면 바로 만들게요";
+      if (!isStale()) $("#avatarEngineStatus").textContent = "앞선 작업이 끝나면 바로 만들게요";
     });
+    if (isStale()) return;
     showAvatar(result.views?.front || result.image, result.engine, result.views);
     $("#avatarEngineStatus").textContent = "드래그하면 아바타를 돌려볼 수 있어요";
   } catch {
+    if (isStale()) return;
     $("#avatarEngineStatus").textContent = "지금은 측면·후면을 만들지 못했어요. 잠시 후 다시 시도해주세요";
     button.hidden = false;
   } finally {
@@ -348,6 +354,8 @@ async function generateAvatar() {
 }
 
 async function runGenerateAvatar() {
+  const requestId = ++avatarRequestId;
+  const isStale = () => requestId !== avatarRequestId;
   if (bodyInputMethod === "photo") {
     if (!fullBodyPhoto) return showToast("먼저 전신사진을 선택해주세요");
     avatarMeasurements = {
@@ -355,7 +363,16 @@ async function runGenerateAvatar() {
       weight: selectedGender === "men" ? 70 : 55, body_shape: "보통", photoBased: true, seed: 20260825
     };
     showAvatar(fullBodyPhoto, "photo-reference");
+<<<<<<< Updated upstream
     window.WearwellVLM.analyzeBodyImage(fullBodyPhoto, selectedGender).then(profile => {
+=======
+    // 분석은 기다리지 않고 흘려보낸다. 그 사이 사용자가 치수 모드로 바꾸거나
+    // 다른 사진을 고를 수 있으므로, 돌아왔을 때 여전히 같은 사진을 쓰고 있을
+    // 때만 반영한다. 그러지 않으면 치수로 만든 아바타에 photoBased가 붙는다.
+    const analysedPhoto = fullBodyPhoto;
+    window.WearwellVLM.analyzeBodyImage(analysedPhoto, selectedGender).then(profile => {
+      if (isStale() || fullBodyPhoto !== analysedPhoto || !avatarMeasurements?.photoBased) return;
+>>>>>>> Stashed changes
       avatarMeasurements = { ...avatarMeasurements, ...profile, photoBased: true };
       $("#avatarEngineStatus").textContent = `사진에서 ${profile.body_shape || "체형"} 특징을 정리했어요`;
       if ($('.preference-step[data-step="3"]').classList.contains("active")) {
@@ -372,10 +389,12 @@ async function runGenerateAvatar() {
   $("#avatarEngineStatus").textContent = "신체 비율을 계산하고 있어요…";
   try {
     const result = await fetchGpuJson("/api/avatar", data, () => {
-      $("#avatarEngineStatus").textContent = "앞선 분석이 끝나면 바로 아바타를 만들게요";
+      if (!isStale()) $("#avatarEngineStatus").textContent = "앞선 분석이 끝나면 바로 아바타를 만들게요";
     });
+    if (isStale()) return;
     showAvatar(result.image, result.engine, result.views);
   } catch {
+    if (isStale()) return;
     showAvatar(localAvatarPreview(data), "fallback");
   } finally {
     card.classList.remove("generating");
@@ -498,6 +517,9 @@ function renderTryonStage(reference, output = null, loading = false) {
 
   if (reference) {
     if (rotateButton) rotateButton.hidden = true;
+    // 비교 모드는 좌우 두 칸이라 아바타 전환도 붙이지 않는다. 여기서 버튼을
+    // 안 숨기면 눌렀을 때 1분을 기다린 뒤 결과가 버려진다.
+    tryonViewer?.clear();
     const resultPane = loading
       ? '<div class="tryon-compare-loading"><div class="generation-loader"><span></span><strong>내 옷을 입혀보는 중</strong><small>룩북의 비율과 분위기를 비교해요</small></div></div>'
       : `<img src="${escapeHtml(views.front || "")}" alt="내 아바타 착장 결과" />`;
@@ -506,14 +528,19 @@ function renderTryonStage(reference, output = null, loading = false) {
     stage.innerHTML = `
     <figure><div><img src="${escapeHtml(reference.image)}" alt="${escapeHtml(reference.title || "룩북 원본")}" /></div><figcaption><b>룩북 원본</b><span>${escapeHtml(reference.title || "")}</span></figcaption></figure>
     <figure><div>${resultPane}</div><figcaption><b>내 아바타 + 내 옷</b><span>${loading ? "생성 중" : "내 옷장으로 재현"}</span></figcaption></figure>`;
+    updateTryonModeButton();
     return;
   }
 
   stage.classList.remove("comparison");
   if (loading) {
+    // 뷰어가 이전 결과를 들고 있으면 로딩 화면 위에서 드래그가 먹혀 스피너를
+    // 이전 착장 이미지로 덮어쓴다. 상태를 비우고 시작한다.
+    tryonViewer?.clear();
     stage.classList.remove("rotatable");
     stage.innerHTML = '<div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div>';
     if (rotateButton) rotateButton.hidden = true;
+    updateTryonModeButton();
     return;
   }
   tryonViewer?.set(views);
@@ -531,7 +558,12 @@ function updateTryonModeButton() {
   const button = $("#tryonAvatarButton");
   if (!button) return;
   const photoBased = Boolean(avatarMeasurements?.photoBased) && Boolean(fullBodyPhoto);
+<<<<<<< Updated upstream
   button.hidden = !photoBased || !tryonContext;
+=======
+  const comparing = $("#tryonStage").classList.contains("comparison");
+  button.hidden = !photoBased || !tryonContext || comparing;
+>>>>>>> Stashed changes
   button.textContent = tryonMode === "photo" ? "✦ 아바타로 보기" : "✦ 원본 사진으로 보기";
 }
 
@@ -604,7 +636,7 @@ async function generateTryonViews() {
     });
     if (context.requestId !== tryonRequestId) return;
     const views = result.views || { front: result.image };
-    rememberTryon(context.cacheKey, views);
+    rememberTryon(context.cacheKey, views, context.payload);
     renderTryonStage(null, views);
     $("#tryonStatusText").textContent = "드래그하면 착장을 돌려볼 수 있어요";
   } catch {
@@ -630,16 +662,25 @@ async function tryOnItems(items, comparison = null) {
 // 도착할 수 있고, 그때 먼저 보낸 요청의 결과가 나중 결과를 덮어쓰면 "고른 옷이
 // 반영되지 않는" 것처럼 보인다. 마지막 요청의 결과만 화면에 올린다.
 let tryonRequestId = 0;
+// 아바타 생성에도 같은 가드가 필요하다. 생성 중에 성별이나 입력 방식을 바꾸면
+// 뒤늦게 도착한 옛 아바타가 화면과 localStorage를 덮어써서, 이후 착장이 전부
+// 버린 아바타로 만들어진다.
+let avatarRequestId = 0;
 
 // 결과 이미지를 무한정 쌓아 두면 메모리를 계속 먹는다(한 항목이 최대 3장).
 const TRYON_CACHE_LIMIT = 12;
+// 캐시로 복원한 착장에서도 측면·후면을 이어서 만들 수 있게 요청 내용을 함께 둔다.
+const cachedPayloads = new Map();
 
-function rememberTryon(cacheKey, views) {
+function rememberTryon(cacheKey, views, payload = null) {
   if (tryonCache.size >= TRYON_CACHE_LIMIT) {
     // Map은 삽입 순서를 지키므로 가장 오래된 항목이 맨 앞에 온다.
-    tryonCache.delete(tryonCache.keys().next().value);
+    const oldest = tryonCache.keys().next().value;
+    tryonCache.delete(oldest);
+    cachedPayloads.delete(oldest);
   }
   tryonCache.set(cacheKey, views);
+  if (payload) cachedPayloads.set(cacheKey, payload);
 }
 
 async function runTryOnItems(items, comparison = null) {
@@ -654,7 +695,10 @@ async function runTryOnItems(items, comparison = null) {
   const requestId = ++tryonRequestId;
   const isStale = () => requestId !== tryonRequestId;
 
-  const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
+  // 아바타 이미지 자체를 키에 넣어야 한다. 사진 모드에서 avatarMeasurements는
+  // 성별로만 정해지는 고정 값이라, 사진을 바꿔도 키가 같아서 앞사람의 착장
+  // 결과가 뒷사람 것으로 표시됐다.
+  const avatarKey = `${avatarMeasurements ? JSON.stringify(avatarMeasurements) : ""}|${avatarImage.slice(-96)}`;
   const cacheKey = `${items.map(item => item.id).join("-")}-${avatarKey}`;
   $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
   renderTryonStage(comparison, null, true);
@@ -663,7 +707,20 @@ async function runTryOnItems(items, comparison = null) {
   if (tryonCache.has(cacheKey)) {
     tryonModes = { photo: tryonCache.get(cacheKey), avatar: null };
     tryonMode = "photo";
+<<<<<<< Updated upstream
     renderTryonStage(comparison, tryonModes.photo);
+=======
+    // 캐시로 복원할 때도 컨텍스트를 새 요청 번호로 갱신해야 한다. 그러지 않으면
+    // 측면·후면이나 아바타 전환 버튼이 옛 요청 번호를 들고 있다가, 눌러서 1분을
+    // 기다린 뒤 결과를 조용히 버린다.
+    tryonContext = { payload: cachedPayloads.get(cacheKey) || null, cacheKey, requestId };
+    if (!tryonContext.payload) tryonContext = null;
+    renderTryonStage(comparison, tryonModes.photo);
+    $("#tryonStatusText").textContent = comparison
+      ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요."
+      : "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
+    $("#tryonEngineLabel").textContent = comparison ? "원본 ↔ 내 착장 비교" : "AI 착장 결과";
+>>>>>>> Stashed changes
     return;
   }
   try {
@@ -691,12 +748,16 @@ async function runTryOnItems(items, comparison = null) {
     // 옷 조합이 바뀌면 아바타 버전도 다시 만들어야 한다(아바타 이미지는 유지).
     tryonModes = { photo: views, avatar: null };
     tryonMode = "photo";
+<<<<<<< Updated upstream
     rememberTryon(cacheKey, views);
+=======
+    rememberTryon(cacheKey, views, payload);
+>>>>>>> Stashed changes
     // 측면·후면은 시간이 3배로 드니 기본으로는 만들지 않는다. 결과가 나온 뒤
     // 사용자가 버튼을 누르면 이 컨텍스트로 이어서 만든다.
     tryonContext = { payload, cacheKey, requestId };
     renderTryonStage(comparison, views);
-    $("#tryonStatusText").textContent = tryonSummary(result, garments.length, wearableItems.length, comparison);
+    $("#tryonStatusText").textContent = tryonSummary(result, garments.length, items.length, comparison);
     $("#tryonEngineLabel").textContent = comparison ? "원본 ↔ 내 착장 비교" : "AI 착장 결과";
   } catch {
     if (isStale()) return;
@@ -715,8 +776,10 @@ function tryonSummary(result, sentCount, selectedCount, comparison) {
     const names = dropped.map(item => item.name).filter(Boolean).join(", ");
     return `같은 부위가 겹쳐서 ${names || `${dropped.length}벌`}은 빼고 입혔어요.`;
   }
+  // 백엔드는 자기가 받은 것만 보고할 수 있다. 프론트가 6벌 상한이나 같은
+  // 부위 중복으로 미리 잘라낸 아이템은 여기서 세야 한다.
   if (sentCount < selectedCount) {
-    return `옷 사진 ${selectedCount - sentCount}장을 불러오지 못해 나머지만 입혔어요.`;
+    return `고른 ${selectedCount}벌 중 ${sentCount}벌만 입혔어요. 같은 부위가 겹치거나 사진을 불러오지 못한 옷은 빠졌어요.`;
   }
   return comparison
     ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요."
@@ -1265,7 +1328,7 @@ function renderGenderChoices() {
     if (selectedGender !== button.dataset.gender) {
       selectedStyles.clear(); selectedInfluencerLookIds.clear(); avatarMeasurements = null; avatarImage = null; fullBodyPhoto = null;
       localStorage.removeItem("오늘옷-avatar");
-      avatarViews = { front: null }; renderAvatarPreview();
+      avatarRequestId += 1; avatarViews = { front: null }; renderAvatarPreview();
       $("#profileAvatar").classList.remove("has-image"); $("#profileAvatar").style.backgroundImage = "";
     }
     selectedGender = button.dataset.gender;
@@ -1337,6 +1400,7 @@ function applyProfile(profile) {
   selectedPriorities = new Set(profile.priorities || []);
   avatarMeasurements = profile.measurements || avatarMeasurements;
   if (avatarMeasurements?.photoBased) {
+    photoAvatarImage = null;
     fullBodyPhoto = profile.avatar || avatarImage;
     setBodyInputMethod("photo");
     if (fullBodyPhoto) $("#fullBodyPreview").innerHTML = `<img src="${escapeHtml(fullBodyPhoto)}" alt="저장한 전신사진" /><span><strong>전신사진 저장됨</strong><small>다시 누르면 사진을 바꿀 수 있어요</small></span>`;
@@ -1533,13 +1597,17 @@ function initEvents() {
   $$("[data-body-method]").forEach(button => button.addEventListener("click", () => {
     if (bodyInputMethod !== button.dataset.bodyMethod) {
       avatarImage = null; avatarMeasurements = null;
-      avatarViews = { front: null }; renderAvatarPreview();
+      avatarRequestId += 1; avatarViews = { front: null }; renderAvatarPreview();
     }
     setBodyInputMethod(button.dataset.bodyMethod);
   }));
   $("#fullBodyInput").addEventListener("change", async event => {
     const file = event.target.files?.[0];
     if (!file) return;
+<<<<<<< Updated upstream
+=======
+    photoAvatarImage = null;
+>>>>>>> Stashed changes
     fullBodyPhoto = await resizeBodyPhoto(file);
     avatarImage = null; avatarMeasurements = null;
     $("#fullBodyPreview").innerHTML = `<img src="${fullBodyPhoto}" alt="선택한 전신사진" /><span><strong>전신사진 선택 완료</strong><small>다시 누르면 사진을 바꿀 수 있어요</small></span>`;

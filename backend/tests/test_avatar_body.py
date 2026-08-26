@@ -261,3 +261,50 @@ def test_generation_size_follows_the_source_aspect_ratio():
         # 픽셀 수가 크게 벗어나면 VRAM이나 속도가 흔들린다.
         budget = 768 * 1152
         assert 0.6 * budget < fitted[0] * fitted[1] < 1.6 * budget, size
+<<<<<<< Updated upstream
+=======
+
+
+def test_room_check_only_reads_the_bottom_strip():
+    """전체 이미지를 float32로 복사하면 4000px 사진 한 장에 180MB가 잡힌다.
+    아래 2%만 보면 되는 일이라 자르고 나서 변환해야 한다."""
+    import tracemalloc
+
+    from PIL import Image
+
+    from avatar_body import has_room_below
+
+    big = Image.new("RGB", (3000, 4000), (120, 120, 120))
+    tracemalloc.start()
+    has_room_below(big)
+    peak = tracemalloc.get_traced_memory()[1]
+    tracemalloc.stop()
+    # 원본만 36MB다. 전체를 복사하면 여기가 180MB로 튄다.
+    assert peak < 30_000_000, f"{peak / 1e6:.0f} MB"
+
+
+def test_huge_photos_are_downscaled_before_padding():
+    from PIL import Image, ImageDraw
+
+    from avatar_body import downscale_to_budget, pad_for_full_body
+
+    # 휴대폰 사진은 4000px가 예사고, 그대로 패딩하면 픽셀 수 검사 이후에
+    # 다시 불어난다.
+    photo = Image.new("RGB", (3000, 4000), (150, 150, 150))
+    ImageDraw.Draw(photo).rectangle((1200, 500, 1800, 3999), fill=(60, 60, 60))
+    assert downscale_to_budget(photo).width < photo.width
+    padded = pad_for_full_body(photo)
+    assert padded.width * padded.height < 768 * 1152 * 2.4
+    # 줄여도 비율은 유지된다.
+    assert abs(padded.width / padded.height - 0.75) < 0.01
+
+
+def test_edge_colour_survives_a_very_narrow_image():
+    import numpy as np
+
+    from avatar_body import _edge_colour
+
+    # 폭이 6px이면 margin이 0이 되어 빈 배열 -> NaN -> ValueError였다.
+    pixels = np.full((200, 6, 3), 42, dtype=np.uint8)
+    assert _edge_colour(pixels, slice(0, 10), 0.15) == (42, 42, 42)
+>>>>>>> Stashed changes

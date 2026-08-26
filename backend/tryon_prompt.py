@@ -435,10 +435,14 @@ def order_garments(garments: list[GarmentLike], limit: int = 6) -> list[GarmentL
 
 def _torso_stack(garments: list[GarmentLike]) -> str | None:
     """몸통 레이어가 2개 이상일 때만 stack 문장을 만든다."""
+    # 속옷은 겉옷에 완전히 가려지는 게 목표라 "보이는 레이어" 스택에서 뺀다.
+    # 넣어 두면 브라와 셔츠가 둘 다 'the top'이 되어 "the top then the top"
+    # 같은 풀 수 없는 지시가 만들어진다. 속옷은 _base_layer_clause가 맡는다.
     names = [
         CATEGORY_SPECS[item.category].stack_name
         for item in garments
         if item.category in {"overall", "upper", "outer"}
+        and not is_underwear(item.category, getattr(item, "name", ""))
     ]
     if len(names) < 2:
         return None
@@ -521,7 +525,9 @@ def _small_item_clause(garments: list[GarmentLike]) -> str | None:
 
 def _kept_slots_clause(garments: list[GarmentLike]) -> str:
     """제공되지 않은 부위는 아바타가 원래 입고 있던 옷을 그대로 두라는 지시."""
-    provided = {BODY_SLOT.get(item.category, item.category) for item in garments}
+    # body_slot()을 써야 한다. 카테고리로 보면 팬티가 '하의' 자리를 차지해서
+    # 정작 바지를 그대로 두라는 문장이 빠지고, 속옷만 입은 결과가 나온다.
+    provided = {body_slot(item) for item in garments}
     if "torso+legs" in provided:
         provided.update(("torso", "legs"))
     untouched = [

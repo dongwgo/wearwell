@@ -55,6 +55,14 @@ MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
+<<<<<<< Updated upstream
+=======
+# 대기열에 세워 둘 수 있는 요청 수. 모든 엔드포인트가 동기 함수라 대기 중인
+# 요청이 스레드풀 슬롯(기본 40개)을 그대로 붙잡는다. 제한이 없으면 대기가
+# 쌓였을 때 /api/health조차 슬롯을 못 얻어 컨테이너 헬스체크가 서버를 죽인다.
+MAX_QUEUE_DEPTH = int(os.getenv("MAX_QUEUE_DEPTH", "8"))
+QUEUE_DEPTH = 0
+>>>>>>> Stashed changes
 GPU_LOCK = threading.RLock()
 INFERENCE_GATE = threading.Lock()
 RATE_LOCK = threading.Lock()
@@ -100,7 +108,12 @@ app = FastAPI(
     redoc_url=None,
     openapi_url=None,
 )
+# add_middleware는 앞쪽에 쌓으므로 마지막에 등록한 것이 가장 바깥이 된다.
+# CORS가 바깥이어야 인증 실패(401)나 rate limit(429) 응답에도 헤더가 붙어서
+# 브라우저가 본문과 Retry-After를 읽을 수 있다. 순서를 바꾸면 프론트엔드는
+# "토큰 만료"와 "서버 다운"을 구분하지 못한다.
 app.add_middleware(BodyLimitMiddleware, max_bytes=MAX_REQUEST_BYTES)
+<<<<<<< Updated upstream
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
@@ -109,6 +122,8 @@ app.add_middleware(
 )
 
 
+=======
+>>>>>>> Stashed changes
 @app.middleware("http")
 async def protect_gpu_api(request: Request, call_next):
     if request.method == "POST" and request.url.path.startswith("/api/"):
@@ -134,11 +149,21 @@ async def protect_gpu_api(request: Request, call_next):
     return await call_next(request)
 
 
+# 마지막에 등록해야 가장 바깥에 놓인다. protect_gpu_api보다 바깥이어야
+# 401/429 응답에도 CORS 헤더가 붙는다.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+
+
 class Measurements(BaseModel):
     gender: Literal["women", "men"]
     height: float = Field(ge=130, le=210)
     weight: float = Field(ge=35, le=180)
-    body_shape: str = "보통"
+    body_shape: str = Field(default="보통", max_length=40)
     shoulder: float | None = Field(default=None, ge=30, le=70)
     chest: float | None = Field(default=None, ge=60, le=160)
     waist: float | None = Field(default=None, ge=45, le=160)
@@ -410,14 +435,21 @@ class FluxImageEngine:
                 references = [reference.image]
                 if view != "front":
                     references.append(images["front"])
-                images[view] = self._run(
-                    prompt=build_avatar_prompt(
-                        target, view=view, identity_reference=view != "front"
-                    ),
-                    # 시점마다 시드를 흘리면 같은 사람이 나올 확률이 떨어진다.
-                    seed=data.seed,
-                    images=references,
-                )
+                try:
+                    images[view] = self._run(
+                        prompt=build_avatar_prompt(
+                            target, view=view, identity_reference=view != "front"
+                        ),
+                        # 시점마다 시드를 흘리면 같은 사람이 나올 확률이 떨어진다.
+                        seed=data.seed,
+                        images=references,
+                    )
+                except Exception:
+                    # 정면이 없으면 아바타 자체가 성립하지 않으므로 그대로 올린다.
+                    if view == "front":
+                        raise
+                    logging.exception("Avatar view failed, keeping the others: %s", view)
+                    continue
                 if view == "front":
                     report = {
                         "bodyReference": reference.source,
@@ -427,7 +459,7 @@ class FluxImageEngine:
                         "meanAbsoluteErrorCm": reference.mean_absolute_error(),
                         "betas": reference.betas,
                     }
-            report["views"] = requested
+            report["views"] = list(images)
             return images, f"{self.engine_name}+{report['bodyReference']}", report
 
         # 텍스트 전용 경로 (비교 기준선)
@@ -494,6 +526,7 @@ class FluxImageEngine:
                 continue
             # 회전에서는 완성된 정면이 가장 강한 근거라 참조 1번에 둔다. 옷
             # 사진도 다시 넣어야 가방이 백팩으로 바뀌는 식의 변형이 줄어든다.
+<<<<<<< Updated upstream
             results[view] = self._run(
                 prompt=build_tryon_view_prompt(view, ordered),
                 seed=request.seed,
@@ -501,6 +534,22 @@ class FluxImageEngine:
                 steps=TRYON_STEPS,
                 size=size,
             )
+=======
+            #
+            # 측면·후면은 부가 정보다. 두 번째·세 번째 생성은 참조가 많아
+            # VRAM이 모자라기 가장 쉬운 지점인데, 여기서 터진다고 이미 만들어
+            # 둔 정면까지 버리면 사용자는 정면 생성 시간을 통째로 날린다.
+            try:
+                results[view] = self._run(
+                    prompt=build_tryon_view_prompt(view, ordered),
+                    seed=request.seed,
+                    images=[results["front"], *garments],
+                    steps=TRYON_STEPS,
+                    size=size,
+                )
+            except Exception:
+                logging.exception("Try-on view failed, keeping the others: %s", view)
+>>>>>>> Stashed changes
         return results, self.engine_name, ordered
 
     def avatarize_photo(self, request: PhotoAvatarRequest) -> tuple[Image.Image, str]:
@@ -719,7 +768,22 @@ vlm_engine = QwenVLMEngine()
 
 
 def acquire_inference_slot() -> None:
-    if not INFERENCE_GATE.acquire(timeout=GPU_QUEUE_TIMEOUT):
+    """GPU 한 자리를 얻는다. 대기열이 너무 길면 기다리지 않고 돌려보낸다."""
+    global QUEUE_DEPTH
+    with RATE_LOCK:
+        if QUEUE_DEPTH >= MAX_QUEUE_DEPTH:
+            raise HTTPException(
+                status_code=503,
+                detail="GPU queue is full",
+                headers={"Retry-After": "20"},
+            )
+        QUEUE_DEPTH += 1
+    try:
+        acquired = INFERENCE_GATE.acquire(timeout=GPU_QUEUE_TIMEOUT)
+    finally:
+        with RATE_LOCK:
+            QUEUE_DEPTH -= 1
+    if not acquired:
         raise HTTPException(
             status_code=503,
             detail="GPU queue timeout",
@@ -748,6 +812,7 @@ def health():
         "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
         "queueTimeoutSeconds": GPU_QUEUE_TIMEOUT,
         "rateLimitPerMinute": RATE_LIMIT_PER_MINUTE,
+        "maxQueueDepth": MAX_QUEUE_DEPTH,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
         "tryonSteps": TRYON_STEPS,
         "maxTryonGarments": MAX_TRYON_GARMENTS,

@@ -217,7 +217,7 @@ def _edge_colour(pixels: np.ndarray, rows: slice, keep_fraction: float) -> tuple
     """
     band = pixels[rows]
     width = band.shape[1]
-    margin = int(width * keep_fraction)
+    margin = max(1, int(width * keep_fraction))
     outer = np.concatenate([band[:, :margin], band[:, width - margin:]], axis=1)
     return tuple(int(v) for v in np.median(outer.reshape(-1, 3), axis=0))
 
@@ -229,8 +229,16 @@ def has_room_below(image: Image.Image, threshold: float = 0.012) -> bool:
     뜻이고, 여백을 더 붙일 이유가 없다. 실제 사진처럼 바닥·가구가 이어지는
     경우에는 색이 흩어지므로 여백을 붙여 준다.
     """
+<<<<<<< Updated upstream
     pixels = np.asarray(image.convert("RGB"), dtype=np.float32)
     strip = pixels[-max(2, int(pixels.shape[0] * 0.02)):]
+=======
+    width, height = image.size
+    rows = max(2, int(height * 0.02))
+    # 먼저 자르고 변환한다. 전체를 float32로 복사하면 4000px 사진 한 장에
+    # 180MB가 순간적으로 잡힌다 — 아래 2%만 보면 되는 일이다.
+    strip = np.asarray(image.convert("RGB").crop((0, height - rows, width, height)), dtype=np.float32)
+>>>>>>> Stashed changes
     return float(strip.reshape(-1, 3).std(axis=0).mean()) / 255.0 < threshold
 
 
@@ -253,6 +261,24 @@ def fit_generation_size(image: Image.Image, budget=RENDER_SIZE, step: int = 16) 
     return fitted
 
 
+<<<<<<< Updated upstream
+=======
+def downscale_to_budget(image: Image.Image, budget=RENDER_SIZE, slack: float = 1.6) -> Image.Image:
+    """생성 크기보다 한참 큰 사진은 미리 줄인다.
+
+    휴대폰 사진은 4000px가 예사고, 그대로 들고 다니면 패딩·복사 단계마다
+    수백 MB가 잡힌다. 어차피 출력은 생성 크기라 원본 해상도는 쓰이지 않는다.
+    """
+    limit = budget[0] * budget[1] * slack
+    pixels = image.width * image.height
+    if pixels <= limit:
+        return image
+    scale = math.sqrt(limit / pixels)
+    size = (max(1, int(image.width * scale)), max(1, int(image.height * scale)))
+    return image.resize(size, Image.Resampling.LANCZOS)
+
+
+>>>>>>> Stashed changes
 def pad_for_full_body(
     image: Image.Image, headroom: float = 0.05, footroom: float = 0.12
 ) -> Image.Image:
@@ -266,10 +292,18 @@ def pad_for_full_body(
     세로로만 늘린 뒤 원래 크기로 되돌리면 사람이 눌려서 넓어 보인다(실측 17%).
     가로에도 같은 비율로 여백을 붙여 비율을 유지한다.
     """
+<<<<<<< Updated upstream
     if has_room_below(image):
         return image.convert("RGB")
 
     pixels = np.asarray(image.convert("RGB"))
+=======
+    image = downscale_to_budget(image.convert("RGB"))
+    if has_room_below(image):
+        return image
+
+    pixels = np.asarray(image)
+>>>>>>> Stashed changes
     height, width = pixels.shape[:2]
     strip = max(2, int(height * 0.03))
     top_colour = _edge_colour(pixels, slice(0, strip), 0.30)

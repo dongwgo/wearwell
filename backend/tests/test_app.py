@@ -9,6 +9,8 @@ import threading
 import time
 from types import SimpleNamespace
 
+from fastapi import HTTPException
+
 import pytest
 from PIL import Image
 
@@ -690,3 +692,125 @@ def test_photo_avatar_falls_back_to_the_photo_without_a_gpu(backend_app, monkeyp
     image, engine = backend_app.image_engine.avatarize_photo(request)
     assert engine == "photo-passthrough"
     assert image.size[0] > 0
+<<<<<<< Updated upstream
+=======
+
+
+def test_a_failed_side_view_still_returns_the_front(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """두 번째 생성은 참조가 많아 VRAM이 모자라기 가장 쉬운 지점이다.
+    거기서 터진다고 이미 만든 정면까지 버리면 사용자는 그 시간을 통째로 날린다."""
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    engine = backend_app.FluxImageEngine()
+
+    def flaky(**kwargs):
+        calls.append(kwargs)
+        if len(calls) > 1:
+            raise RuntimeError("CUDA out of memory")
+        return Image.new("RGB", kwargs.get("size") or backend_app.INFERENCE_SIZE)
+
+    monkeypatch.setattr(engine, "_run", flaky)
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[{"image": image_payload("white"), "category": "upper", "name": "셔츠"}],
+        views=["front", "side", "back"],
+        avatarViews={"side": image_payload("gray"), "back": image_payload("gray")},
+    )
+
+    images, _, _ = engine.generate_tryon(request)
+
+    assert set(images) == {"front"}
+
+
+def test_a_failed_front_view_is_still_an_error(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(engine, "_run", lambda **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[{"image": image_payload("white"), "category": "upper"}],
+    )
+    with pytest.raises(RuntimeError):
+        engine.generate_tryon(request)
+
+
+def test_a_failed_avatar_side_view_still_returns_the_front(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(backend_app, "AVATAR_BODY_REFERENCE", True)
+    calls = []
+    engine = backend_app.FluxImageEngine()
+
+    def flaky(**kwargs):
+        calls.append(kwargs)
+        if len(calls) > 1:
+            raise RuntimeError("CUDA out of memory")
+        return Image.new("RGB", backend_app.INFERENCE_SIZE)
+
+    monkeypatch.setattr(engine, "_run", flaky)
+    data = backend_app.Measurements(gender="men", height=178, weight=72, views=["front", "side"])
+
+    images, _, report = engine.generate_avatar(data)
+
+    assert set(images) == {"front"}
+    # 리포트의 views는 요청이 아니라 실제로 만들어진 것을 담아야 한다.
+    assert report["views"] == ["front"]
+
+
+def test_queue_depth_is_capped_so_the_server_stays_answerable(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """모든 엔드포인트가 동기 함수라 대기 요청이 스레드풀 슬롯을 붙잡는다.
+    제한이 없으면 대기가 쌓였을 때 /api/health조차 응답하지 못한다.
+
+    거절 사유까지 확인한다 — 대기하다 시간이 초과돼도 같은 503이 나오므로,
+    상태 코드만 보면 제한이 실제로 걸렸는지 구분할 수 없다.
+    """
+    monkeypatch.setattr(backend_app, "MAX_QUEUE_DEPTH", 2)
+    # 대기가 실제로 일어나면 오래 걸리므로 짧게 줄여 둔다.
+    monkeypatch.setattr(backend_app, "GPU_QUEUE_TIMEOUT", 5.0)
+    backend_app.INFERENCE_GATE.acquire()  # GPU를 점유한 상태로 만든다
+    admitted = []
+
+    def wait_for_slot():
+        try:
+            backend_app.acquire_inference_slot()
+            admitted.append(True)
+        except Exception:
+            pass
+
+    waiters = [threading.Thread(target=wait_for_slot) for _ in range(2)]
+    detail = None
+    try:
+        for thread in waiters:
+            thread.start()
+        time.sleep(0.2)  # 두 스레드가 대기열에 들어갈 시간
+
+        try:
+            backend_app.acquire_inference_slot()
+            admitted.append(True)
+        except HTTPException as error:
+            detail = error.detail
+    finally:
+        backend_app.INFERENCE_GATE.release()
+        for thread in waiters:
+            thread.join(timeout=6)
+        for _ in admitted:
+            try:
+                backend_app.INFERENCE_GATE.release()
+            except RuntimeError:
+                break
+
+    # 기다리다 지친 것이 아니라 대기열이 꽉 차서 즉시 거절돼야 한다.
+    assert detail == "GPU queue is full"
+
+
+def test_auth_failures_carry_cors_headers(backend_app):
+    """CORS가 인증 미들웨어보다 바깥에 있어야 브라우저가 401 본문을 읽는다.
+    안쪽이면 프론트엔드는 '토큰 만료'와 '서버 다운'을 구분하지 못한다."""
+    from fastapi.testclient import TestClient
+
+    client = TestClient(backend_app.app)
+    origin = {"Origin": "http://localhost:5173"}
+    denied = client.post("/api/tryon", headers={**origin, "Authorization": "Bearer wrong"}, json={})
+
+    assert denied.status_code == 401
+    assert denied.headers.get("access-control-allow-origin") == "http://localhost:5173"
+>>>>>>> Stashed changes
