@@ -16,6 +16,8 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 
 ## 모델과 처리 방식
 
+세 모델이 각각 무슨 일을 맡고 한 GPU를 어떻게 나눠 쓰는지는 [docs/models.md](docs/models.md)에 정리했습니다. 요약하면 **SegFormer가 오려내고, Qwen이 설명하고, FLUX가 그립니다.**
+
 [FLUX.2 [klein] 4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B)는 Apache 2.0 공개 가중치이며 텍스트 생성, 이미지 편집, 다중 참조 편집을 하나의 파이프라인에서 지원합니다.
 
 - 아바타: 치수를 문장이 아니라 **체형 실루엣 이미지**로 바꿔 참조 이미지로 넣고, FLUX가 그 실루엣을 따라 768×1152 전신 이미지를 그립니다(`backend/avatar_body.py`). `views`로 정면·측면·후면을 요청할 수 있고, 미리보기에서 가로로 드래그하면 시점이 돌아갑니다. 측면·후면은 완성된 정면을 참조 이미지로 함께 받아 같은 인물을 유지합니다. `SMPLX_MODEL_PATH`를 지정하면 SMPL-X 메시를 목표 치수에 맞춰 피팅하고 `/api/avatar` 응답의 `fit.measurementErrorCm`으로 cm 단위 오차를 함께 돌려줍니다. 가중치가 없으면 인체 계측 비율 실루엣으로 폴백합니다.
