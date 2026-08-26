@@ -458,6 +458,7 @@ dialog { border-radius: 28px; }
 .seg-model-meta { font-family: var(--seg-mono); font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
 .seg-model-summary { font-size: 11.5px; color: var(--ink); }
 .seg-model-watch { font-size: 11px; color: var(--clay); }
+.seg-model-override { font-family: var(--seg-mono); font-size: 10px; color: var(--sage-dark); margin-top: 2px; }
 
 .seg-lab-drop { margin-bottom: 16px; }
 .seg-lab-run { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }

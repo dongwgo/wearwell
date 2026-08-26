@@ -602,6 +602,7 @@ def list_segmentation_models():
         "production": segment_models.PRODUCTION_MODEL,
         "loaded": loaded,
         "categoryColors": {name: f"#{r:02x}{g:02x}{b:02x}" for name, (r, g, b) in segment_models.CATEGORY_COLORS.items()},
+        # 기본 기준. 모델별 최종 기준은 각 model의 thresholds에 들어 있다.
         "thresholds": segment_models.QUALITY_THRESHOLDS,
     }
 

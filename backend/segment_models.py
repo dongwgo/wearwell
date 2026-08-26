@@ -24,7 +24,9 @@ CATEGORY_COLORS = {
     "액세서리": (236, 98, 160),
 }
 
-# 완성도 낮은 검출을 옷장에 넣지 않기 위한 3중 필터.
+# 완성도 낮은 검출을 옷장에 넣지 않기 위한 3중 필터의 기본값.
+# 모델마다 확신도 분포가 다르므로 ModelSpec.threshold_overrides로 덮을 수 있다
+# (docs/segmentation.md의 "3차 시행착오" 참고).
 # 하나라도 못 넘으면 그 아이템은 버린다(사진에 옷이 없다는 뜻이 아니라
 # 이번 검출의 잘라낸 결과물을 믿을 수 없다는 뜻).
 #
@@ -112,6 +114,12 @@ class ModelSpec:
     summary: str
     watch_for: str
     part_labels: frozenset[str] = field(default_factory=frozenset)
+    # 이 모델에서만 다르게 쓰는 기준. {"신발": {"minConfidence": 0.42}} 꼴로 일부 키만 덮는다.
+    threshold_overrides: dict[str, dict[str, float]] = field(default_factory=dict)
+
+    def thresholds_for(self, category: str) -> dict[str, float]:
+        """기본 기준에 이 모델의 보정을 얹은 최종 기준."""
+        return {**QUALITY_THRESHOLDS[category], **self.threshold_overrides.get(category, {})}
 
     def as_dict(self) -> dict:
         return {
@@ -124,6 +132,8 @@ class ModelSpec:
             "watchFor": self.watch_for,
             "categories": sorted(set(self.label_to_category.values()), key=CATEGORIES.index),
             "labelCount": len(self.label_to_category),
+            "thresholds": {category: self.thresholds_for(category) for category in QUALITY_THRESHOLDS},
+            "thresholdOverrides": self.threshold_overrides,
         }
 
 
@@ -137,7 +147,7 @@ MODELS: dict[str, ModelSpec] = {
             taxonomy="ATR 18",
             weights_mb=110,
             label_to_category=ATR_LABEL_TO_CATEGORY,
-            summary="현재 프로덕션 기본값. 셋 중 가장 가볍고 빠르다.",
+            summary="가장 가볍고 빠르다. 신발 확신도가 높게 나와 기본 기준을 그대로 쓴다.",
             watch_for="아우터 클래스가 없어 코트도 상의로 나온다. 경계가 뭉툭한 편.",
         ),
         ModelSpec(
@@ -147,8 +157,13 @@ MODELS: dict[str, ModelSpec] = {
             taxonomy="ATR 18",
             weights_mb=189,
             label_to_category=ATR_LABEL_TO_CATEGORY,
-            summary="B2와 라벨 체계가 같고 인코더만 키운 버전. 순수 용량 비교용.",
-            watch_for="B2와 카테고리가 같으므로 차이는 경계 품질과 IoU로만 드러난다.",
+            # 무신사 스냅 100장 실측: 신발 확신도 중앙값이 0.487로 기본 기준 0.50 바로
+            # 아래에 몰려 있다. B2(중앙값 0.751)에 맞춘 기준을 그대로 쓰면 면적·채움을
+            # 통과한 신발 후보 41개 중 17개만 살아남는다. 0.42로 낮추면 40개가 통과하고,
+            # 0.42~0.50 구간을 눈으로 확인한 결과 전부 실제 신발이었다.
+            threshold_overrides={"신발": {"minConfidence": 0.42}},
+            summary="현재 프로덕션 기본값. B2와 라벨 체계가 같고 인코더만 키운 버전.",
+            watch_for="신발 확신도가 B2보다 낮게 나와 기준을 0.42로 낮춰 두었다.",
         ),
         ModelSpec(
             key="b3_fashion",
@@ -174,7 +189,7 @@ MODELS: dict[str, ModelSpec] = {
     ]
 }
 
-PRODUCTION_MODEL = "b2_clothes"
+PRODUCTION_MODEL = "b3_clothes"
 DEFAULT_COMPARE = ["b2_clothes", "b3_clothes", "b3_fashion"]
 
 

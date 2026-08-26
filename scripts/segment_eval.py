@@ -28,13 +28,6 @@ import segment_service  # noqa: E402
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 
 
-def reason_axis(reason: str | None) -> str:
-    """탈락 사유를 축 이름 하나로. 어느 기준이 병목인지 세려는 것이다."""
-    if reason is None:
-        return "통과"
-    return reason.split()[0]  # "면적" | "채움" | "확신도"
-
-
 def evaluate(paths, model_key, fixed_fill=None):
     """사진들을 한 모델에 돌려 (카테고리 -> 사유 카운터)와 소요 시간을 모은다."""
     per_category: dict[str, Counter] = defaultdict(Counter)
@@ -53,14 +46,13 @@ def evaluate(paths, model_key, fixed_fill=None):
         for item in analysis["items"]:
             category = item["category"]
             confidences[category].append(item["confidence"])
-            if fixed_fill is None:
-                per_category[category][reason_axis(item["rejectReason"])] += 1
-                continue
-            # 단일 채움 기준을 씌우면 어떻게 되는지 재판정한다.
+            # 두 모드 모두 같은 숫자로 재판정한다. 한쪽은 서버 판정을 읽고 다른 쪽만
+            # 다시 계산하면, 기준선에 걸친 후보에서 두 열을 나란히 비교할 수 없다.
             thresholds = item["thresholds"]
+            min_fill = thresholds["minFill"] if fixed_fill is None else fixed_fill
             if item["areaRatio"] < thresholds["minArea"]:
                 per_category[category]["면적"] += 1
-            elif item["fillRatio"] < fixed_fill:
+            elif item["fillRatio"] < min_fill:
                 per_category[category]["채움"] += 1
             elif item["confidence"] < thresholds["minConfidence"]:
                 per_category[category]["확신도"] += 1
