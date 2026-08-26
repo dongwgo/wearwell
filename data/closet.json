@@ -1,0 +1,155 @@
+{
+  "items": [
+    {
+      "id": "bb4992ede526",
+      "filename": "bb4992ede526.webp",
+      "name": "6951158 17871220354703 big",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-25T07:53:20.067067+00:00"
+    },
+    {
+      "id": "9f354d7f09ca",
+      "filename": "9f354d7f09ca.webp",
+      "name": "6951162 17860703202136 big",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-25T07:54:16.782565+00:00"
+    },
+    {
+      "id": "b9976a1cf3f0",
+      "filename": "b9976a1cf3f0.webp",
+      "name": "detail 6951162 17860703313985 big",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-25T07:59:44.158243+00:00"
+    },
+    {
+      "id": "9b0b4e8e5be3",
+      "filename": "9b0b4e8e5be3.png",
+      "name": "snap-083 - 상의",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:33:17.990832+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "ea250603ec79",
+      "filename": "ea250603ec79.png",
+      "name": "snap-083 - 하의",
+      "presetId": null,
+      "category": "하의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:33:17.991688+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "f03e6899222d",
+      "filename": "f03e6899222d.png",
+      "name": "snap-082 - 상의",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:35:27.590535+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "f841b6b4aac1",
+      "filename": "f841b6b4aac1.png",
+      "name": "snap-082 - 하의",
+      "presetId": null,
+      "category": "하의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:35:27.591233+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "47abd810486f",
+      "filename": "47abd810486f.png",
+      "name": "snap-035 - 상의",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:05.403521+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "043c40a275db",
+      "filename": "043c40a275db.png",
+      "name": "snap-035 - 하의",
+      "presetId": null,
+      "category": "하의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:05.404278+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "152a0fb33852",
+      "filename": "152a0fb33852.png",
+      "name": "snap-035 - 신발",
+      "presetId": null,
+      "category": "신발",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:05.404901+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "5ff6992ab2fd",
+      "filename": "5ff6992ab2fd.png",
+      "name": "snap-035 - 가방",
+      "presetId": null,
+      "category": "가방",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:05.405535+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "54a168ca5acc",
+      "filename": "54a168ca5acc.png",
+      "name": "snap-031 - 상의",
+      "presetId": null,
+      "category": "상의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:20.859286+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "21e999773588",
+      "filename": "21e999773588.png",
+      "name": "snap-031 - 하의",
+      "presetId": null,
+      "category": "하의",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:20.860085+00:00",
+      "source": "segment"
+    },
+    {
+      "id": "c9b6790fd450",
+      "filename": "c9b6790fd450.png",
+      "name": "snap-031 - 신발",
+      "presetId": null,
+      "category": "신발",
+      "size": "",
+      "measurements": {},
+      "addedAt": "2026-08-26T00:39:20.860741+00:00",
+      "source": "segment"
+    }
+  ]
+}

@@ -19,6 +19,7 @@
         <button class="nav-link active" data-view="today">홈</button>
         <button class="nav-link" data-view="wardrobe">내 옷장 <span id="wardrobeCount">200</span></button>
         <button class="nav-link" data-view="discover">코디 추천</button>
+        <button class="nav-link nav-dev" data-view="seglab" id="segLabNavLink" hidden>Seg Lab</button>
       </nav>
       <div class="top-actions">
         <button class="weather-pill" id="weatherButton" aria-label="Weather details">
@@ -130,6 +131,33 @@
           <span>사진 출처 안내</span>
           <p>내 옷장 200장은 무신사 상품 이미지와 레이블로 구성했어요. 룩북은 한국 패션 인물의 공개 착장 사진 100장이며, 각 카드에서 사진 원문과 인물을 확인할 수 있어요. 룩북 사진 출처는 <a href="assets/influencers/sources.json" target="_blank">사진 출처 목록</a>, 옷장 원문은 <a href="assets/lookbook-sources.json" target="_blank">옷장 출처 목록</a>에 정리했어요.</p>
         </div>
+      </section>
+
+      <!-- 개발용 세그멘테이션 비교 탭. localhost이거나 ?dev=1일 때만 seg-lab.js가 노출한다. -->
+      <section class="view seg-lab" id="seglabView">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">개발용 · 옷 분리 모델 비교</p>
+            <h1>같은 사진을<br /><em>모델별로 돌려서 비교해요.</em></h1>
+            <p class="lede">품질 필터에 걸러진 후보와 그 이유, 매핑되지 않은 원본 라벨까지 그대로 보여줘요.</p>
+          </div>
+          <div class="seg-lab-health" id="segLabHealth"><span class="seg-dot"></span><small>백엔드 확인 중…</small></div>
+        </div>
+        <div class="seg-lab-controls">
+          <div class="seg-lab-field"><label for="segLabEndpoint">백엔드 주소</label><input id="segLabEndpoint" type="url" spellcheck="false" placeholder="http://127.0.0.1:8787" /></div>
+          <div class="seg-lab-field seg-lab-models"><span>비교할 모델</span><div class="seg-model-picker" id="segLabModelPicker"></div></div>
+        </div>
+        <label class="drop-zone seg-lab-drop" id="segLabDropZone">
+          <input id="segLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
+          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>원본 해상도로 추론하고, 결과 이미지만 줄여서 보내요</small>
+        </label>
+        <div class="seg-lab-run">
+          <figure class="seg-lab-source" id="segLabSource" hidden><img alt="비교할 원본 사진" /><figcaption></figcaption></figure>
+          <button class="primary-button" id="segLabRun" disabled>모델 비교 실행</button>
+        </div>
+        <div class="seg-lab-status" id="segLabStatus" hidden></div>
+        <div class="seg-lab-results" id="segLabResults"></div>
+        <div class="seg-lab-agreement" id="segLabAgreement"></div>
       </section>
     </main>
 
@@ -264,5 +292,6 @@
     <script src="wardrobe-db.js"></script>
     <script src="qwen-vlm.js"></script>
     <script src="app.js"></script>
+    <script src="seg-lab.js"></script>
   </body>
 </html>

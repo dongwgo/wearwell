@@ -20,6 +20,7 @@ def backend_app(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
     monkeypatch.setenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
     monkeypatch.setenv("VLM_LOAD_IN_4BIT", "1")
+    monkeypatch.setenv("WEARWELL_DEV_TOOLS", "1")
     monkeypatch.setenv("WEARWELL_API_TOKEN", "test-token")
     monkeypatch.setenv("IMAGE_WIDTH", "768")
     monkeypatch.setenv("IMAGE_HEIGHT", "1152")
@@ -47,6 +48,12 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["vlmModel"] == "Qwen/Qwen3-VL-8B-Instruct"
     assert result["vlmLoaded"] is False
     assert result["vlmQuantization"] == "nf4"
+    assert result["segmentationModel"] == "mattmdjaga/segformer_b2_clothes"
+    assert result["segmentationModelKey"] == "b2_clothes"
+    assert result["segmentationLoaded"] is False
+    assert result["segmentationLoadedModels"] == []
+    assert result["segmentationDevice"] is None
+    assert result["segmentationWarmupVerified"] is False
     assert result["queueTimeoutSeconds"] == 300
     assert result["rateLimitPerMinute"] == 60
 
@@ -134,10 +141,11 @@ def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypa
 def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: pytest.MonkeyPatch):
     from fastapi.testclient import TestClient
 
+    calls = []
     monkeypatch.setitem(
         sys.modules,
         "segment_service",
-        SimpleNamespace(segment=lambda raw: [{
+        SimpleNamespace(segment=lambda raw, model_key: calls.append(model_key) or [{
             "category": "상의",
             "label": "Upper-clothes",
             "confidence": 0.91,
@@ -155,6 +163,161 @@ def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: 
     assert item["category"] == "상의"
     assert item["image"].startswith("data:image/png;base64,")
     assert item["confidence"] == 0.91
+    # 모델을 지정하지 않으면 프로덕션 기본값으로 돈다.
+    assert calls == [None]
+    assert response.json()["model"]["key"] == "b2_clothes"
+
+
+def test_segmentation_route_rejects_unknown_model(backend_app):
+    from fastapi.testclient import TestClient
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/segment",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "name": "outfit", "model": "does-not-exist"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_only_fashionpedia_model_can_produce_outer_category():
+    """ATR 라벨에는 아우터가 없다 — 코트도 Upper-clothes로 나온다.
+
+    비교 탭에서 아우터 컬럼이 한 모델에만 뜨는 게 버그가 아니라는 근거.
+    """
+    import segment_models
+
+    outer_capable = {
+        key for key, spec in segment_models.MODELS.items()
+        if "아우터" in spec.label_to_category.values()
+    }
+    assert outer_capable == {"b3_fashion"}
+    # 아우터를 만들 수 있는 모델이 있으니 품질 기준에도 아우터가 있어야 한다.
+    assert set(segment_models.QUALITY_THRESHOLDS) >= set(segment_models.CATEGORIES)
+
+
+def test_dev_model_listing_describes_every_registered_model(backend_app):
+    from fastapi.testclient import TestClient
+
+    payload = TestClient(backend_app.app).get("/api/dev/segment/models").json()
+
+    import segment_models
+
+    assert [model["key"] for model in payload["models"]] == list(segment_models.MODELS)
+    assert payload["production"] in [model["key"] for model in payload["models"]]
+    assert len(payload["default"]) == 3
+    # 오버레이 색은 모델이 아니라 카테고리로 정해져야 나란히 놓고 비교할 수 있다.
+    assert set(payload["categoryColors"]) == set(segment_models.CATEGORY_COLORS)
+
+
+def test_dev_routes_are_hidden_when_dev_tools_are_disabled(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "DEV_TOOLS_ENABLED", False)
+    client = TestClient(backend_app.app)
+
+    assert client.get("/api/dev/segment/models").status_code == 404
+    assert client.post(
+        "/api/dev/segment/compare",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload()},
+    ).status_code == 404
+
+
+def stub_analysis(category: str, mask):
+    return {
+        "model": {"key": "stub", "title": "Stub"},
+        "device": "cpu",
+        "loadSeconds": 0.0,
+        "inferenceSeconds": 0.1,
+        "imageSize": {"width": 4, "height": 4},
+        "acceptedCount": 1,
+        "items": [{"category": category, "accepted": True, "png_bytes": b"crop"}],
+        "rawLabels": [],
+        "overlay_png_bytes": b"overlay",
+        "_masks": {category: mask},
+    }
+
+
+def test_compare_route_returns_one_result_per_model_with_pairwise_iou(backend_app, monkeypatch: pytest.MonkeyPatch):
+    import numpy as np
+    from fastapi.testclient import TestClient
+
+    import segment_service as real_service
+
+    left = np.array([[True, True], [False, False]])
+    right = np.array([[True, False], [False, False]])
+    analyses = {"b2_clothes": stub_analysis("상의", left), "b3_clothes": stub_analysis("상의", right)}
+    monkeypatch.setitem(
+        sys.modules,
+        "segment_service",
+        SimpleNamespace(
+            analyze=lambda raw, key: analyses[key],
+            mask_iou=real_service.mask_iou,
+            loaded_keys=lambda: [],
+        ),
+    )
+
+    payload = TestClient(backend_app.app).post(
+        "/api/dev/segment/compare",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "models": ["b2_clothes", "b3_clothes"]},
+    ).json()
+
+    assert len(payload["results"]) == 2
+    # 마스크는 IoU 계산용이라 응답에 실려 나가면 안 된다(직렬화도 안 된다).
+    assert all("_masks" not in result for result in payload["results"])
+    assert payload["results"][0]["overlay"].startswith("data:image/png;base64,")
+    assert payload["results"][0]["items"][0]["image"].startswith("data:image/png;base64,")
+    assert payload["agreement"] == [{"left": "b2_clothes", "right": "b3_clothes", "categories": {"상의": 0.5}}]
+
+
+def test_compare_route_keeps_working_when_one_model_fails(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """모델 하나가 못 떠도 나머지 비교 결과는 살려야 한다 — 비교가 목적이므로."""
+    import numpy as np
+    from fastapi.testclient import TestClient
+
+    import segment_service as real_service
+
+    def analyze(raw, key):
+        if key == "b3_clothes":
+            raise RuntimeError("가중치를 내려받지 못했습니다")
+        return stub_analysis("하의", np.array([[True, False]]))
+
+    monkeypatch.setitem(
+        sys.modules,
+        "segment_service",
+        SimpleNamespace(analyze=analyze, mask_iou=real_service.mask_iou, loaded_keys=lambda: []),
+    )
+
+    payload = TestClient(backend_app.app).post(
+        "/api/dev/segment/compare",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "models": ["b2_clothes", "b3_clothes"]},
+    ).json()
+
+    assert payload["results"][0]["acceptedCount"] == 1
+    assert payload["results"][1]["error"] == "가중치를 내려받지 못했습니다"
+    # 한쪽이 실패했으면 비교할 쌍이 없다.
+    assert payload["agreement"] == []
+
+
+def test_agreement_flags_categories_only_one_model_detected(backend_app):
+    """한쪽만 검출한 카테고리를 빠뜨리면 '아우터를 얘만 찾았다'는 걸 놓친다."""
+    import numpy as np
+
+    import segment_service
+
+    rows = backend_app.pairwise_agreement(
+        {
+            "b2_clothes": {"상의": np.array([[True]])},
+            "b3_fashion": {"상의": np.array([[True]]), "아우터": np.array([[True]])},
+        },
+        segment_service.mask_iou,
+    )
+
+    assert rows[0]["categories"]["상의"] == 1.0
+    assert rows[0]["categories"]["아우터"] == {"onlyIn": "b3_fashion"}
 
 
 def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monkeypatch: pytest.MonkeyPatch):

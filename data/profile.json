@@ -1,0 +1,15 @@
+{
+  "height": 181,
+  "weight": 71,
+  "gender": 1.0,
+  "genderLabel": "men",
+  "muscle": 1.0,
+  "bodyMeasurements": {},
+  "shoulder": null,
+  "inseam": null,
+  "bodyShape": "보통",
+  "styles": [],
+  "priorities": [
+    "날씨에 잘 맞기"
+  ]
+}

@@ -19,8 +19,11 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
+import segment_models
+
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+SEGMENTATION_MODEL = os.getenv("SEGMENTATION_MODEL", "mattmdjaga/segformer_b2_clothes")
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
 VLM_MAX_PIXELS = int(os.getenv("VLM_MAX_PIXELS", str(1024 * 1024)))
 API_TOKEN = os.getenv("WEARWELL_API_TOKEN", "")
@@ -34,6 +37,8 @@ MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+DEV_TOOLS_ENABLED = os.getenv("WEARWELL_DEV_TOOLS", "0") == "1"
+MAX_COMPARE_MODELS = 4
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
 GPU_LOCK = threading.RLock()
 INFERENCE_GATE = threading.Lock()
@@ -41,6 +46,7 @@ RATE_LOCK = threading.Lock()
 REQUEST_TIMES: dict[str, deque[float]] = defaultdict(deque)
 WARMUP_VERIFIED = False
 VLM_WARMUP_VERIFIED = False
+SEGMENTATION_WARMUP_VERIFIED = False
 
 
 class BodyLimitMiddleware:
@@ -156,6 +162,13 @@ class VLMImageRequest(BaseModel):
 class SegmentationRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
     name: str = Field(default="full-body photo", max_length=120)
+    model: str | None = Field(default=None, max_length=60)
+
+
+class SegmentCompareRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    name: str = Field(default="full-body photo", max_length=120)
+    models: list[str] = Field(default_factory=list, max_length=MAX_COMPARE_MODELS)
 
 
 def decode_image(value: str) -> Image.Image:
@@ -497,14 +510,23 @@ def acquire_inference_slot() -> None:
 
 @app.get("/api/health")
 def health():
+    import segment_service
+
     available, name = cuda_info()
+    segmentation = segment_service.status()
     return {
         "ok": True,
         "cuda": available,
         "gpu": name,
         "model": IMAGE_MODEL,
         "avatarModel": IMAGE_MODEL,
-        "segmentationModel": "mattmdjaga/segformer_b2_clothes",
+        "segmentationModel": segmentation["model"],
+        "segmentationModelKey": segmentation["modelKey"],
+        "segmentationLoaded": segmentation["loaded"],
+        "segmentationLoadedModels": segmentation["loadedModels"],
+        "segmentationDevice": segmentation["device"],
+        "segmentationWarmupVerified": SEGMENTATION_WARMUP_VERIFIED,
+        "devTools": DEV_TOOLS_ENABLED,
         "tryonModel": IMAGE_MODEL,
         "vlmModel": VLM_MODEL,
         "modelLoaded": image_engine.pipe is not None,
@@ -543,8 +565,9 @@ def segment_closet_photo(request: SegmentationRequest):
         image.save(source, format="PNG")
         import segment_service
 
-        detections = segment_service.segment(source.getvalue())
+        detections = segment_service.segment(source.getvalue(), request.model)
         return {
+            "model": segment_models.resolve(request.model).as_dict(),
             "items": [
                 {
                     "id": f"segment-{int(time.time() * 1000)}-{index}",
@@ -557,10 +580,94 @@ def segment_closet_photo(request: SegmentationRequest):
                 for index, item in enumerate(detections)
             ]
         }
+    except KeyError as error:
+        raise HTTPException(status_code=422, detail=str(error.args[0])) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except Exception as error:
         logging.exception("Garment segmentation failed")
+        raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+def require_dev_tools() -> None:
+    if not DEV_TOOLS_ENABLED:
+        raise HTTPException(status_code=404, detail="Dev tools are disabled")
+
+
+@app.get("/api/dev/segment/models")
+def list_segmentation_models():
+    require_dev_tools()
+    import segment_service
+
+    return {
+        "models": [spec.as_dict() for spec in segment_models.MODELS.values()],
+        "default": segment_models.DEFAULT_COMPARE,
+        "production": segment_models.PRODUCTION_MODEL,
+        "loaded": segment_service.loaded_keys(),
+        "categoryColors": {name: f"#{r:02x}{g:02x}{b:02x}" for name, (r, g, b) in segment_models.CATEGORY_COLORS.items()},
+        "thresholds": segment_models.QUALITY_THRESHOLDS,
+    }
+
+
+def pairwise_agreement(masks_by_model: dict, iou) -> list[dict]:
+    rows = []
+    keys = list(masks_by_model)
+    for index, left in enumerate(keys):
+        for right in keys[index + 1:]:
+            left_masks, right_masks = masks_by_model[left], masks_by_model[right]
+            categories = sorted(set(left_masks) | set(right_masks), key=segment_models.CATEGORIES.index)
+            scores = {}
+            for category in categories:
+                if category in left_masks and category in right_masks:
+                    scores[category] = iou(left_masks[category], right_masks[category])
+                else:
+                    scores[category] = {"onlyIn": left if category in left_masks else right}
+            rows.append({"left": left, "right": right, "categories": scores})
+    return rows
+
+
+@app.post("/api/dev/segment/compare")
+def compare_segmentation_models(request: SegmentCompareRequest):
+    require_dev_tools()
+    keys = request.models or segment_models.DEFAULT_COMPARE
+    unknown = [key for key in keys if key not in segment_models.MODELS]
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"알 수 없는 모델: {', '.join(unknown)}")
+    acquire_inference_slot()
+    try:
+        image = decode_image(request.image)
+        source = io.BytesIO()
+        image.save(source, format="PNG")
+        raw = source.getvalue()
+        import segment_service
+
+        results, masks_by_model = [], {}
+        for key in keys:
+            try:
+                analysis = segment_service.analyze(raw, key)
+            except Exception as error:
+                logging.exception("Segmentation comparison failed for %s", key)
+                results.append({"model": segment_models.MODELS[key].as_dict(), "error": str(error) or "모델 실행에 실패했습니다"})
+                continue
+            masks_by_model[key] = analysis.pop("_masks")
+            analysis["overlay"] = "data:image/png;base64," + base64.b64encode(analysis.pop("overlay_png_bytes")).decode()
+            for item in analysis["items"]:
+                item["image"] = "data:image/png;base64," + base64.b64encode(item.pop("png_bytes")).decode()
+            results.append(analysis)
+        return {
+            "name": request.name,
+            "requested": keys,
+            "results": results,
+            "agreement": pairwise_agreement(masks_by_model, segment_service.mask_iou),
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except HTTPException:
+        raise
+    except Exception as error:
+        logging.exception("Segmentation comparison failed")
         raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
     finally:
         INFERENCE_GATE.release()
@@ -614,7 +721,7 @@ def analyze_body(request: VLMImageRequest):
 
 @app.post("/api/warmup")
 def warmup_model():
-    global WARMUP_VERIFIED, VLM_WARMUP_VERIFIED
+    global WARMUP_VERIFIED, VLM_WARMUP_VERIFIED, SEGMENTATION_WARMUP_VERIFIED
     available, _ = cuda_info()
     if not available:
         raise HTTPException(status_code=503, detail="CUDA GPU is unavailable")
@@ -624,6 +731,11 @@ def warmup_model():
         VLM_WARMUP_VERIFIED = True
         image_engine._load()
         WARMUP_VERIFIED = True
+        import segment_service
+
+        segment_service.get_model()
+        SEGMENTATION_WARMUP_VERIFIED = True
+        segmentation = segment_service.status()
         return {
             "ok": True,
             "model": IMAGE_MODEL,
@@ -631,6 +743,8 @@ def warmup_model():
             "vlmModel": VLM_MODEL,
             "vlmDtype": vlm_engine.dtype,
             "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
+            "segmentationModel": SEGMENTATION_MODEL,
+            "segmentationDevice": segmentation["device"],
         }
     except Exception as error:
         logging.exception("Model warmup failed")

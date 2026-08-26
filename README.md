@@ -145,6 +145,7 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/lookbook`
 - `POST /api/vlm/body`
 - `POST /api/warmup`
+- `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (개발용 Seg Lab)
 
 모델 추론 endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
@@ -163,7 +164,31 @@ window.WEARWELL_CONFIG = {
 - `HF_HOME`: Hugging Face cache 경로
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
 - `SEGMENTATION_DEVICE`: `auto`(기본), `cuda`, `cpu` 중 하나. `auto`는 GPU가 있으면 GPU를 사용
+- `WEARWELL_DEV_TOOLS`: `1`이면 개발용 Seg Lab API를 노출. 기본값은 `0`
+- `SEGMENT_MODEL_CACHE_SIZE`: 메모리에 유지할 세그멘테이션 모델 수. 기본값은 `3`
 - `WEARWELL_API_TOKEN`: API bearer token
+
+## Seg Lab — 옷 분리 모델 비교
+
+전신사진 한 장을 여러 모델에 실행해 크롭, 오버레이, 품질 필터 탈락 이유와 모델 간 IoU를 비교하는 개발 도구입니다. `WEARWELL_DEV_TOOLS=1`로 backend를 시작하고 로컬 프론트엔드에 `?dev=1`을 붙이면 상단에 **Seg Lab** 탭이 표시됩니다.
+
+모델 목록은 [`backend/segment_models.py`](backend/segment_models.py)에서 관리합니다.
+
+| key | 모델 | 라벨 체계 | 특징 |
+| --- | --- | --- | --- |
+| `b2_clothes` | `mattmdjaga/segformer_b2_clothes` | ATR 18 | 프로덕션 기본값 |
+| `b3_clothes` | `sayeed99/segformer_b3_clothes` | ATR 18 | B2보다 큰 인코더 |
+| `b3_fashion` | `sayeed99/segformer-b3-fashion` | Fashionpedia 46 | 상의와 아우터 구분 |
+| `b5_human_parsing` | `matei-dorian/segformer-b5-finetuned-human-parsing` | ATR 18 | 가장 큰 비교 모델 |
+
+ATR 라벨에는 아우터가 없어 코트도 상의로 분류될 수 있습니다. Fashionpedia 모델은 아우터를 구분하지만 소매·카라를 별도 부속 라벨로 분리합니다.
+
+```bash
+cd backend
+WEARWELL_DEV_TOOLS=1 WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --host 127.0.0.1 --port 8787
+```
+
+`local-config.js`의 `LOCAL_API_TOKEN`을 같은 토큰으로 설정하고 <http://127.0.0.1:8000/?dev=1>을 엽니다. 처음 실행하는 모델은 가중치를 다운로드하므로 시간이 걸릴 수 있습니다.
 
 ## 개발 검증
 
