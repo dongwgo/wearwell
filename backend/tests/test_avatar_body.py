@@ -25,6 +25,7 @@ from avatar_body import (  # noqa: E402
     build_body_reference,
     estimate_missing,
     measure_mesh,
+    pad_for_full_body,
     render_proportional_silhouette,
     rotate_y,
 )
@@ -195,3 +196,50 @@ def test_every_view_prompt_demands_full_body_framing():
         prompt = build_avatar_prompt(BodyTarget("women", 165, 55), view=view)
         assert "soles of the feet inside the frame" in prompt
         assert "below the feet" in prompt
+
+
+def _body_rows(image) -> tuple[int, int]:
+    """이미지에서 몸이 차지하는 첫 행과 마지막 행."""
+    widths = silhouette_widths(image)
+    filled = [index for index, width in enumerate(widths) if width > 0]
+    return filled[0], filled[-1]
+
+
+def test_padding_creates_empty_space_below_a_body_that_ran_off_the_edge():
+    from PIL import Image, ImageDraw
+
+    # 종아리에서 잘린 인물 사진: 몸이 아래 모서리까지 닿아 있다.
+    cropped = Image.new("RGB", (768, 1152), (154, 154, 152))
+    ImageDraw.Draw(cropped).rectangle((280, 120, 490, 1151), fill=(90, 70, 60))
+    assert _body_rows(cropped)[1] >= 1151
+
+    padded = pad_for_full_body(cropped)
+
+    assert padded.size == (768, 1152)
+    top, bottom = _body_rows(padded)
+    # 위아래 모두 배경이 남아야 모델이 "여기까지가 화면"이라고 읽는다.
+    assert top > 0
+    assert bottom < padded.height - 40
+
+
+def test_padding_samples_the_background_not_the_body():
+    from PIL import Image, ImageDraw
+
+    background = (200, 30, 30)  # 눈에 띄는 색이라야 잘못 골랐을 때 바로 보인다
+    image = Image.new("RGB", (768, 1152), background)
+    ImageDraw.Draw(image).rectangle((300, 0, 470, 1151), fill=(20, 20, 20))
+
+    padded = pad_for_full_body(image)
+
+    # 맨 아랫줄 가운데는 몸이 아니라 배경색이어야 한다.
+    pixel = padded.getpixel((padded.width // 2, padded.height - 4))
+    assert abs(pixel[0] - background[0]) < 40 and pixel[0] > pixel[1]
+
+
+def test_padding_keeps_a_body_that_already_had_margins():
+    from PIL import Image, ImageDraw
+
+    image = Image.new("RGB", (768, 1152), (240, 240, 240))
+    ImageDraw.Draw(image).rectangle((300, 100, 470, 1000), fill=(40, 40, 40))
+    top, bottom = _body_rows(pad_for_full_body(image))
+    assert top > 0 and bottom < 1152

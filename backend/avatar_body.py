@@ -209,6 +209,54 @@ def fit_betas(target: BodyTarget, num_betas: int = 10, max_iterations: int = 60)
     return solution.x, vertices, measure_mesh(vertices)
 
 
+def _edge_colour(pixels: np.ndarray, rows: slice, keep_fraction: float) -> tuple[int, int, int]:
+    """가장자리 띠에서 배경색을 고른다.
+
+    몸이 서 있는 가운데 열을 빼고 바깥쪽만 본다. 아래쪽 띠는 가운데에 다리와
+    신발이 있어서, 통째로 평균 내면 배경이 아니라 살색이 나온다.
+    """
+    band = pixels[rows]
+    width = band.shape[1]
+    margin = int(width * keep_fraction)
+    outer = np.concatenate([band[:, :margin], band[:, width - margin:]], axis=1)
+    return tuple(int(v) for v in np.median(outer.reshape(-1, 3), axis=0))
+
+
+def pad_for_full_body(
+    image: Image.Image, headroom: float = 0.05, footroom: float = 0.12, size=RENDER_SIZE
+) -> Image.Image:
+    """인물 사진 위아래에 배경색 여백을 덧대고 목표 크기로 되돌린다.
+
+    착장 결과에서 발이 잘리는 문제는 프롬프트만으로 잘 잡히지 않는다 —
+    FLUX.2는 참조 이미지의 **구도**를 그대로 따라가는 성향이 강해서, 넣어준
+    사람 사진이 종아리에서 끝나면 결과도 종아리에서 끝난다. 문장으로 부탁하는
+    대신 참조 이미지에 실제로 빈 공간을 만들어 "여기까지가 화면"이라고 보여준다.
+    아래쪽을 위쪽보다 넉넉히 잡는 건 신발이 발밑으로 더 자라기 때문이다.
+    """
+    pixels = np.asarray(image.convert("RGB"))
+    height, width = pixels.shape[:2]
+    strip = max(2, int(height * 0.03))
+    top_colour = _edge_colour(pixels, slice(0, strip), 0.30)
+    bottom_colour = _edge_colour(pixels, slice(height - strip, height), 0.15)
+
+    top_pad = int(height * headroom)
+    bottom_pad = int(height * footroom)
+    canvas = Image.new("RGB", (width, height + top_pad + bottom_pad), top_colour)
+    if bottom_pad:
+        ImageDraw.Draw(canvas).rectangle(
+            (0, top_pad + height, width, canvas.height), fill=bottom_colour
+        )
+    canvas.paste(image.convert("RGB"), (0, top_pad))
+    # 이어붙인 자리에 생기는 가로줄을 없앤다. 띠 부분만 흐리게 문질러서 배경이
+    # 자연스럽게 이어지도록 하고, 인물 영역은 건드리지 않는다.
+    for y0, y1 in ((0, top_pad), (top_pad + height, canvas.height)):
+        if y1 - y0 < 4:
+            continue
+        seam = (0, max(0, y0 - 6), width, min(canvas.height, y1 + 6))
+        canvas.paste(canvas.crop(seam).filter(ImageFilter.GaussianBlur(5)), seam[:2])
+    return canvas.resize(size, Image.Resampling.LANCZOS)
+
+
 def rotate_y(vertices: np.ndarray, degrees: float) -> np.ndarray:
     """메시를 세로축 기준으로 돌린다. 측면·후면 뷰는 이걸로 공짜로 얻는다."""
     if not degrees:
