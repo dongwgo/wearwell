@@ -91,6 +91,7 @@ const setup = await evaluate(`({
   models: document.querySelectorAll('#refineLabModel option').length,
   selected: document.querySelector('#refineLabModel').value,
   chips: document.querySelectorAll('.refine-chip').length,
+  repairControls: document.querySelectorAll('#refineOptClose, #refineOptHoles, #refineOptOccluded, #refineOptStrays, #refineOptSmooth, #refineEnclosure').length,
   presets: document.querySelectorAll('.refine-preset').length,
   activePreset: document.querySelector('.refine-preset.on')?.textContent.trim() || "",
   endpoint: document.querySelector('#refineLabEndpoint').value,
@@ -145,6 +146,8 @@ const value = await evaluate(`({
   imagesTotal: document.querySelectorAll('.refine-stage img, .refine-overlay img').length,
   repairSteps: document.querySelectorAll('.refine-steps li').length,
   diagnosed: [...document.querySelectorAll('.refine-item')].filter(item => /구멍/.test(item.textContent)).length,
+  occlusionDiagnosed: [...document.querySelectorAll('.refine-item')].filter(item => /가려짐/.test(item.textContent)).length,
+  legendColors: document.querySelectorAll('.refine-legend span').length,
   summaryFilled: document.querySelector('#refineLabSummary').children.length,
   flowFilled: document.querySelector('#refineFlowSegment').textContent,
   generatedItems: [...document.querySelectorAll('.refine-item')].filter(item => item.querySelectorAll('.refine-stage')[4]?.querySelector('img')).length,
@@ -169,11 +172,14 @@ if (setup.chips !== 7) problems.push(`카테고리 칩 ${setup.chips}개`);
 if (!setup.presets) problems.push("백엔드 프리셋 버튼 없음");
 if (endpoint && setup.endpoint !== endpoint) problems.push(`주소가 ${setup.endpoint}로 잡힘`);
 if (setup.flowSteps !== 5) problems.push(`파이프라인 단계 ${setup.flowSteps}개`);
+if (setup.repairControls !== 6) problems.push(`보수 옵션 ${setup.repairControls}개`);
 if (!value.items) problems.push("처리된 옷이 없음");
 if (value.stagesPerItem.some(count => count !== 5)) problems.push(`옷별 단계 ${value.stagesPerItem.join("/")}`);
 if (value.imagesLoaded !== value.imagesTotal || !value.imagesTotal) problems.push(`이미지 로딩 ${value.imagesLoaded}/${value.imagesTotal}`);
 if (!value.repairSteps) problems.push("보수 단계 내역이 렌더되지 않음");
 if (value.diagnosed !== value.items) problems.push(`결함 진단 ${value.diagnosed}/${value.items}`);
+if (value.occlusionDiagnosed !== value.items) problems.push(`가림 진단 ${value.occlusionDiagnosed}/${value.items}`);
+if (value.legendColors !== value.items * 3) problems.push(`결함 범례 ${value.legendColors}개 (옷당 3색이어야 함)`);
 if (!value.summaryFilled) problems.push("요약 카드가 비어 있음");
 if (!/\d/.test(value.flowFilled)) problems.push("파이프라인 다이어그램에 실행 수치가 반영되지 않음");
 if (value.failedStages) problems.push(`실패한 단계 ${value.failedStages}개`);

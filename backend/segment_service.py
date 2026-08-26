@@ -28,6 +28,9 @@ CACHE_SIZE = max(1, int(os.getenv("SEGMENT_MODEL_CACHE_SIZE", "3")))
 HF_TOKEN = os.getenv("HF_TOKEN") or None
 # 이 비율 미만으로 잡힌 라벨은 노이즈로 보고 rawLabels에서 뺀다.
 RAW_LABEL_MIN_RATIO = 0.0005
+# 모델마다 배경 라벨의 이름이 다르다. "사람 픽셀 = 배경이 아닌 것"을 가르는 기준선이라
+# 옷 카테고리 매핑과 달리 모델 스펙이 아니라 여기에 둔다.
+BACKGROUND_LABELS = ("Background", "unlabelled")
 # analyze()는 화면에 늘어놓고 눈으로 비교하는 용도라 원본 해상도를 보낼 이유가 없다.
 # 모델 3개면 크롭만 15장이라 원본 크기로는 응답이 수십 MB가 된다. 세그멘테이션
 # 자체는 원본으로 돌리고, 응답에 실을 이미지만 줄인다.
@@ -289,7 +292,7 @@ def _raw_labels(pred, id2label, spec, total_pixels):
     for label_id, label_name in id2label.items():
         count = int(counts[int(label_id)]) if int(label_id) < len(counts) else 0
         ratio = count / total_pixels
-        if label_name in ("Background", "unlabelled") or ratio < RAW_LABEL_MIN_RATIO:
+        if label_name in BACKGROUND_LABELS or ratio < RAW_LABEL_MIN_RATIO:
             continue
         rows.append({
             "label": label_name,
@@ -303,7 +306,12 @@ def _raw_labels(pred, id2label, spec, total_pixels):
 def analyze(image_bytes: bytes, model_key: str) -> dict:
     """개발용 진단. 걸러진 후보와 이유, 원본 라벨 분포, 오버레이, 소요 시간까지.
 
-    `_masks`는 모델 간 IoU 계산용 numpy 마스크라 직렬화 전에 호출부가 걷어낸다.
+    `_masks`(모델 간 IoU 계산용)와 `_parse`(라벨맵 원본)는 numpy라 직렬화 전에
+    호출부가 걷어낸다.
+
+    `_parse`를 싣는 이유: 옷 카테고리로 매핑되지 않는 라벨 — Left-arm, Hair, Bag —
+    은 여기서 버려지지만, "이 자리는 배경이 아니라 팔에 덮인 옷"이라는 판정에는
+    그 라벨이 유일한 근거다(refine_service.find_occluded).
     """
     import numpy as np
     from PIL import Image
@@ -348,6 +356,11 @@ def analyze(image_bytes: bytes, model_key: str) -> dict:
         "rawLabels": _raw_labels(pred, id2label, spec, height * width),
         "overlay_png_bytes": _overlay_png(img_np, masks),
         "_masks": masks,
+        "_parse": {
+            "pred": pred,
+            "names": {int(label_id): name for label_id, name in id2label.items()},
+            "background": [int(label_id) for label_id, name in id2label.items() if name in BACKGROUND_LABELS],
+        },
     }
 
 

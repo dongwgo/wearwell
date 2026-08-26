@@ -586,7 +586,9 @@ dialog { border-radius: 28px; }
 .refine-legend { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 10px; color: var(--muted); }
 .refine-legend span { width: 9px; height: 9px; border-radius: 3px; }
 .refine-legend .hole { background: #e84c4c; }
+.refine-legend .occluded { background: #f5a623; }
 .refine-legend .stray { background: #4285f4; }
+.refine-swatch { display: inline-block; width: 9px; height: 9px; margin-right: 4px; border-radius: 3px; vertical-align: -1px; background: var(--swatch, transparent); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
 .refine-note { margin: 0; font-size: 10.5px; color: var(--muted); }
 .refine-error { margin: 0; font-size: 11px; color: var(--clay); overflow-wrap: anywhere; }
 

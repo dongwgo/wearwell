@@ -213,9 +213,14 @@ class RepairOptions(BaseModel):
 
     close: bool = True
     fillHoles: bool = True
+    # 팔·가방에 가려진 자리를 세그멘테이션 라벨을 근거로 메운다. 구멍과 달리 바깥과
+    # 이어진 결손이라 형태학 연산으로는 되돌릴 수 없다.
+    fillOccluded: bool = True
     dropStrays: bool = True
+    smooth: bool = True
     closeScale: float = Field(default=0.012, ge=0.0, le=0.05)
     strayRatio: float = Field(default=0.08, ge=0.0, le=1.0)
+    occlusionEnclosure: float = Field(default=0.6, ge=0.0, le=1.0)
 
 
 class ClosetRefineRequest(BaseModel):
@@ -518,13 +523,20 @@ class FluxImageEngine:
             return image, engine
         return self.fallback_tryon(person, ordered), "tryon-preview-fallback"
 
-    def refine_garment(self, garment: Image.Image, category: str, name: str, seed: int, steps: int | None = None):
+    def refine_garment(
+        self, garment: Image.Image, category: str, name: str, seed: int,
+        steps: int | None = None, hint: str = "",
+    ):
         """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
 
-        입력은 이미 흰 배경에 얹은 정규화 이미지지만, 팔에 가려졌던 자리는 여전히
-        비어 있다. 형태학 연산으로는 없는 픽셀을 만들 수 없어서 그 복원을 여기서
-        시킨다. 그래서 프롬프트가 "구멍을 메우고 끊어진 부분을 잇되 색·패턴·재단은
+        입력은 이미 흰 배경에 얹은 정규화 이미지지만, 가려졌던 자리는 실루엣만
+        메워져 대표색으로 평평하게 칠해져 있다. 그 안의 질감·주름을 그리는 게 여기
+        일이다. 그래서 프롬프트가 "구멍을 메우고 끊어진 부분을 잇되 색·패턴·재단은
         그대로"라는 말을 반드시 담아야 한다 — 자유롭게 그리라고 하면 다른 옷이 온다.
+
+        `hint`는 2단계 진단이 만든 한 문장이다(`refine_service.generation_hint`).
+        "어디가 무엇에 가려져 비었는지"를 알려주지 않으면 모델은 평평한 색면을
+        무지 패널로, 파먹힌 실루엣을 원래 디자인으로 읽는다.
         """
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
@@ -541,6 +553,7 @@ class FluxImageEngine:
                 "plain pure white background with soft even studio lighting and a subtle contact shadow. "
                 "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
                 "no text, no watermark, no collage, no split screen, no duplicated item."
+                f"{hint}"
             )
             return self._run(prompt=prompt, seed=seed, images=[garment], size=REFINE_SIZE, steps=steps), self.engine_name
         # GPU가 없어도 랩이 돌아야 한다. 정규화 이미지를 그대로 최종본으로 쓰면
@@ -883,6 +896,9 @@ def refine_closet_photo(request: ClosetRefineRequest):
 
         analysis = segment_service.analyze(source.getvalue(), request.model or segment_models.PRODUCTION_MODEL)
         masks = analysis.pop("_masks")
+        # 라벨맵이 있어야 "여기는 배경이 아니라 팔에 가려진 옷"을 가릴 수 있다.
+        # 예전 백엔드·테스트 스텁은 주지 않으므로 없으면 가림 진단만 빠진다.
+        parse = analysis.pop("_parse", None)
         image_np = np.array(image)
 
         wanted = [
@@ -897,7 +913,7 @@ def refine_closet_photo(request: ClosetRefineRequest):
         for item in wanted[:MAX_REFINE_ITEMS]:
             item.pop("png_bytes", None)  # 스테이지 크롭을 따로 만든다 — 같은 그림을 두 번 싣지 않는다
             repair_started = time.perf_counter()
-            stages = refine_service.build_stages(image_np, masks[item["category"]], options)
+            stages = refine_service.build_stages(image_np, masks[item["category"]], options, parse)
             item["diagnosis"] = stages["diagnosis"]
             item["repair"] = stages["repair"]
             item["repairSeconds"] = round(time.perf_counter() - repair_started, 2)
@@ -916,6 +932,8 @@ def refine_closet_photo(request: ClosetRefineRequest):
                     closet, engine = image_engine.refine_garment(
                         stages["image"], item["category"], f"{request.name} {item['category']}",
                         request.seed, request.steps,
+                        # 2단계가 알아낸 것을 넘기지 않으면 모델은 메운 자리를 "원래 그런 디자인"으로 읽는다.
+                        refine_service.generation_hint(item["diagnosis"]),
                     )
                     item["stages"]["closet"] = encode_image(closet)
                     item["generation"] = {
@@ -1008,6 +1026,7 @@ def compare_segmentation_models(request: SegmentCompareRequest):
                 results.append({"model": segment_models.MODELS[key].as_dict(), "error": str(error) or "모델 실행에 실패했습니다"})
                 continue
             masks_by_model[key] = analysis.pop("_masks")
+            analysis.pop("_parse", None)  # 라벨맵은 refine 경로에서만 쓴다 — 직렬화도 되지 않는다
             analysis["overlay"] = encode_png(analysis.pop("overlay_png_bytes"))
             for item in analysis["items"]:
                 item["image"] = encode_png(item.pop("png_bytes"))

@@ -175,8 +175,8 @@
         <ol class="refine-flow">
           <li><b>1</b><strong>전신샷</strong><small id="refineFlowSource">사진 한 장</small></li>
           <li><b>2</b><strong>세그멘테이션</strong><small id="refineFlowSegment">옷 픽셀을 카테고리로</small></li>
-          <li><b>3</b><strong>결함 진단</strong><small id="refineFlowDiagnose">구멍·조각 세기</small></li>
-          <li><b>4</b><strong>마스크 보수</strong><small id="refineFlowRepair">닫기·구멍 메우기·조각 정리</small></li>
+          <li><b>3</b><strong>결함 진단</strong><small id="refineFlowDiagnose">구멍·가림·조각 세기</small></li>
+          <li><b>4</b><strong>마스크 보수</strong><small id="refineFlowRepair">구멍·가림 메우고 조각 정리</small></li>
           <li><b>5</b><strong>FLUX 재생성</strong><small id="refineFlowGenerate">흰 배경 상품컷</small></li>
         </ol>
 
@@ -193,11 +193,14 @@
             <div class="refine-switches">
               <label class="refine-switch"><input type="checkbox" id="refineOptClose" checked /><span><b>닫기</b><small>팽창 후 침식으로 좁은 틈과 톱니를 메운다</small></span></label>
               <label class="refine-switch"><input type="checkbox" id="refineOptHoles" checked /><span><b>구멍 메우기</b><small>마스크가 둘러싼 빈 자리만 채운다</small></span></label>
+              <label class="refine-switch"><input type="checkbox" id="refineOptOccluded" checked /><span><b>가림 메우기</b><small>팔·가방에 덮인 자리를 세그멘테이션 라벨을 근거로 잇는다</small></span></label>
               <label class="refine-switch"><input type="checkbox" id="refineOptStrays" checked /><span><b>조각 정리</b><small>가장 큰 조각 대비 기준 미만인 부스러기를 버린다</small></span></label>
+              <label class="refine-switch"><input type="checkbox" id="refineOptSmooth" checked /><span><b>경계 다듬기</b><small>메운 자리에 남는 톱니를 중앙값 필터로 편다</small></span></label>
             </div>
             <div class="refine-sliders">
               <label>닫기 커널 <output id="refineCloseValue">1.2%</output><input type="range" id="refineCloseScale" min="0" max="4" step="0.1" value="1.2" /></label>
               <label>조각 기준 <output id="refineStrayValue">8%</output><input type="range" id="refineStrayRatio" min="0" max="50" step="1" value="8" /></label>
+              <label>가림 판정 <output id="refineEnclosureValue">60%</output><input type="range" id="refineEnclosure" min="0" max="100" step="5" value="60" /></label>
             </div>
           </div>
           <div class="seg-lab-field">

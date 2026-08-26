@@ -80,13 +80,24 @@
   const controls = {
     close: $("#refineOptClose"),
     fillHoles: $("#refineOptHoles"),
+    fillOccluded: $("#refineOptOccluded"),
     dropStrays: $("#refineOptStrays"),
+    smooth: $("#refineOptSmooth"),
     generate: $("#refineOptGenerate"),
     closeScale: $("#refineCloseScale"),
     strayRatio: $("#refineStrayRatio"),
+    occlusionEnclosure: $("#refineEnclosure"),
     seed: $("#refineSeed"),
     steps: $("#refineSteps"),
   };
+
+  // 가려진 자리가 옷의 어디쯤인지. 백엔드는 프롬프트에도 쓰는 영어 코드로 준다.
+  const WHERE_KO = {
+    upper: "위", middle: "가운데", lower: "아래", left: "왼쪽", center: "가운데", right: "오른쪽",
+  };
+  // "lower-left" → "왼쪽 아래". 한국어는 가로 위치를 먼저 읽어야 자연스럽다.
+  const whereLabel = code => !code ? "" : code === "center" ? "가운데"
+    : code.split("-").map(part => WHERE_KO[part] || part).reverse().join(" ");
 
   function authHeaders() {
     const token = tokenFor(endpoint);
@@ -133,10 +144,13 @@
       model: modelSelect.value || "",
       close: controls.close.checked,
       fillHoles: controls.fillHoles.checked,
+      fillOccluded: controls.fillOccluded.checked,
       dropStrays: controls.dropStrays.checked,
+      smooth: controls.smooth.checked,
       generate: controls.generate.checked,
       closeScale: Number(controls.closeScale.value),
       strayRatio: Number(controls.strayRatio.value),
+      occlusionEnclosure: Number(controls.occlusionEnclosure.value),
       seed: Number(controls.seed.value) || 0,
       steps: controls.steps.value ? Number(controls.steps.value) : null,
       categories: [...categories],
@@ -146,8 +160,10 @@
   function syncOutputs() {
     $("#refineCloseValue").textContent = `${Number(controls.closeScale.value).toFixed(1)}%`;
     $("#refineStrayValue").textContent = `${controls.strayRatio.value}%`;
+    $("#refineEnclosureValue").textContent = `${controls.occlusionEnclosure.value}%`;
     controls.closeScale.disabled = !controls.close.checked;
     controls.strayRatio.disabled = !controls.dropStrays.checked;
+    controls.occlusionEnclosure.disabled = !controls.fillOccluded.checked;
     controls.seed.disabled = controls.steps.disabled = !controls.generate.checked;
     writeStorage(OPTIONS_KEY, JSON.stringify(readOptions()));
   }
@@ -155,10 +171,10 @@
   function restoreOptions() {
     let stored = {};
     try { stored = JSON.parse(readStorage(OPTIONS_KEY) || "{}"); } catch { stored = {}; }
-    for (const key of ["close", "fillHoles", "dropStrays", "generate"]) {
+    for (const key of ["close", "fillHoles", "fillOccluded", "dropStrays", "smooth", "generate"]) {
       if (typeof stored[key] === "boolean") controls[key].checked = stored[key];
     }
-    for (const key of ["closeScale", "strayRatio", "seed"]) {
+    for (const key of ["closeScale", "strayRatio", "occlusionEnclosure", "seed"]) {
       if (Number.isFinite(stored[key])) controls[key].value = stored[key];
     }
     if (Number.isFinite(stored.steps)) controls.steps.value = stored.steps;
@@ -338,9 +354,21 @@
     });
   }
 
+  /** 손상 정도 한 숫자 — 구멍과 가림 중 큰 쪽. 둘 다 "옷이 온전했을 넓이" 대비다. */
+  const damageOf = item => Math.max(item.diagnosis.holeRatio || 0, item.diagnosis.occludedRatio || 0);
+
   function defectStage(item) {
     const { diagnosis } = item;
-    const intact = diagnosis.holeCount === 0 && diagnosis.componentCount <= 1;
+    const occluded = diagnosis.occludedRatio || 0;
+    const intact = diagnosis.holeCount === 0 && diagnosis.componentCount <= 1 && !occluded;
+    // 가려짐은 라벨맵이 있어야 판정된다. 예전 백엔드면 "구멍 0개"가 곧 "멀쩡함"이
+    // 아니라는 걸 알려줘야 한다 — 이 사진의 진짜 결함이 거기 있을 수 있다.
+    const byLabel = (diagnosis.occludedBy || [])[0];
+    const occludedValue = !diagnosis.occlusionAvailable
+      ? `<i>라벨맵 없음</i>`
+      : occluded
+        ? `${percent(occluded)}${byLabel ? ` <i>${escapeHtml(byLabel.label)}</i>` : ""}`
+        : "없음";
     return stageFigure({
       index: 2,
       title: "결함 진단",
@@ -349,44 +377,73 @@
       body: `${readout([
         ["조각", `${diagnosis.componentCount}개${diagnosis.strayCount ? ` <i>(부스러기 ${diagnosis.strayCount})</i>` : ""}`,
           diagnosis.componentCount > 1 ? "warn" : ""],
-        ["구멍", `${diagnosis.holeCount}개`, diagnosis.holeCount ? "warn" : ""],
-        ["파먹힌 넓이", percent(diagnosis.holeRatio), diagnosis.holeRatio > 0.05 ? "warn" : ""],
-        ["가장 큰 조각", percent(diagnosis.largestRatio)],
+        ["구멍", `${diagnosis.holeCount}개 · ${percent(diagnosis.holeRatio)}`, diagnosis.holeRatio > 0.05 ? "warn" : ""],
+        ["가려짐", occludedValue, occluded > 0.02 ? "warn" : ""],
+        ["가려진 자리", occluded ? (whereLabel(diagnosis.occludedWhere) || "여러 곳") : "—"],
+        // 볼록껍질을 얼마나 채우는가. 구멍이 없어도 파먹혔으면 여기서 떨어진다.
+        // 예전 백엔드는 이 값을 주지 않는다 — 0%로 그리면 멀쩡한 옷이 빨갛게 보인다.
+        ["볼록채움도", diagnosis.solidity == null ? "—" : percent(diagnosis.solidity),
+          diagnosis.solidity != null && diagnosis.solidity < 0.85 ? "warn" : ""],
       ])}
-      <p class="refine-legend"><span class="hole"></span>구멍 <span class="stray"></span>버릴 조각</p>`,
+      <p class="refine-legend"><span class="hole"></span>구멍 <span class="occluded"></span>가려짐 <span class="stray"></span>버릴 조각</p>`,
     });
   }
 
+  const STEP_KO = {
+    close: "닫기", fillHoles: "구멍 메우기", fillOccluded: "가림 메우기",
+    smooth: "경계 다듬기", dropStrays: "조각 정리",
+  };
+
   function repairStage(item) {
-    const steps = item.repair.steps.length
-      ? item.repair.steps.map(step => `<li><b>${escapeHtml(step.step)}</b><span>${escapeHtml(step.detail)}</span><em>${signed(step.delta)}</em></li>`).join("")
+    const { repair, diagnosis } = item;
+    const steps = repair.steps.length
+      ? repair.steps.map(step => `<li><b>${escapeHtml(STEP_KO[step.step] || step.step)}</b><span>${escapeHtml(step.detail)}</span><em>${signed(step.delta)}</em></li>`).join("")
       : `<li class="none">보수 단계를 모두 껐어요</li>`;
+    // 후보였지만 안전장치에 걸린 조각. 왜 안 메웠는지 여기 없으면 기준을 고칠 근거가 없다.
+    const occlusion = repair.occlusion || {};
+    const held = (occlusion.openCount || 0) + (occlusion.oversizedCount || 0);
     return stageFigure({
       index: 3,
       title: "마스크 보수",
       image: item.stages.repaired,
       body: `<ul class="refine-steps">${steps}</ul>
       ${readout([
-        ["남은 구멍", item.repair.holesAfter ? px(item.repair.holesAfter) : "없음", item.repair.holesAfter ? "warn" : "ok"],
-        ["남은 조각", `${item.repair.componentsAfter}개`],
-        ["메운 자리", item.repair.patchedPixels
-          ? `${px(item.repair.patchedPixels)} <i>${escapeHtml(item.repair.patchColor)}</i>`
+        ["남은 구멍", repair.holesAfter ? px(repair.holesAfter) : "없음", repair.holesAfter ? "warn" : "ok"],
+        ["남은 조각", `${repair.componentsAfter}개`],
+        ["메운 자리", repair.patchedPixels
+          ? `${px(repair.patchedPixels)} <i>${percent(repair.patchedPixels / Math.max(1, repair.pixelsAfter))}</i>`
           : "없음"],
-        ["마스크 변화", `${px(item.repair.pixelsBefore)} → ${px(item.repair.pixelsAfter)} <i>(${signed(item.repair.pixelsAfter - item.repair.pixelsBefore)})</i>`],
+        ["가림 후보", occlusion.candidatePixels
+          ? `${occlusion.acceptedCount || 0}조각 적용${held ? ` <i>· ${held}조각 보류</i>` : ""}${
+              occlusion.trimmedPixels ? ` <i>· 오목한 자리 ${px(occlusion.trimmedPixels)} 제외</i>` : ""}`
+          : diagnosis.occlusionAvailable ? "없음" : "—"],
+        ["마스크 변화", `${px(repair.pixelsBefore)} → ${px(repair.pixelsAfter)} <i>(${signed(repair.pixelsAfter - repair.pixelsBefore)})</i>`],
       ])}`,
     });
   }
 
+  const FILL_KO = {
+    propagate: "경계 색을 안쪽으로 전파",
+    median: "옷 대표색으로 평평하게",
+    none: "없음",
+  };
+
   function normalizedStage(item) {
+    const { repair } = item;
+    const swatch = repair.patchColor
+      ? `<span class="refine-swatch" style="--swatch:${escapeHtml(repair.patchColor)}"></span><code>${escapeHtml(repair.patchColor)}</code>`
+      : "—";
     return stageFigure({
       index: 4,
       title: "정규화 (생성 입력)",
       image: item.stages.normalized,
       body: readout([
-        ["배경", "흰색으로 채움"],
-        ["규격", "정사각 · 여백 6%"],
-        ["메운 자리", item.repair.patchedPixels ? "옷 대표색으로 평평하게" : "없음"],
-        ["남은 몫", "질감·주름·가려졌던 형태"],
+        ["규격", "768px 정사각 · 흰 배경 · 여백 6%"],
+        ["메운 방식", FILL_KO[repair.patchFill] || repair.patchFill || "없음"],
+        ["옷 대표색", swatch],
+        // 알파를 그대로 얹으면 흰 배경 위에 계단이 남고, 그냥 흐리면 살색 후광이 생긴다.
+        ["경계", "옷 색을 2px 번지게 한 뒤 알파 0.8px 페더"],
+        ["남은 몫", "질감·주름·무늬"],
       ]),
     });
   }
@@ -436,7 +493,8 @@
   }
 
   function renderSummary(payload) {
-    const worst = payload.items.reduce((max, item) => Math.max(max, item.diagnosis.holeRatio), 0);
+    const worst = payload.items.reduce((max, item) => Math.max(max, damageOf(item)), 0);
+    const occludedItems = payload.items.filter(item => item.diagnosis.occludedRatio > 0).length;
     summaryBox.innerHTML = `
       <figure class="refine-overlay">
         <img src="${payload.overlay}" alt="세그멘테이션 오버레이" loading="lazy" />
@@ -446,15 +504,16 @@
         ${readout([
           ["검출", `${payload.detectedCount}벌 중 ${payload.items.length}벌 처리${payload.skippedCount ? ` <i>(${payload.skippedCount}벌 생략)</i>` : ""}`],
           ["세그멘테이션", `${payload.segmentSeconds}s · ${escapeHtml(payload.device)}${payload.loadSeconds > 0 ? ` · 콜드 적재 ${payload.loadSeconds}s` : ""}`],
-          ["가장 심한 손상", worst ? `구멍이 넓이의 ${percent(worst)}` : "구멍 없음", worst > 0.05 ? "warn" : ""],
+          ["가장 심한 손상", worst ? `넓이의 ${percent(worst)}가 비어 있었음` : "구멍·가림 없음", worst > 0.05 ? "warn" : ""],
+          ["가려진 옷", occludedItems ? `${occludedItems}벌 (팔·가방 등에 덮임)` : "없음"],
           ["전체", `${payload.totalSeconds}s`],
         ])}
       </div>`;
 
     $("#refineFlowSource").textContent = `${payload.imageSize.width}×${payload.imageSize.height}`;
     $("#refineFlowSegment").textContent = `${payload.detectedCount}벌 · ${payload.segmentSeconds}s`;
-    $("#refineFlowDiagnose").textContent = worst ? `최대 ${percent(worst)} 파먹힘` : "구멍 없음";
-    $("#refineFlowRepair").textContent = `남은 구멍 ${payload.items.reduce((sum, item) => sum + (item.repair.holesAfter ? 1 : 0), 0)}벌`;
+    $("#refineFlowDiagnose").textContent = worst ? `최대 ${percent(worst)} 파먹힘` : "결함 없음";
+    $("#refineFlowRepair").textContent = `가림 ${occludedItems}벌 · 남은 구멍 ${payload.items.reduce((sum, item) => sum + (item.repair.holesAfter ? 1 : 0), 0)}벌`;
     const generated = payload.items.filter(item => item.stages.closet).length;
     $("#refineFlowGenerate").textContent = generated ? `${generated}벌 생성` : "생성 안 함";
   }
@@ -492,9 +551,12 @@
           repair: {
             close: options.close,
             fillHoles: options.fillHoles,
+            fillOccluded: options.fillOccluded,
             dropStrays: options.dropStrays,
+            smooth: options.smooth,
             closeScale: options.closeScale / 100,
             strayRatio: options.strayRatio / 100,
+            occlusionEnclosure: options.occlusionEnclosure / 100,
           },
           generate: options.generate,
           seed: options.seed,
