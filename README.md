@@ -35,15 +35,92 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 
 노트북은 저장소와 의존성을 준비하고, 모델을 미리 적재한 다음 세션별 API 토큰과 Quick Tunnel 주소가 담긴 설정 파일을 생성합니다. GPU 런타임에서는 `/api/*`만 제공하며 프론트엔드 파일은 제공하지 않습니다.
 
-## 2. 로컬 프론트엔드 실행
+## 2. 로컬 프론트엔드 실행 (처음 하는 사람용)
 
-프로젝트 루트에서 다음 명령을 실행합니다.
+아래 과정은 **내 컴퓨터에서 Wearwell 웹 화면을 여는 방법**입니다. 코드를 수정할 필요 없이 명령어를 한 줄씩 복사해서 실행하면 됩니다.
+
+### 2-1. Git 설치 확인
+
+먼저 [Git](https://git-scm.com/downloads)을 설치합니다. 설치가 끝나면 Windows에서는 **PowerShell**, macOS에서는 **터미널**을 열고 다음 명령어를 입력합니다.
+
+```bash
+git --version
+```
+
+`git version 2.x.x`처럼 버전이 표시되면 준비가 된 것입니다. 명령어를 찾을 수 없다는 메시지가 나오면 Git을 설치한 뒤 터미널을 완전히 닫았다가 다시 여세요.
+
+### 2-2. 프로젝트 다운로드
+
+터미널에서 아래 명령어를 **한 줄씩** 실행합니다.
+
+```bash
+git clone https://github.com/dongwgo/wearwell.git
+cd wearwell
+```
+
+- `git clone`은 GitHub에 있는 프로젝트를 내 컴퓨터로 복사합니다.
+- `cd wearwell`은 방금 받은 프로젝트 폴더로 이동합니다.
+- 두 번째 명령에서 폴더를 찾을 수 없다고 나오면 첫 번째 명령이 오류 없이 끝났는지 확인하세요.
+
+이미 프로젝트를 clone했다면 다시 받을 필요 없이, 터미널에서 기존 `wearwell` 폴더로 이동하면 됩니다.
+
+### 2-3. uv 설치
+
+`uv`는 이 프로젝트를 간단하게 실행할 수 있게 도와주는 프로그램입니다. 사용하는 운영체제에 맞는 명령어 **하나만** 실행하세요.
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+macOS 또는 Linux:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+설치가 끝나면 터미널을 완전히 닫았다가 다시 열고, `wearwell` 폴더로 다시 이동합니다. 설치 확인은 다음과 같이 합니다.
+
+```bash
+uv --version
+```
+
+`uv 0.x.x`처럼 버전이 표시되면 정상입니다.
+
+### 2-4. Python 3.11 설치
+
+프로젝트 폴더(`wearwell`) 안에서 다음 명령어를 실행합니다.
+
+```bash
+uv python install 3.11
+```
+
+이미 Python 3.11이 있어도 이 명령어를 실행해도 괜찮습니다. 이 프론트엔드는 HTML, CSS, JavaScript로 되어 있으므로 `npm install`은 필요하지 않습니다.
+
+### 2-5. 프론트엔드 서버 실행
+
+같은 터미널에서 다음 명령어를 실행합니다.
 
 ```bash
 uv run --python 3.11 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-브라우저에서 `http://127.0.0.1:8000`을 엽니다. `local-config.js`는 다음 형식입니다.
+`Serving HTTP on 127.0.0.1 port 8000`과 비슷한 문구가 나오면 성공입니다. 서버를 사용하는 동안에는 **이 터미널을 닫지 마세요.**
+
+### 2-6. 브라우저에서 열기
+
+Chrome, Edge, Safari 같은 웹 브라우저를 열고 주소창에 다음 주소를 입력합니다.
+
+<http://127.0.0.1:8000>
+
+Wearwell 화면이 나오면 로컬 프론트엔드 실행이 완료된 것입니다. 서버를 종료하려면 실행 중인 터미널을 클릭하고 `Ctrl+C`를 누릅니다.
+
+> 화면은 열리지만 AI 이미지 생성 기능이 동작하지 않는다면 위의 **1. GPU 모델 API 실행**도 완료했는지 확인하세요. Colab에서 받은 `local-config.js` 파일은 `index.html`과 같은 `wearwell` 폴더에 있어야 합니다.
+
+### `local-config.js` 형식
+
+`local-config.js`는 다음 형식입니다.
 
 ```js
 window.WEARWELL_CONFIG = {
