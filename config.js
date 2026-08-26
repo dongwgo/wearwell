@@ -1,6 +1,6 @@
 (() => {
   const existing = window.WEARWELL_CONFIG || {};
-  window.WEARWELL_CONFIG = { API_BASE: "", API_TOKEN: "", ...existing };
+  window.WEARWELL_CONFIG = { API_BASE: "", API_TOKEN: "", LOCAL_API_BASE: "http://127.0.0.1:8787", LOCAL_API_TOKEN: "", ...existing };
 
   const safeStorageGet = key => {
     try { return window.localStorage?.getItem(key) || ""; } catch { return ""; }

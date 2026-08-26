@@ -5,6 +5,7 @@ import importlib
 import io
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from PIL import Image
@@ -126,6 +127,32 @@ def test_avatar_prompt_contains_every_supplied_measurement(backend_app, monkeypa
     assert calls[0]["seed"] == 77
     for value in ("181 cm", "76 kg", "49 cm", "103 cm", "82 cm", "96 cm", "83 cm"):
         assert value in calls[0]["prompt"]
+
+
+def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setitem(
+        sys.modules,
+        "segment_service",
+        SimpleNamespace(segment=lambda raw: [{
+            "category": "상의",
+            "label": "Upper-clothes",
+            "confidence": 0.91,
+            "png_bytes": b"transparent-png",
+        }]),
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/closet/segment",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "name": "outfit"},
+    )
+
+    assert response.status_code == 200
+    item = response.json()["items"][0]
+    assert item["category"] == "상의"
+    assert item["image"].startswith("data:image/png;base64,")
+    assert item["confidence"] == 0.91
 
 
 def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monkeypatch: pytest.MonkeyPatch):

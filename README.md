@@ -3,7 +3,7 @@
 날씨·체형·취향 기반 스타일 추천 프론트엔드와 GPU 이미지 API를 분리한 프로젝트입니다.
 
 - 로컬 컴퓨터: `index.html`, CSS, JavaScript, `assets/`
-- GPU 런타임: FLUX.2 [klein] 4B + Qwen3-VL-8B-Instruct(NF4), FastAPI
+- GPU 런타임: FLUX.2 [klein] 4B + Qwen3-VL-8B-Instruct(NF4) + SegFormer, FastAPI
 - Cloudflare Quick Tunnel: 로컬 브라우저의 모델 요청만 전달
 
 ## 권장 실행 환경
@@ -18,8 +18,9 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 
 [FLUX.2 [klein] 4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B)는 Apache 2.0 공개 가중치이며 텍스트 생성, 이미지 편집, 다중 참조 편집을 하나의 파이프라인에서 지원합니다.
 
-- 아바타: 성별, 키, 몸무게, 체형과 선택 입력한 상세 치수를 포함해 768×1152 전신 이미지를 생성합니다.
+- 아바타: 성별, 키, 몸무게, 체형과 선택 입력한 상세 치수를 포함해 기본 FLUX 백엔드가 768×1152 전신 이미지를 생성합니다.
 - 가상 착장: 아바타와 선택한 의류 사진을 한 번에 전달해 얼굴·체형을 유지하면서 모든 옷을 동시에 반영합니다.
+- 옷 분리: `mattmdjaga/segformer_b2_clothes`가 전신샷에서 의류를 투명 PNG로 분리합니다. 설정된 Colab API를 우선 사용하고, 연결 실패 시 같은 FastAPI를 `127.0.0.1:8787`에서 실행 중이면 로컬로 폴백합니다.
 - 기본 추론: BF16, 4 steps, guidance 1.0
 
 측정값으로 만든 아바타는 시각적 근사치이며 실제 신체 스캔이나 의류 사이즈 판정 결과가 아닙니다.
@@ -47,7 +48,9 @@ uv run --python 3.11 python -m http.server 8000 --bind 127.0.0.1
 ```js
 window.WEARWELL_CONFIG = {
   API_BASE: "https://example.trycloudflare.com",
-  API_TOKEN: "session-token"
+  API_TOKEN: "session-token",
+  LOCAL_API_BASE: "http://127.0.0.1:8787",
+  LOCAL_API_TOKEN: "optional-local-token"
 };
 ```
 
@@ -59,13 +62,14 @@ window.WEARWELL_CONFIG = {
 
 - `GET /api/health`
 - `POST /api/avatar`
+- `POST /api/closet/segment`
 - `POST /api/tryon`
 - `POST /api/vlm/garment`
 - `POST /api/vlm/lookbook`
 - `POST /api/vlm/body`
 - `POST /api/warmup`
 
-POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
+모델 추론 endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
 환경변수:
 
@@ -81,6 +85,7 @@ POST endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `lo
 - `FLUX_CPU_OFFLOAD`: `1`이면 일부 모델을 CPU RAM으로 이동
 - `HF_HOME`: Hugging Face cache 경로
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
+- `SEGMENTATION_DEVICE`: `auto`(기본), `cuda`, `cpu` 중 하나. `auto`는 GPU가 있으면 GPU를 사용
 - `WEARWELL_API_TOKEN`: API bearer token
 
 ## 개발 검증

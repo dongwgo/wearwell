@@ -72,6 +72,7 @@ let selectedStyles = new Set();
 let selectedInfluencerLookIds = new Set();
 let selectedPriorities = new Set(["날씨에 잘 맞기"]);
 let uploadFiles = [];
+let segmentFiles = [];
 let savedLooks = new Set(JSON.parse(localStorage.getItem("오늘옷-saved") || "[]"));
 let selectedWardrobeItem = null;
 let matchVariation = 0;
@@ -85,6 +86,8 @@ const lookbookAnalysisQueued = new Set();
 const API_BASE = window.resolveWearwellApiBase();
 const API_TOKEN = window.resolveWearwellApiToken();
 const API_HEADERS = { "Content-Type": "application/json", ...(API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {}) };
+const LOCAL_API_BASE = String(window.WEARWELL_CONFIG.LOCAL_API_BASE || "http://127.0.0.1:8787").replace(/\/+$/, "");
+const LOCAL_API_TOKEN = String(window.WEARWELL_CONFIG.LOCAL_API_TOKEN || API_TOKEN);
 const todayWeather = { temperature: 22, condition: "약한 비", tags: ["선선함", "약한 비", "간절기", "습함"] };
 const LOOK_ANALYSIS_VERSION = 3;
 const VLM_ANALYSIS_ENGINE = "Qwen3-VL-8B-Instruct";
@@ -986,6 +989,71 @@ async function addUploadsToWardrobe() {
   })();
 }
 
+function handleSegmentUploads(files) {
+  segmentFiles = [...files].filter(file => file.type.startsWith("image/")).slice(0, 6);
+  $("#segmentPreview").innerHTML = segmentFiles.map(file => `<div class="upload-thumb"><img src="${URL.createObjectURL(file)}" alt="전신샷 미리보기" /></div>`).join("");
+  $("#addSegmentPhotos").disabled = segmentFiles.length === 0;
+}
+
+async function fetchSegmentation(payload) {
+  try {
+    return await fetchGpuJson("/api/closet/segment", payload);
+  } catch (remoteError) {
+    if (API_BASE === LOCAL_API_BASE) throw remoteError;
+    const response = await fetch(`${LOCAL_API_BASE}/api/closet/segment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(LOCAL_API_TOKEN ? { Authorization: `Bearer ${LOCAL_API_TOKEN}` } : {}) },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.detail || remoteError.message);
+    return result;
+  }
+}
+
+async function addSegmentPhotosToWardrobe() {
+  const files = segmentFiles;
+  $("#addSegmentPhotos").disabled = true;
+  $("#segmentFileInput").disabled = true;
+  const added = [];
+  let failures = 0;
+  for (let index = 0; index < files.length; index++) {
+    const file = files[index];
+    $("#segmentPreview").innerHTML = `<div class="generation-loader"><span></span><strong>${index + 1}/${files.length}장 분석 중</strong><small>옷의 경계를 찾고 있어요…</small></div>`;
+    try {
+      const result = await fetchSegmentation({ image: await resizeBodyPhoto(file), name: file.name.replace(/\.[^.]+$/, "") || "전신샷" });
+      for (const detected of result.items || []) {
+        const item = {
+          id: `${detected.id}-${Math.random().toString(36).slice(2, 7)}`,
+          image: detected.image,
+          gender: selectedGender || "all",
+          category: detected.category,
+          name: detected.name,
+          color: "색상 미분류",
+          worn: 0,
+          userAdded: true,
+          segmentation: { label: detected.label, confidence: detected.confidence }
+        };
+        item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
+        wardrobe.unshift(item);
+        added.push(item);
+        await persistGarment(item);
+      }
+    } catch (error) {
+      failures += 1;
+      showToast(`${file.name}: ${error.message}`);
+    }
+  }
+  segmentFiles = [];
+  $("#segmentFileInput").disabled = false;
+  $("#segmentPreview").innerHTML = "";
+  closeDialogs();
+  activeCategory = categories[0];
+  renderCategoryFilters();
+  renderWardrobe();
+  showToast(added.length ? `옷 ${added.length}벌을 분리해 저장했어요${failures ? ` (${failures}장 실패)` : ""}` : "분리할 옷을 찾지 못했어요");
+}
+
 async function restoreWardrobeDatabase() {
   try {
     const records = await window.WearwellDB.getAllGarments();
@@ -1079,8 +1147,11 @@ function initEvents() {
   $("#backPreferences").addEventListener("click", () => showPreferenceStep(3));
   $("#finishPreferences").addEventListener("click", savePreferences);
   $("#uploadButton").addEventListener("click", () => openDialog($("#uploadDialog")));
+  $("#segmentButton").addEventListener("click", () => openDialog($("#segmentDialog")));
   $("#fileInput").addEventListener("change", event => handleUploads(event.target.files));
   $("#addUploads").addEventListener("click", addUploadsToWardrobe);
+  $("#segmentFileInput").addEventListener("change", event => handleSegmentUploads(event.target.files));
+  $("#addSegmentPhotos").addEventListener("click", addSegmentPhotosToWardrobe);
   $("#analyzeVisibleWardrobe").addEventListener("click", analyzeVisibleWardrobe);
   $("#trySelectedGarments").addEventListener("click", () => tryOnItems([...selectedGarmentIds].map(id => wardrobe.find(item => item.id === id)).filter(Boolean)));
   $("#clearGarmentSelection").addEventListener("click", () => { selectedGarmentIds.clear(); updateSelectionTray(); renderWardrobe(); });
@@ -1092,6 +1163,10 @@ function initEvents() {
   ["dragenter", "dragover"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add("drag"); }));
   ["dragleave", "drop"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove("drag"); }));
   dropZone.addEventListener("drop", event => handleUploads(event.dataTransfer.files));
+  const segmentDropZone = $("#segmentDropZone");
+  ["dragenter", "dragover"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.add("drag"); }));
+  ["dragleave", "drop"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.remove("drag"); }));
+  segmentDropZone.addEventListener("drop", event => handleSegmentUploads(event.dataTransfer.files));
   $$('dialog').forEach(dialog => dialog.addEventListener("click", event => {
     const rect = dialog.getBoundingClientRect();
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();

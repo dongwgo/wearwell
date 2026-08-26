@@ -100,7 +100,10 @@
       <section class="view" id="wardrobeView">
         <div class="page-heading">
           <div><p class="eyebrow">내 옷장</p><h1>가지고 있는 옷을<br /><em>한눈에 모아봤어요.</em></h1><p class="lede">사진을 올리면 오늘 입을 수 있는 조합을 찾아드려요.</p></div>
-          <button class="primary-button" id="uploadButton">+ 옷 사진 추가하기</button>
+          <div class="page-heading-actions">
+            <button class="quiet-button" id="segmentButton">전신샷에서 옷 찾기</button>
+            <button class="primary-button" id="uploadButton">+ 옷 사진 추가하기</button>
+          </div>
         </div>
         <div class="wardrobe-toolbar">
           <div class="filter-row" id="categoryFilters"></div>
@@ -204,6 +207,18 @@
       </label>
       <div class="upload-preview" id="uploadPreview"></div>
       <div class="dialog-footer"><span>한 장에 옷 하나씩 찍으면 더 정확해요</span><button class="primary-button" id="addUploads" disabled>내 옷장에 추가</button></div>
+    </dialog>
+
+    <dialog id="segmentDialog" class="upload-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <p class="eyebrow">전신샷으로 한 번에 채우기</p>
+      <h2>입고 있는 옷을<br /><em>자동으로 분리해 담을게요.</em></h2>
+      <label class="drop-zone" id="segmentDropZone">
+        <input id="segmentFileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+        <span class="upload-icon">↥</span><strong>전신샷을 여기에 놓아주세요</strong><small>정면 전신샷 · 최대 6장</small>
+      </label>
+      <div class="upload-preview" id="segmentPreview"></div>
+      <div class="dialog-footer"><span>Colab API를 우선 사용하며, API 주소를 로컬로 설정하면 같은 모델을 로컬에서 실행해요</span><button class="primary-button" id="addSegmentPhotos" disabled>옷장에 자동 추가</button></div>
     </dialog>
 
     <dialog id="itemMatchDialog" class="item-match-dialog">

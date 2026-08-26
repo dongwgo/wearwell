@@ -1,0 +1,101 @@
+{
+  "retrievedAt": "2026-08-25T06:17:55.715Z",
+  "images": [
+    {
+      "file": "trend-women-1.jpg",
+      "gender": "women",
+      "query": "woman full body white shirt cuffed jeans street style",
+      "source": "https://unsplash.com/photos/a-woman-in-a-white-t-shirt-and-blue-jeans-ofcCPgXjbhc",
+      "photographer": "Natalia Blauth",
+      "photographerUrl": "https://unsplash.com/@nataliablauth"
+    },
+    {
+      "file": "trend-women-2.jpg",
+      "gender": "women",
+      "query": "woman full body wide leg pants tank top street style",
+      "source": "https://unsplash.com/photos/a-woman-in-a-red-top-and-tan-pants-TGy3PhmgCGQ",
+      "photographer": "Fellipe Ditadi",
+      "photographerUrl": "https://unsplash.com/@ditadi"
+    },
+    {
+      "file": "trend-women-3.jpg",
+      "gender": "women",
+      "query": "woman full body midi skirt flats outfit",
+      "source": "https://unsplash.com/photos/full-photo-of-stylish-happy-young-business-woman-walking-on-the-street-Czss1XeuXJw",
+      "photographer": "Getty Images",
+      "photographerUrl": "https://unsplash.com/@gettyimages"
+    },
+    {
+      "file": "trend-women-4.jpg",
+      "gender": "women",
+      "query": "woman full body cream blazer street style",
+      "source": "https://unsplash.com/photos/a-woman-walking-down-a-street-carrying-a-bag-TzgO263Bc-s",
+      "photographer": "Natalia Blauth",
+      "photographerUrl": "https://unsplash.com/@nataliablauth"
+    },
+    {
+      "file": "trend-women-5.jpg",
+      "gender": "women",
+      "query": "woman full body tonal outfit street style",
+      "source": "https://unsplash.com/photos/a-woman-standing-in-front-of-a-building-Q5wf--ks9Gc",
+      "photographer": "Hatice Baran",
+      "photographerUrl": "https://unsplash.com/@haticebaran"
+    },
+    {
+      "file": "trend-women-6.jpg",
+      "gender": "women",
+      "query": "woman full body colorful accessories street style",
+      "source": "https://unsplash.com/photos/vertical-portrait-of-young-carefree-woman-wearing-colorful-street-style-fashion-outdoors-in-urban-setting-kBqIj4J_eBE",
+      "photographer": "Getty Images",
+      "photographerUrl": "https://unsplash.com/@gettyimages"
+    },
+    {
+      "file": "trend-men-1.jpg",
+      "gender": "men",
+      "query": "man full body lightweight tailoring street style",
+      "source": "https://unsplash.com/photos/handsome-young-african-american-businessman-waitng-a-taxi-on-a-street-YpwMi8qaWrA",
+      "photographer": "Getty Images",
+      "photographerUrl": "https://unsplash.com/@gettyimages"
+    },
+    {
+      "file": "trend-men-2.jpg",
+      "gender": "men",
+      "query": "man full body bermuda shorts knit outfit",
+      "source": "https://unsplash.com/photos/three-men-standing-in-front-of-a-green-wall-MjKLVisXSdw",
+      "photographer": "Natalia Blauth",
+      "photographerUrl": "https://unsplash.com/@nataliablauth"
+    },
+    {
+      "file": "trend-men-3.jpg",
+      "gender": "men",
+      "query": "man full body white shirt dark jeans outfit",
+      "source": "https://unsplash.com/photos/portrait-of-white-man-isolated-rz71FER3Yp0",
+      "photographer": "Curated Lifestyle",
+      "photographerUrl": "https://unsplash.com/@curatedlifestyle"
+    },
+    {
+      "file": "trend-men-4.jpg",
+      "gender": "men",
+      "query": "man full body all black street style",
+      "source": "https://unsplash.com/photos/a-man-leaning-on-a-pole-with-a-flower-in-his-hand-4_1B32MCDss",
+      "photographer": "Lia Bekyan",
+      "photographerUrl": "https://unsplash.com/@liabekyan"
+    },
+    {
+      "file": "trend-men-5.jpg",
+      "gender": "men",
+      "query": "man full body layered shirt wide pants",
+      "source": "https://unsplash.com/photos/a-man-with-a-scarf-around-his-neck-7U5TOxHJR0U",
+      "photographer": "Andrej Lišakov",
+      "photographerUrl": "https://unsplash.com/@lishakov"
+    },
+    {
+      "file": "trend-men-6.jpg",
+      "gender": "men",
+      "query": "man full body preppy street style",
+      "source": "https://unsplash.com/photos/young-man-walking-smart-casual-on-an-autumn-day-on-a-street-of-european-city-lifestyle-photography-qAg6cN7NEK4",
+      "photographer": "Getty Images",
+      "photographerUrl": "https://unsplash.com/@gettyimages"
+    }
+  ]
+}

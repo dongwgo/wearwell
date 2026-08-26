@@ -153,6 +153,11 @@ class VLMImageRequest(BaseModel):
     gender: Literal["women", "men"] | None = None
 
 
+class SegmentationRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    name: str = Field(default="full-body photo", max_length=120)
+
+
 def decode_image(value: str) -> Image.Image:
     try:
         encoded = value.split(",", 1)[1] if value.startswith("data:") else value
@@ -494,6 +499,7 @@ def health():
         "gpu": name,
         "model": IMAGE_MODEL,
         "avatarModel": IMAGE_MODEL,
+        "segmentationModel": "mattmdjaga/segformer_b2_clothes",
         "tryonModel": IMAGE_MODEL,
         "vlmModel": VLM_MODEL,
         "modelLoaded": image_engine.pipe is not None,
@@ -519,6 +525,38 @@ def generate_avatar(data: Measurements):
     except Exception as error:
         logging.exception("Avatar generation failed")
         raise HTTPException(status_code=500, detail="Avatar generation failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+@app.post("/api/closet/segment")
+def segment_closet_photo(request: SegmentationRequest):
+    acquire_inference_slot()
+    try:
+        image = decode_image(request.image)
+        source = io.BytesIO()
+        image.save(source, format="PNG")
+        import segment_service
+
+        detections = segment_service.segment(source.getvalue())
+        return {
+            "items": [
+                {
+                    "id": f"segment-{int(time.time() * 1000)}-{index}",
+                    "name": f"{request.name} - {item['category']}",
+                    "category": item["category"],
+                    "image": "data:image/png;base64," + base64.b64encode(item["png_bytes"]).decode(),
+                    "label": item["label"],
+                    "confidence": item["confidence"],
+                }
+                for index, item in enumerate(detections)
+            ]
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("Garment segmentation failed")
+        raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
     finally:
         INFERENCE_GATE.release()
 
