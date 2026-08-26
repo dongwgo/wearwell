@@ -51,6 +51,10 @@ MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
 DEV_TOOLS_ENABLED = os.getenv("WEARWELL_DEV_TOOLS", "0") == "1"
+CORS_ORIGIN_REGEX = os.getenv(
+    "WEARWELL_CORS_ORIGIN_REGEX",
+    r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
+)
 MAX_COMPARE_MODELS = 4
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
 GPU_CONCURRENCY = max(1, int(os.getenv("GPU_CONCURRENCY", "2")))
@@ -103,7 +107,7 @@ app = FastAPI(
 app.add_middleware(BodyLimitMiddleware, max_bytes=MAX_REQUEST_BYTES)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
 )
