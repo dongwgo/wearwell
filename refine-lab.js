@@ -3,7 +3,10 @@
  *
  * Seg Lab이 "모델이 옷을 어디까지 잡았나"를 본다면 이 탭은 그 다음 질문을 본다:
  * 잘라낸 조각을 옷장에 넣을 수 있는 그림으로 어떻게 바꾸는가. 백엔드의
- * /api/dev/closet/refine 하나를 부르고 단계별 중간 산출물을 나란히 늘어놓는다.
+ * /api/closet/refine 하나를 부르고 단계별 중간 산출물을 나란히 늘어놓는다.
+ *
+ * 쓰는 경로는 전부 공개 경로(/api/closet/*)다 — Colab 공개 터널은 dev 도구를 끄고
+ * 뜨므로 /api/dev/*에 기대면 이 탭은 GPU가 있는 곳에서 아예 열리지 않는다.
  *
  * seg-lab.js와 마찬가지로 app.js의 전역에 의존하지 않는다 — 앱 코드를 건드려도
  * 이 도구가 같이 깨지지 않게.
@@ -50,6 +53,8 @@
 
   let endpoint = readStorage(ENDPOINT_KEY) || defaultEndpoint;
   let registry = null;
+  let health = null;
+  let refinePath = "";
   let categories = new Set();
   let sourceFile = null;
   let sourceDataUrl = null;
@@ -92,7 +97,7 @@
   function renderPresets() {
     const presets = [
       colabBase && { url: colabBase, label: "Colab GPU", hint: "local-config.js의 API_BASE" },
-      { url: localBase, label: "로컬 백엔드", hint: "backend/app.py" },
+      { url: localBase, label: "로컬 백엔드", hint: "옵션 · backend/app.py" },
     ].filter(Boolean);
     presetBox.innerHTML = presets.map(preset => `
       <button type="button" class="refine-preset${preset.url === endpoint ? " on" : ""}" data-url="${escapeHtml(preset.url)}">
@@ -162,7 +167,7 @@
   }
 
   function updateRunButton() {
-    runButton.disabled = running || !sourceDataUrl || !registry;
+    runButton.disabled = running || !sourceDataUrl || !registry || !refinePath;
     runButton.textContent = running ? "실행 중…" : "파이프라인 실행";
   }
 
@@ -202,66 +207,85 @@
     setHealth("down", `${labelFor(endpoint)} · ${message}`);
     modelSelect.innerHTML = "";
     categoryBox.innerHTML = "";
+    registry = null;
     updateRunButton();
   }
 
-  /** 세그멘테이션이 백엔드에 올라와 있어도 이 탭이 못 쓰는 경우를 구분해 준다. */
-  function segmentationNote(health) {
-    if (!health.segmentationModel) return "";
-    const where = health.segmentationDevice ? ` · ${health.segmentationDevice}` : "";
-    return ` (세그멘테이션 ${health.segmentationModel}${where}는 정상 동작 중)`;
+  const STALE_BACKEND = "Colab 노트북 셀 2~3을 다시 실행해 최신 코드로 띄우세요";
+  const BAD_TOKEN = "토큰이 맞지 않아요 — local-config.js의 토큰과 백엔드의 WEARWELL_API_TOKEN을 맞추세요";
+
+  /** 모델 목록. 공개 경로가 먼저고, 그게 없는 예전 백엔드에서만 dev 경로로 떨어진다. */
+  async function fetchRegistry() {
+    const response = await fetch(`${endpoint}/api/closet/models`, { headers: authHeaders() });
+    if (response.ok) return response.json();
+    if (response.status !== 404) throw new Error(`모델 목록이 HTTP ${response.status}예요`);
+    if (health?.devTools === false) throw new Error(`이 백엔드에는 /api/closet/models가 없어요 — ${STALE_BACKEND}`);
+    const legacy = await fetch(`${endpoint}/api/dev/segment/models`, { headers: authHeaders() });
+    if (!legacy.ok) throw new Error(`이 백엔드에는 모델 목록 경로가 없어요 — ${STALE_BACKEND}`);
+    return legacy.json();
+  }
+
+  /**
+   * 사진을 올리기 전에 refine 경로가 있는지 확인해 둔다. 몇 MB를 올린 뒤에야
+   * 404를 보는 것보다 낫다. 본문이 빈 POST는 pydantic 검증에서 422로 끊기므로
+   * GPU를 건드리지 않는다 — 즉 404(없음)와 422(있음)를 공짜로 구분할 수 있다.
+   */
+  async function detectRefinePath() {
+    for (const path of ["/api/closet/refine", "/api/dev/closet/refine"]) {
+      const response = await fetch(`${endpoint}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: "{}",
+      });
+      if (response.status === 401) throw new Error(BAD_TOKEN);
+      if (response.status !== 404) return path;
+    }
+    throw new Error(`백엔드에 refine 경로가 없어요 — ${STALE_BACKEND}`);
   }
 
   async function loadRegistry() {
     setHealth("checking", `${labelFor(endpoint)} 확인 중…`);
     registry = null;
+    health = null;
+    refinePath = "";
     const storedModel = restoreOptions();
 
-    // 모델 목록보다 헬스를 먼저 본다. 목록 라우트의 404만 보고는 "서버가 없다",
-    // "코드가 예전이다", "dev 도구가 꺼졌다"를 구분할 수 없어서 추측한 문구를
-    // 띄우게 된다. 헬스에는 devTools 값이 그대로 들어 있다.
-    let health = null;
+    // 목록보다 헬스를 먼저 본다. 라우트의 404만 보고는 "서버가 없다", "코드가 예전이다",
+    // "dev 도구가 꺼졌다"를 구분할 수 없어서 추측한 문구를 띄우게 된다.
     try {
       const response = await fetch(`${endpoint}/api/health`);
-      if (response.ok) health = await response.json();
-      else return failRegistry(`헬스 응답이 HTTP ${response.status}예요 — 주소를 확인하세요`);
+      if (!response.ok) return failRegistry(`헬스 응답이 HTTP ${response.status}예요 — 주소를 확인하세요`);
+      health = await response.json();
     } catch (error) {
       return failRegistry(`연결 실패 (${error.message}) — 백엔드가 떠 있는지, 터널 주소가 최신인지 확인하세요`);
     }
 
-    if (health.devTools === false) {
-      return failRegistry(
-        `dev 도구가 꺼져 있어 /api/dev/* 가 닫혀 있어요${segmentationNote(health)}. `
-        + "WEARWELL_DEV_TOOLS=1로 다시 띄우거나 로컬 백엔드로 바꾸세요"
-      );
-    }
-
     try {
-      const response = await fetch(`${endpoint}/api/dev/segment/models`, { headers: authHeaders() });
-      // 헬스에 devTools 자체가 없으면 이 라우트가 생기기 전 코드다.
-      if (response.status === 404) {
-        throw new Error(health.devTools === undefined
-          ? "이 백엔드에는 dev 라우트가 없어요 — 예전 코드가 돌고 있습니다"
-          : "dev 라우트를 찾을 수 없어요");
-      }
-      if (response.status === 401) throw new Error("토큰이 맞지 않아요 — local-config.js의 토큰과 백엔드의 WEARWELL_API_TOKEN을 맞추세요");
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      registry = await response.json();
+      registry = await fetchRegistry();
+      refinePath = await detectRefinePath();
     } catch (error) {
-      return failRegistry(`${error.message}${segmentationNote(health)}`);
+      return failRegistry(error.message);
     }
 
+    // 백엔드가 이미 올려 둔 모델이 기본값이다. 다른 모델을 고르면 그 요청에서
+    // 콜드 적재가 한 번 일어난다 — 어느 쪽인지 목록에 그대로 적어 준다.
+    const loaded = new Set(health.segmentationLoadedModels || (health.segmentationModelKey ? [health.segmentationModelKey] : []));
+    const preferred = storedModel || health.segmentationModelKey || registry.production;
     modelSelect.innerHTML = registry.models.map(model => `
-      <option value="${escapeHtml(model.key)}"${model.key === (storedModel || registry.production) ? " selected" : ""}>
-        ${escapeHtml(model.title)}${model.key === registry.production ? " (프로덕션)" : ""} · ${escapeHtml(model.taxonomy)}
+      <option value="${escapeHtml(model.key)}"${model.key === preferred ? " selected" : ""}>
+        ${escapeHtml(model.title)}${model.key === registry.production ? " (프로덕션)" : ""} · ${escapeHtml(model.taxonomy)}${loaded.has(model.key) ? " · 적재됨" : ""}
       </option>`).join("");
     renderCategories();
 
-    // FLUX가 GPU에 올라가는지는 세그멘테이션 목록으로는 알 수 없다. 5단계가 실제로
-    // 돌지, 아니면 정규화본이 그대로 나올지를 미리 알려준다.
+    // 세그멘테이션과 FLUX는 따로 논다. 5단계가 실제로 돌지, 아니면 정규화본이
+    // 그대로 나올지를 미리 알려준다.
     const where = labelFor(endpoint);
-    if (health.cuda) setHealth("up", `${where} · ${health.gpu} · ${health.model}${health.modelLoaded ? " (적재됨)" : " (첫 생성 때 적재)"}`);
-    else setHealth("warn", `${where} · GPU가 없어 5단계는 정규화본을 그대로 내보내요 (1~4단계는 정상)`);
+    const seg = `세그 ${health.segmentationModel || "?"}${health.segmentationLoaded ? "" : " (첫 요청 때 적재)"}`;
+    if (health.cuda) {
+      setHealth("up", `${where} · ${health.gpu} · ${seg} · FLUX ${health.model}${health.modelLoaded ? " (적재됨)" : " (첫 생성 때 적재)"}`);
+    } else {
+      setHealth("warn", `${where} · ${seg} · GPU가 없어 5단계는 정규화본을 그대로 내보내요 (1~4단계는 정상)`);
+    }
     updateRunButton();
   }
 
@@ -456,7 +480,7 @@
       ? "분리하고 보수한 뒤 옷마다 FLUX를 돌리고 있어요. 첫 실행은 가중치 적재로 몇 분 걸릴 수 있어요"
       : "분리하고 마스크를 보수하고 있어요");
     try {
-      const response = await fetch(`${endpoint}/api/dev/closet/refine`, {
+      const response = await fetch(`${endpoint}${refinePath}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({

@@ -667,15 +667,8 @@ def segment_closet_photo(request: SegmentationRequest):
         INFERENCE_GATE.release()
 
 
-def require_dev_tools() -> None:
-    if not DEV_TOOLS_ENABLED:
-        raise HTTPException(status_code=404, detail="Dev tools are disabled")
-
-
-@app.get("/api/dev/segment/models")
-def list_segmentation_models():
-    """비교 탭이 띄울 모델 목록. 모델을 적재하지 않으므로 torch 없이도 응답한다."""
-    require_dev_tools()
+def segmentation_registry() -> dict:
+    """모델 목록·카테고리 색·품질 기준. 모델을 적재하지 않으므로 torch 없이도 응답한다."""
     loaded: list[str] = []
     try:
         import segment_service
@@ -694,91 +687,26 @@ def list_segmentation_models():
     }
 
 
-@app.post("/api/dev/segment/compare")
-def compare_segmentation_models(request: SegmentCompareRequest):
-    """같은 사진을 여러 모델에 돌려 결과를 나란히 돌려준다.
+@app.get("/api/closet/models")
+def list_closet_models():
+    """세그멘테이션 메타데이터. 옷장·Refine Lab이 카테고리 색과 기준을 읽어 간다.
 
-    GPU/CPU를 순차로 쓰도록 추론 게이트 안에서 한 모델씩 처리한다. 모델별로
-    독립 실패를 허용한다 — 하나가 못 뜬다고 비교 전체를 버리면 쓸모가 없다.
+    적재도 추론도 하지 않는 상수 응답이라 dev 도구와 함께 닫을 이유가 없다.
     """
-    require_dev_tools()
-    keys = request.models or segment_models.DEFAULT_COMPARE
-    unknown = [key for key in keys if key not in segment_models.MODELS]
-    if unknown:
-        raise HTTPException(status_code=422, detail=f"알 수 없는 모델: {', '.join(unknown)}")
-
-    acquire_inference_slot()
-    try:
-        image = decode_image(request.image)
-        source = io.BytesIO()
-        image.save(source, format="PNG")
-        raw = source.getvalue()
-        import segment_service
-
-        results, masks_by_model = [], {}
-        for key in keys:
-            try:
-                analysis = segment_service.analyze(raw, key)
-            except Exception as error:
-                logging.exception("Segmentation comparison failed for %s", key)
-                results.append({
-                    "model": segment_models.MODELS[key].as_dict(),
-                    "error": str(error) or "모델 실행에 실패했습니다",
-                })
-                continue
-            masks_by_model[key] = analysis.pop("_masks")
-            analysis["overlay"] = encode_png(analysis.pop("overlay_png_bytes"))
-            for item in analysis["items"]:
-                item["image"] = encode_png(item.pop("png_bytes"))
-            results.append(analysis)
-
-        return {
-            "name": request.name,
-            "requested": keys,
-            "results": results,
-            "agreement": pairwise_agreement(masks_by_model, segment_service.mask_iou),
-        }
-    except ValueError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
-    except HTTPException:
-        raise
-    except Exception as error:
-        logging.exception("Segmentation comparison failed")
-        raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
-    finally:
-        INFERENCE_GATE.release()
+    return segmentation_registry()
 
 
-def pairwise_agreement(masks_by_model: dict, iou) -> list[dict]:
-    """모델 쌍마다 카테고리별 IoU. 어느 옷에서 의견이 갈리는지 보려는 것이다.
-
-    한쪽만 검출한 카테고리는 IoU가 0이므로 빠뜨리지 않고 함께 싣는다.
-    """
-    keys = list(masks_by_model)
-    rows = []
-    for index, left in enumerate(keys):
-        for right in keys[index + 1:]:
-            left_masks, right_masks = masks_by_model[left], masks_by_model[right]
-            categories = sorted(set(left_masks) | set(right_masks), key=segment_models.CATEGORIES.index)
-            scores = {}
-            for category in categories:
-                if category in left_masks and category in right_masks:
-                    scores[category] = iou(left_masks[category], right_masks[category])
-                else:
-                    scores[category] = {"onlyIn": left if category in left_masks else right}
-            rows.append({"left": left, "right": right, "categories": scores})
-    return rows
-
-
-@app.post("/api/dev/closet/refine")
+@app.post("/api/closet/refine")
 def refine_closet_photo(request: ClosetRefineRequest):
     """전신샷 -> 세그멘테이션 -> 마스크 보수 -> FLUX 재생성을 한 요청에서 전부 돌린다.
 
-    Refine Lab이 단계별 중간 산출물을 나란히 놓고 보기 위한 개발용 경로다. 옷 한 벌씩
-    독립 실패를 허용한다 — 한 벌의 생성이 실패했다고 나머지 단계 결과까지 버리면
-    무엇이 문제였는지 볼 수가 없다.
+    /api/closet/segment과 같은 급의 제품 경로다 — 모델을 여러 개 올려 비교하는
+    /api/dev/*와 달리 프로덕션 모델 하나만 쓰므로, dev 도구를 끈 공개 터널에서도
+    열어 둔다. Refine Lab은 이 경로 하나로 단계별 중간 산출물을 받아 늘어놓는다.
+
+    옷 한 벌씩 독립 실패를 허용한다 — 한 벌의 생성이 실패했다고 나머지 단계 결과까지
+    버리면 무엇이 문제였는지 볼 수가 없다.
     """
-    require_dev_tools()
     unknown = [category for category in request.categories if category not in segment_models.CATEGORIES]
     if unknown:
         raise HTTPException(status_code=422, detail=f"알 수 없는 카테고리: {', '.join(unknown)}")
@@ -866,6 +794,94 @@ def refine_closet_photo(request: ClosetRefineRequest):
         raise HTTPException(status_code=503, detail="Refinement pipeline is unavailable") from error
     finally:
         INFERENCE_GATE.release()
+
+
+def require_dev_tools() -> None:
+    if not DEV_TOOLS_ENABLED:
+        raise HTTPException(status_code=404, detail="Dev tools are disabled")
+
+
+@app.get("/api/dev/segment/models")
+def list_segmentation_models():
+    """비교 탭이 띄울 모델 목록. /api/closet/models와 같은 내용이다."""
+    require_dev_tools()
+    return segmentation_registry()
+
+
+@app.post("/api/dev/segment/compare")
+def compare_segmentation_models(request: SegmentCompareRequest):
+    """같은 사진을 여러 모델에 돌려 결과를 나란히 돌려준다.
+
+    GPU/CPU를 순차로 쓰도록 추론 게이트 안에서 한 모델씩 처리한다. 모델별로
+    독립 실패를 허용한다 — 하나가 못 뜬다고 비교 전체를 버리면 쓸모가 없다.
+    """
+    require_dev_tools()
+    keys = request.models or segment_models.DEFAULT_COMPARE
+    unknown = [key for key in keys if key not in segment_models.MODELS]
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"알 수 없는 모델: {', '.join(unknown)}")
+
+    acquire_inference_slot()
+    try:
+        image = decode_image(request.image)
+        source = io.BytesIO()
+        image.save(source, format="PNG")
+        raw = source.getvalue()
+        import segment_service
+
+        results, masks_by_model = [], {}
+        for key in keys:
+            try:
+                analysis = segment_service.analyze(raw, key)
+            except Exception as error:
+                logging.exception("Segmentation comparison failed for %s", key)
+                results.append({
+                    "model": segment_models.MODELS[key].as_dict(),
+                    "error": str(error) or "모델 실행에 실패했습니다",
+                })
+                continue
+            masks_by_model[key] = analysis.pop("_masks")
+            analysis["overlay"] = encode_png(analysis.pop("overlay_png_bytes"))
+            for item in analysis["items"]:
+                item["image"] = encode_png(item.pop("png_bytes"))
+            results.append(analysis)
+
+        return {
+            "name": request.name,
+            "requested": keys,
+            "results": results,
+            "agreement": pairwise_agreement(masks_by_model, segment_service.mask_iou),
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except HTTPException:
+        raise
+    except Exception as error:
+        logging.exception("Segmentation comparison failed")
+        raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+def pairwise_agreement(masks_by_model: dict, iou) -> list[dict]:
+    """모델 쌍마다 카테고리별 IoU. 어느 옷에서 의견이 갈리는지 보려는 것이다.
+
+    한쪽만 검출한 카테고리는 IoU가 0이므로 빠뜨리지 않고 함께 싣는다.
+    """
+    keys = list(masks_by_model)
+    rows = []
+    for index, left in enumerate(keys):
+        for right in keys[index + 1:]:
+            left_masks, right_masks = masks_by_model[left], masks_by_model[right]
+            categories = sorted(set(left_masks) | set(right_masks), key=segment_models.CATEGORIES.index)
+            scores = {}
+            for category in categories:
+                if category in left_masks and category in right_masks:
+                    scores[category] = iou(left_masks[category], right_masks[category])
+                else:
+                    scores[category] = {"onlyIn": left if category in left_masks else right}
+            rows.append({"left": left, "right": right, "categories": scores})
+    return rows
 
 
 @app.post("/api/tryon")

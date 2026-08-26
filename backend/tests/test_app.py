@@ -234,11 +234,8 @@ def test_dev_routes_are_hidden_when_dev_tools_are_disabled(backend_app, monkeypa
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload()},
     ).status_code == 404
-    assert client.post(
-        "/api/dev/closet/refine",
-        headers={"Authorization": "Bearer test-token"},
-        json={"image": image_payload()},
-    ).status_code == 404
+    # 모델 목록 자체는 상수라 dev 도구와 함께 닫을 이유가 없다. Refine Lab이 여기서 읽는다.
+    assert client.get("/api/closet/models").status_code == 200
 
 
 def stub_analysis(category: str, mask):
@@ -390,7 +387,7 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     )
 
     response = TestClient(backend_app.app).post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload(), "name": "스냅", "seed": 7},
     )
@@ -418,6 +415,32 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     assert "png_bytes" not in item
 
 
+def test_refine_route_stays_open_when_dev_tools_are_disabled(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """Colab 공개 터널은 dev 도구를 끄고 뜬다. 거기서도 Refine Lab이 돌아야 한다."""
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "DEV_TOOLS_ENABLED", False)
+    install_segment_stub(monkeypatch)
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "generate": False},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["items"][0]["stages"]["normalized"].startswith("data:image/png;base64,")
+
+
+def test_closet_model_listing_matches_the_dev_listing(backend_app):
+    """Refine Lab은 공개 경로를, Seg Lab은 dev 경로를 읽는다 — 내용이 갈리면 안 된다."""
+    from fastapi.testclient import TestClient
+
+    client = TestClient(backend_app.app)
+
+    assert client.get("/api/closet/models").json() == client.get("/api/dev/segment/models").json()
+
+
 def test_refine_route_keeps_the_earlier_stages_when_generation_fails(backend_app, monkeypatch: pytest.MonkeyPatch):
     """FLUX가 실패해도 세그멘테이션·보수 결과는 살려야 어디서 깨졌는지 알 수 있다."""
     from fastapi.testclient import TestClient
@@ -430,7 +453,7 @@ def test_refine_route_keeps_the_earlier_stages_when_generation_fails(backend_app
     monkeypatch.setattr(backend_app.image_engine, "refine_garment", explode)
 
     payload = TestClient(backend_app.app).post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload()},
     ).json()
@@ -452,7 +475,7 @@ def test_refine_route_can_stop_before_the_generation_step(backend_app, monkeypat
     )
 
     payload = TestClient(backend_app.app).post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload(), "generate": False},
     ).json()
@@ -478,12 +501,12 @@ def test_refine_route_skips_rejected_candidates_unless_asked(backend_app, monkey
     client = TestClient(backend_app.app)
 
     default = client.post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload()},
     ).json()
     asked = client.post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload(), "includeRejected": True},
     ).json()
@@ -496,7 +519,7 @@ def test_refine_route_rejects_unknown_category(backend_app):
     from fastapi.testclient import TestClient
 
     response = TestClient(backend_app.app).post(
-        "/api/dev/closet/refine",
+        "/api/closet/refine",
         headers={"Authorization": "Bearer test-token"},
         json={"image": image_payload(), "categories": ["모자"]},
     )
