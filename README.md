@@ -20,7 +20,7 @@ L4에서 기본 설정으로 실행할 수 있고 A100/H100도 호환됩니다. 
 
 - 아바타: 성별, 키, 몸무게, 체형과 선택 입력한 상세 치수를 포함해 기본 FLUX 백엔드가 768×1152 전신 이미지를 생성합니다.
 - 가상 착장: 아바타와 선택한 의류 사진을 한 번에 전달해 얼굴·체형을 유지하면서 모든 옷을 동시에 반영합니다.
-- 옷 분리: `mattmdjaga/segformer_b2_clothes`가 전신샷에서 의류를 투명 PNG로 분리합니다. 설정된 Colab API를 우선 사용하고, 연결 실패 시 같은 FastAPI를 `127.0.0.1:8787`에서 실행 중이면 로컬로 폴백합니다.
+- 옷 분리: `sayeed99/segformer_b3_clothes`가 전신샷에서 의류를 투명 PNG로 분리합니다. 모델 선정과 품질 임계값 설계는 [docs/segmentation.md](docs/segmentation.md)에 정리했습니다. 설정된 Colab API를 우선 사용하고, 연결 실패 시 같은 FastAPI를 `127.0.0.1:8787`에서 실행 중이면 로컬로 폴백합니다.
 - 기본 추론: BF16, 4 steps, guidance 1.0
 
 측정값으로 만든 아바타는 시각적 근사치이며 실제 신체 스캔이나 의류 사이즈 판정 결과가 아닙니다.
@@ -174,12 +174,12 @@ window.WEARWELL_CONFIG = {
 
 모델 목록은 [`backend/segment_models.py`](backend/segment_models.py)에서 관리합니다.
 
-| key | 모델 | 라벨 체계 | 특징 |
-| --- | --- | --- | --- |
-| `b2_clothes` | `mattmdjaga/segformer_b2_clothes` | ATR 18 | 프로덕션 기본값 |
-| `b3_clothes` | `sayeed99/segformer_b3_clothes` | ATR 18 | B2보다 큰 인코더 |
-| `b3_fashion` | `sayeed99/segformer-b3-fashion` | Fashionpedia 46 | 상의와 아우터 구분 |
-| `b5_human_parsing` | `matei-dorian/segformer-b5-finetuned-human-parsing` | ATR 18 | 가장 큰 비교 모델 |
+| key | 모델 | 라벨 체계 | 가중치 | 특징 |
+| --- | --- | --- | --- | --- |
+| `b2_clothes` | `mattmdjaga/segformer_b2_clothes` | ATR 18 | 110MB | 가장 가볍고 빠름 |
+| `b3_clothes` | `sayeed99/segformer_b3_clothes` | ATR 18 | 189MB | **프로덕션 기본값.** B2와 라벨이 같고 인코더만 큼 |
+| `b3_fashion` | `sayeed99/segformer-b3-fashion` | Fashionpedia 46 | 189MB | 유일하게 상의와 아우터를 구분 |
+| `b5_human_parsing` | `matei-dorian/segformer-b5-finetuned-human-parsing` | ATR 18 | 339MB | 가장 큰 ATR 모델. 기본 선택에는 빠져 있음 |
 
 ATR 라벨에는 아우터가 없어 코트도 상의로 분류될 수 있습니다. Fashionpedia 모델은 아우터를 구분하지만 소매·카라를 별도 부속 라벨로 분리합니다.
 

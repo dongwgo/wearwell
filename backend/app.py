@@ -23,7 +23,7 @@ import segment_models
 
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
-SEGMENTATION_MODEL = os.getenv("SEGMENTATION_MODEL", "mattmdjaga/segformer_b2_clothes")
+SEGMENTATION_MODEL = os.getenv("SEGMENTATION_MODEL", "sayeed99/segformer_b3_clothes")
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
 VLM_MAX_PIXELS = int(os.getenv("VLM_MAX_PIXELS", str(1024 * 1024)))
 API_TOKEN = os.getenv("WEARWELL_API_TOKEN", "")
@@ -607,6 +607,7 @@ def list_segmentation_models():
         "production": segment_models.PRODUCTION_MODEL,
         "loaded": segment_service.loaded_keys(),
         "categoryColors": {name: f"#{r:02x}{g:02x}{b:02x}" for name, (r, g, b) in segment_models.CATEGORY_COLORS.items()},
+        # 기본 기준. 모델별 최종 기준은 각 model의 thresholds에 들어 있다.
         "thresholds": segment_models.QUALITY_THRESHOLDS,
     }
 
@@ -743,7 +744,7 @@ def warmup_model():
             "vlmModel": VLM_MODEL,
             "vlmDtype": vlm_engine.dtype,
             "vlmQuantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
-            "segmentationModel": SEGMENTATION_MODEL,
+            "segmentationModel": segmentation["model"],
             "segmentationDevice": segmentation["device"],
         }
     except Exception as error:

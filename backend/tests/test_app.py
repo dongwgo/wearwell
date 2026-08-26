@@ -48,8 +48,8 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["vlmModel"] == "Qwen/Qwen3-VL-8B-Instruct"
     assert result["vlmLoaded"] is False
     assert result["vlmQuantization"] == "nf4"
-    assert result["segmentationModel"] == "mattmdjaga/segformer_b2_clothes"
-    assert result["segmentationModelKey"] == "b2_clothes"
+    assert result["segmentationModel"] == "sayeed99/segformer_b3_clothes"
+    assert result["segmentationModelKey"] == "b3_clothes"
     assert result["segmentationLoaded"] is False
     assert result["segmentationLoadedModels"] == []
     assert result["segmentationDevice"] is None
@@ -164,8 +164,10 @@ def test_segmentation_route_returns_transparent_crops(backend_app, monkeypatch: 
     assert item["image"].startswith("data:image/png;base64,")
     assert item["confidence"] == 0.91
     # 모델을 지정하지 않으면 프로덕션 기본값으로 돈다.
+    import segment_models
+
     assert calls == [None]
-    assert response.json()["model"]["key"] == "b2_clothes"
+    assert response.json()["model"]["key"] == segment_models.PRODUCTION_MODEL
 
 
 def test_segmentation_route_rejects_unknown_model(backend_app):
@@ -194,6 +196,25 @@ def test_only_fashionpedia_model_can_produce_outer_category():
     assert outer_capable == {"b3_fashion"}
     # 아우터를 만들 수 있는 모델이 있으니 품질 기준에도 아우터가 있어야 한다.
     assert set(segment_models.QUALITY_THRESHOLDS) >= set(segment_models.CATEGORIES)
+
+
+def test_threshold_overrides_only_replace_named_keys():
+    """모델별 보정은 지정한 키만 덮고 나머지는 기본값을 유지해야 한다.
+
+    통째로 갈아끼우면 보정 하나 넣을 때마다 나머지 두 축이 조용히 사라진다.
+    """
+    import segment_models
+
+    spec = segment_models.MODELS["b3_clothes"]
+    base = segment_models.QUALITY_THRESHOLDS["신발"]
+    resolved = spec.thresholds_for("신발")
+
+    assert resolved["minConfidence"] == 0.42 != base["minConfidence"]
+    assert resolved["minArea"] == base["minArea"]
+    assert resolved["minFill"] == base["minFill"]
+    # 보정이 없는 카테고리와 모델은 기본값 그대로.
+    assert spec.thresholds_for("상의") == segment_models.QUALITY_THRESHOLDS["상의"]
+    assert segment_models.MODELS["b2_clothes"].thresholds_for("신발") == base
 
 
 def test_dev_model_listing_describes_every_registered_model(backend_app):

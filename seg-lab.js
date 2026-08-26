@@ -114,6 +114,15 @@
     updateRunButton();
   }
 
+  /** 기본 기준을 덮어쓴 모델임을 표시. 같은 사진에서 기준선이 달라 보이는 이유다. */
+  function renderOverrides(overrides) {
+    const entries = Object.entries(overrides || {});
+    if (!entries.length) return "";
+    const text = entries.map(([category, values]) =>
+      `${category} ${Object.entries(values).map(([key, value]) => `${key} ${value}`).join(", ")}`).join(" · ");
+    return `<span class="seg-model-override">기준 보정: ${escapeHtml(text)}</span>`;
+  }
+
   function renderPicker() {
     picker.innerHTML = registry.models.map(model => `
       <label class="seg-model-option${selected.has(model.key) ? " on" : ""}">
@@ -126,6 +135,7 @@
         <span class="seg-model-meta">${escapeHtml(model.taxonomy)} · ${model.weightsMb}MB · ${escapeHtml(model.modelId)}</span>
         <span class="seg-model-summary">${escapeHtml(model.summary)}</span>
         <span class="seg-model-watch">주의: ${escapeHtml(model.watchFor)}</span>
+        ${renderOverrides(model.thresholdOverrides)}
       </label>`).join("");
 
     picker.querySelectorAll("input").forEach(input => input.addEventListener("change", () => {

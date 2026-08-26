@@ -18,7 +18,7 @@ import time
 from collections import OrderedDict
 
 import segment_models
-from segment_models import CATEGORY_COLORS, MODELS, PRODUCTION_MODEL, QUALITY_THRESHOLDS
+from segment_models import CATEGORY_COLORS, MODELS, PRODUCTION_MODEL
 
 # 프로덕션 기본 모델. 예전 코드가 참조하던 이름을 유지한다.
 MODEL_ID = MODELS[PRODUCTION_MODEL].model_id
@@ -241,7 +241,7 @@ def segment(image_bytes: bytes, model_key: str | None = None) -> list[dict]:
     results = []
     for category, mask in masks.items():
         stats = _measure(mask, confidence, img_np.shape)
-        if _reject_reason(stats, QUALITY_THRESHOLDS[category]):
+        if _reject_reason(stats, spec.thresholds_for(category)):
             continue
         results.append({
             "category": category,
@@ -316,7 +316,7 @@ def analyze(image_bytes: bytes, model_key: str) -> dict:
     items = []
     for category, mask in masks.items():
         stats = _measure(mask, confidence, img_np.shape)
-        thresholds = QUALITY_THRESHOLDS[category]
+        thresholds = spec.thresholds_for(category)
         reason = _reject_reason(stats, thresholds)
         items.append({
             "category": category,
@@ -324,9 +324,12 @@ def analyze(image_bytes: bytes, model_key: str) -> dict:
             "accepted": reason is None,
             "rejectReason": reason,
             "pixelCount": stats["pixelCount"],
-            "areaRatio": round(stats["areaRatio"], 4),
-            "fillRatio": round(stats["fillRatio"], 3),
-            "confidence": round(stats["confidence"], 3),
+            # 표시용으로는 두세 자리면 충분하지만, scripts/segment_eval.py가 이 값으로
+            # 기준을 바꿔가며 재판정한다. 자리를 아끼면 기준선에 걸친 후보의 판정이
+            # 뒤집혀서 실험 결과를 믿을 수 없게 된다.
+            "areaRatio": round(stats["areaRatio"], 6),
+            "fillRatio": round(stats["fillRatio"], 5),
+            "confidence": round(stats["confidence"], 5),
             "thresholds": thresholds,
             "png_bytes": _crop_png(img_np, mask, stats["bbox"], PREVIEW_CROP_PX),
         })
