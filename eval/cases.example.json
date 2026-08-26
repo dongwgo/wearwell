@@ -1,0 +1,44 @@
+[
+  {
+    "id": "layer-inner-outer",
+    "root": "eval",
+    "avatar": "avatars/men-181.jpg",
+    "garments": [
+      {"image": "items/oxford-shirt.png", "category": "상의", "name": "화이트 옥스퍼드 셔츠"},
+      {"image": "items/navy-blazer.png", "category": "아우터", "name": "네이비 블레이저"},
+      {"image": "items/charcoal-slacks.png", "category": "하의", "name": "차콜 슬랙스"}
+    ]
+  },
+  {
+    "id": "bag-crossbody",
+    "root": "eval",
+    "avatar": "avatars/women-163.jpg",
+    "garments": [
+      {"image": "items/knit-top.png", "category": "상의", "name": "아이보리 니트"},
+      {"image": "items/denim.png", "category": "하의", "name": "라이트 데님"},
+      {"image": "items/cross-bag.png", "category": "가방", "name": "브라운 레더 크로스백"}
+    ]
+  },
+  {
+    "id": "full-outfit-six",
+    "root": "eval",
+    "avatar": "avatars/men-175.jpg",
+    "garments": [
+      {"image": "items/tee.png", "category": "상의", "name": "블랙 반팔 티셔츠"},
+      {"image": "items/coach-jacket.png", "category": "아우터", "name": "코치 자켓"},
+      {"image": "items/wide-pants.png", "category": "하의", "name": "베이지 와이드 팬츠"},
+      {"image": "items/sneakers.png", "category": "신발", "name": "화이트 스니커즈"},
+      {"image": "items/backpack.png", "category": "가방", "name": "나일론 백팩"},
+      {"image": "items/ball-cap.png", "category": "액세서리", "name": "코튼 볼캡"}
+    ]
+  },
+  {
+    "id": "accessory-hat-only",
+    "root": "eval",
+    "avatar": "avatars/women-170.jpg",
+    "garments": [
+      {"image": "items/trench.png", "category": "아우터", "name": "베이지 트렌치 코트"},
+      {"image": "items/bucket-hat.png", "category": "액세서리", "name": "블랙 버킷햇"}
+    ]
+  }
+]

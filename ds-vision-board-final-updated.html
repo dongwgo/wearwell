@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<title>삼성 DS 비전 프로젝트 보드 — 2026-08 업데이트</title>
+<style>
+:root{
+  --paper:#F2F3F6;--panel:#FFFFFF;--panel-2:#F8F9FB;--ink:#15181E;--ink-2:#3D444F;--muted:#6E7787;
+  --line:#D8DBE2;--line-soft:#E6E8ED;--shadow:0 1px 2px rgba(21,24,30,.05),0 10px 28px -18px rgba(21,24,30,.30);
+  --f1:#26896F;--f2:#CF5A3C;--f3:#7B59C8;--f4:#C07B24;--f5:#2875B5;--f6:#B94878;--f7:#4168C5;--f8:#647C2F;
+  --ok:#1D8A70;--warn:#B97819;--bad:#C84B38;--info:#4168C5;
+  --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI","Malgun Gothic",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,"Cascadia Mono","D2Coding",monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --paper:#0F1116;--panel:#171A21;--panel-2:#1C2028;--ink:#EAECF1;--ink-2:#B8BEC9;--muted:#8F98A8;
+  --line:#2A2F39;--line-soft:#232830;--shadow:0 1px 2px rgba(0,0,0,.45),0 12px 32px -18px rgba(0,0,0,.95);
+  --f1:#48B79A;--f2:#EF7659;--f3:#A58AE5;--f4:#DFA84E;--f5:#5AA0D8;--f6:#E172A3;--f7:#7298EB;--f8:#A2C75C;
+  --ok:#48B79A;--warn:#DFA84E;--bad:#EE7059;--info:#7298EB;
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input{font:inherit}code{font-family:var(--mono);font-size:.92em}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.hero{padding:72px 0 34px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:flex;gap:11px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.kicker b{color:var(--ink-2);font-weight:700}
+h1,h2,h3{margin:0;text-wrap:balance}h1{font-size:clamp(32px,4.8vw,54px);line-height:1.12;letter-spacing:-.028em;font-weight:780;max-width:21ch}
+.lede{margin:20px 0 0;max-width:75ch;color:var(--ink-2);font-size:17.5px}.lede em{font-style:normal;color:var(--ink);font-weight:670;box-shadow:inset 0 -.45em 0 color-mix(in srgb,var(--f7) 18%,transparent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}.lg{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 9px;border:1px solid var(--line);border-radius:3px;background:var(--panel);font-size:13px;font-weight:600;text-decoration:none;transition:.15s}.lg:hover{border-color:var(--c);transform:translateY(-1px)}.lg .sw{width:9px;height:9px;background:var(--c);border-radius:2px;flex:none}.lg .n{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.notice-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:32px}@media(min-width:900px){.notice-grid{grid-template-columns:1.15fr .85fr}}
+.key,.scope{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:19px 21px}.key{border-left:3px solid var(--ink-2)}.scope{border-left:3px solid var(--warn)}
+.key h3,.scope h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}.key ul,.scope ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.key li,.scope li{font-size:14px;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start}.key li b,.scope li b{color:var(--ink)}
+.badge{font-family:var(--mono);font-size:10.5px;font-weight:750;letter-spacing:.045em;padding:3px 7px;border-radius:3px;white-space:nowrap;border:1px solid currentColor;display:inline-flex;align-items:center}
+.run-browser{color:var(--ok)}.run-colab{color:var(--warn)}.run-heavy{color:var(--bad)}
+.toolbar-wrap{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.toolbar{max-width:1240px;margin:0 auto;padding:12px 24px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}.toolbar strong{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-right:3px}
+.filter{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);padding:6px 10px;border-radius:3px;font-size:12.5px;font-weight:650;cursor:pointer}.filter:hover,.filter[aria-pressed="true"]{border-color:var(--ink-2);color:var(--ink);background:var(--panel-2)}.count{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.search{min-width:210px;flex:1 1 240px;max-width:360px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 10px;border-radius:3px;font-size:13px}
+.field{padding:58px 0 10px;scroll-margin-top:80px}.field+.field{border-top:1px solid var(--line-soft)}.fhead{display:flex;align-items:flex-start;gap:16px}.fnum{font-family:var(--mono);font-size:12px;font-weight:750;color:var(--c);border:1px solid var(--c);border-radius:3px;padding:3px 7px;margin-top:7px;flex:none}.fhead h2{font-size:clamp(22px,2.8vw,29px);letter-spacing:-.018em;font-weight:740}.fhead h2 small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:550;margin-top:4px}.why{max-width:76ch;color:var(--ink-2);font-size:15.5px;margin:13px 0 25px}.why strong{color:var(--ink);font-weight:680}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr));gap:16px}.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:20px 20px 17px;display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow);min-width:0}.card::before,.card::after{content:"";position:absolute;width:13px;height:13px;pointer-events:none;border-color:var(--c);border-style:solid}.card::before{top:-1px;left:-1px;border-width:2px 0 0 2px}.card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}.card[hidden]{display:none}
+.ctop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.taskchip{font-family:var(--mono);font-size:10px;color:var(--c);letter-spacing:.04em;font-weight:750;margin-bottom:4px}.card h3{font-size:17.5px;font-weight:730;letter-spacing:-.012em;line-height:1.32}.card h3 em{display:block;font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:520;letter-spacing:.018em;margin-top:4px}.desc{font-size:14.3px;color:var(--ink-2);margin:0}.desc strong{color:var(--ink);font-weight:670}
+.io{font-family:var(--mono);font-size:11px;color:var(--muted);background:color-mix(in srgb,var(--c) 7%,transparent);border:1px dashed color-mix(in srgb,var(--c) 35%,transparent);padding:8px 9px;border-radius:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}.io span{color:var(--c);font-weight:800}.io b{font-weight:650;color:var(--ink-2)}.io i{font-style:normal;color:var(--muted)}
+.meta-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.vtag,.lic{font-family:var(--mono);font-size:9.8px;line-height:1.3;font-weight:700;padding:3px 6px;border-radius:3px;border:1px solid var(--line)}.v-live{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.v-official{color:var(--info);border-color:color-mix(in srgb,var(--info) 45%,var(--line))}.v-code{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}.lic{color:var(--muted)}.lic-safe{color:var(--ok)}.lic-caution{color:var(--warn)}
+.links{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:3px}.lk{font-family:var(--mono);font-size:11px;font-weight:650;text-decoration:none;padding:5px 9px;border:1px solid var(--line);border-radius:3px;color:var(--ink-2);transition:.15s}.lk:hover{border-color:var(--c);color:var(--c)}.lk.pri{background:var(--c);border-color:var(--c);color:white}@media(prefers-color-scheme:dark){.lk.pri{color:#0F1116}}
+.note{font-size:12px;color:var(--muted);border-top:1px dotted var(--line);padding-top:9px;margin:0}.note b{color:var(--warn)}
+.closing{padding:58px 0 0;border-top:1px solid var(--line-soft);margin-top:10px}.split{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:900px){.split{grid-template-columns:1.05fr .95fr}}.box{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:23px}.box h3{font-size:17px;font-weight:730;margin-bottom:12px}.box ol,.box ul{margin:0;padding-left:1.2em;display:grid;gap:9px;font-size:14px;color:var(--ink-2)}.box li b{color:var(--ink)}
+.tblwrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left;padding:9px 12px 9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}th{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}td:first-child{font-weight:670;color:var(--ink);white-space:nowrap}.full{margin-top:16px}
+.seeds{counter-reset:s;list-style:none!important;padding:0!important}.seeds li{display:grid;grid-template-columns:auto 1fr;gap:10px;border-bottom:1px dotted var(--line);padding:0 0 9px}.seeds li:last-child{border-bottom:0;padding-bottom:0}.seeds li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:700}
+footer{margin:56px 0 48px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}footer b{color:var(--ink-2)}
+.no-results{display:none;margin:28px 0;padding:20px;border:1px dashed var(--line);color:var(--muted);text-align:center}.no-results.show{display:block}
+@media(max-width:620px){.wrap{padding:0 17px}.hero{padding-top:48px}.toolbar{padding:10px 17px}.count{width:100%;margin-left:0}.card{padding:18px 17px 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="kicker"><span>삼성 DS · Computer Vision</span><span>—</span><span><b>8개 분야</b> · 실습 후보 <b>27개</b></span><span>—</span><span>2026-08-23 검토</span></div>
+<h1>태스크를 먼저 나누고, 실행 가능한 모델만 남긴 비전 프로젝트 보드</h1>
+<p class="lede">분류·검출·분할·자세·3D·생성·비전–언어·이미지 복원을 한 목록에 섞지 않았습니다. 각 카드에는 <em>입력과 출력, 실행 경로, 검증 수준, 라이선스</em>를 함께 표시했습니다. 먼저 브라우저나 작은 체크포인트로 성공시키고, 팀 주제가 정해진 뒤에만 무거운 모델로 내려가십시오.</p>
+<nav aria-label="분야 바로가기" class="legend"><a class="lg" href="#f1" style="--c:var(--f1)"><span class="sw"></span>분류 · 검색 · 이상탐지<span class="n">01</span></a><a class="lg" href="#f2" style="--c:var(--f2)"><span class="sw"></span>객체 검출 · 추적<span class="n">02</span></a><a class="lg" href="#f3" style="--c:var(--f3)"><span class="sw"></span>픽셀 분할<span class="n">03</span></a><a class="lg" href="#f4" style="--c:var(--f4)"><span class="sw"></span>사람 자세 · 3D 모션<span class="n">04</span></a><a class="lg" href="#f5" style="--c:var(--f5)"><span class="sw"></span>깊이 · 카메라 · 3D<span class="n">05</span></a><a class="lg" href="#f6" style="--c:var(--f6)"><span class="sw"></span>생성 · 편집<span class="n">06</span></a><a class="lg" href="#f7" style="--c:var(--f7)"><span class="sw"></span>비전–언어 · OCR<span class="n">07</span></a><a class="lg" href="#f8" style="--c:var(--f8)"><span class="sw"></span>이미지 복원 · 화질 개선<span class="n">08</span></a></nav>
+<div class="notice-grid">
+<div class="key">
+<h3>실행 경로</h3>
+<ul>
+<li><span class="badge run-browser">브라우저</span><span><b>설치 없이 체험.</b> 공식 또는 공식 저장소가 연결한 Hugging Face Space·웹 샘플을 우선했습니다.</span></li>
+<li><span class="badge run-colab">COLAB</span><span><b>무료 GPU에서 시작.</b> 작은 체크포인트와 공식 notebook·quickstart가 있는 항목입니다.</span></li>
+<li><span class="badge run-heavy">심화</span><span><b>계정·가중치·고사양 의존성 확인.</b> 공통 실습이 아니라 선택 팀용으로만 둡니다.</span></li>
+</ul>
+</div>
+<div class="scope">
+<h3>이번 검증의 정확한 범위</h3>
+<ul>
+<li><span>✓</span><span><b>공식 저장소·모델 카드·notebook 경로</b>와 현재 공개 상태를 확인했습니다.</span></li>
+<li><span>✓</span><span><b>“Running on Zero”인 공개 Space</b>는 2026-08-22 기준 실행 상태를 확인했습니다.</span></li>
+<li><span>!</span><span>모델과 런타임은 계속 바뀔 수 있으므로, <b>수업 직전에 각 카드의 Colab·Space 링크를 다시 실행</b>해 설치부터 최종 출력까지 확인하십시오.</span></li>
+</ul>
+</div>
+</div>
+</header>
+</div>
+<div class="toolbar-wrap">
+<div class="toolbar" role="search">
+<strong>필터</strong>
+<button aria-pressed="true" class="filter" data-filter="all" type="button">전체</button>
+<button aria-pressed="false" class="filter" data-filter="browser" type="button">브라우저</button>
+<button aria-pressed="false" class="filter" data-filter="colab" type="button">Colab</button>
+<input aria-label="모델과 태스크 검색" class="search" id="search" placeholder="모델·태스크 검색" type="search"/>
+<span class="count" id="count">27 / 27 표시</span>
+</div>
+</div>
+<main class="wrap">
+<section class="field" id="f1" style="--c:var(--f1)">
+<div class="fhead">
+<div class="fnum">01</div>
+<h2>분류 · 검색 · 이상탐지<small>Classification, Retrieval &amp; Anomaly Detection</small></h2>
+</div>
+<p class="why"><strong>이미지 전체를 판단하는 문제</strong>입니다. 정해진 클래스 중 하나를 고르는 분류, 텍스트와 이미지를 같은 공간에서 비교하는 검색, 정상 데이터에서 벗어난 부분을 찾는 산업 이상탐지를 분리해 보십시오.</p>
+<div class="grid">
+<article class="card" data-run="browser" data-search="yolo26 classify 분류 ultralytics closed-set classification browser demo">
+<div class="ctop">
+<div>
+<div class="taskchip">분류</div>
+<h3>YOLO26 Classify<em>Ultralytics · closed-set classification</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">ImageNet 사전학습 분류기를 브라우저에서 바로 시험하고, 필요하면 같은 패키지에서 커스텀 학습으로 확장합니다. <strong>정답 후보가 미리 정해진 문제</strong>의 기준선으로 쓰기 좋습니다.</p>
+<div class="io"><span>IN</span> <b>이미지</b><i>→</i><span>OUT</span> <b>클래스 확률·Top-k</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 Space 실행 확인</span>
+<span class="lic lic-caution">LICENSE · AGPL-3.0 / Enterprise</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/Ultralytics/YOLO26" rel="noopener noreferrer" target="_blank">공식 데모</a><a class="lk" href="https://colab.research.google.com/github/ultralytics/ultralytics/blob/main/examples/tutorial.ipynb" rel="noopener noreferrer" target="_blank">공식 Colab</a><a class="lk" href="https://docs.ultralytics.com/tasks/classify/" rel="noopener noreferrer" target="_blank">문서</a></div>
+<p class="note"><b>실행 방법</b> · 데모의 모델 목록에서 <code>yolo26n-cls</code>를 선택하십시오. 사내 제품·서비스 적용 시 AGPL 의무 또는 Enterprise 라이선스를 별도로 검토해야 합니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="siglip 2 제로샷 분류 검색 google zero-shot classification retrieval official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">제로샷 분류·검색</div>
+<h3>SigLIP 2<em>Google · zero-shot classification &amp; retrieval</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">이미지와 문장을 같은 임베딩 공간에 놓습니다. 라벨을 새로 학습하지 않고 <strong>후보 문장으로 분류</strong>하거나, 텍스트로 유사 이미지를 찾을 수 있습니다.</p>
+<div class="io"><span>IN</span> <b>이미지 + 후보 문장</b><i>→</i><span>OUT</span> <b>유사도·순위</b></div>
+<div class="meta-row">
+<span class="vtag v-code">동료 수정 Colab · 설치 오류 대응</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1YfsInjUSLNWpRzB0bygdwPOszgwS24Wt?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Colab</a><a class="lk" href="https://huggingface.co/google/siglip2-base-patch16-256" rel="noopener noreferrer" target="_blank">모델 카드</a><a class="lk" href="https://github.com/google-research/big_vision" rel="noopener noreferrer" target="_blank">공식 코드</a></div>
+<p class="note"><b>수업 메모</b> · 동료가 Colab 환경 설치 오류를 수정한 버전입니다.
+    같은 이미지에 후보 문장만 바꿔 넣어 closed-set 분류와 zero-shot 검색의 차이를 비교하기 좋습니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="anomalib 2.6 이상탐지 open edge platform industrial anomaly detection official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">이상탐지</div>
+<h3>Anomalib 2.6<em>Open Edge Platform · industrial anomaly detection</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">정상 샘플을 중심으로 학습해 결함 가능성을 이미지·픽셀 수준으로 표시합니다. PatchCore 등 여러 방법을 같은 API로 비교할 수 있어 <strong>반도체·제조 실습</strong>에 가장 직접적입니다.</p>
+<div class="io"><span>IN</span> <b>정상/결함 이미지</b><i>→</i><span>OUT</span> <b>이상 점수 + heatmap</b></div>
+<div class="meta-row">
+<span class="vtag v-code">동료 수정 Colab · 링크/recursion 대응</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1OxfnUKfK2LrLr3ToOPwsUHRfxDaMVFkE?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Colab</a><a class="lk" href="https://github.com/open-edge-platform/anomalib" rel="noopener noreferrer" target="_blank">GitHub</a><a class="lk" href="https://anomalib.readthedocs.io/" rel="noopener noreferrer" target="_blank">문서</a></div>
+<p class="note"><b>수업 메모</b> · 동료가 깨진 링크와 recursion error를 수정한 Colab입니다.
+    MVTec AD 샘플로 시작한 뒤 실제 웨이퍼·표면 이미지에서는 데이터 누수와 정상 조건의 범위를 먼저 점검하십시오.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f2" style="--c:var(--f2)">
+<div class="fhead">
+<div class="fnum">02</div>
+<h2>객체 검출 · 추적<small>Object Detection &amp; Tracking</small></h2>
+</div>
+<p class="why"><strong>어디에 무엇이 있는지</strong>를 박스로 찾는 검출과, 영상에서 같은 개체의 ID를 이어 가는 추적을 묶었습니다. 고정 클래스 검출과 텍스트 기반 open-vocabulary 검출은 서로 다른 문제로 봐야 합니다.</p>
+<div class="grid">
+<article class="card" data-run="colab" data-search="yolo26 detect track 검출 추적 ultralytics real-time detection official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">검출·추적</div>
+<h3>YOLO26 Detect + Track<em>Ultralytics · real-time detection</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">가장 짧은 코드로 사전학습 검출과 ByteTrack·BoT-SORT 추적을 연결합니다. 영상 데모, 계수, 안전장구 검사처럼 <strong>실시간성이 중요한 기준선</strong>에 적합합니다.</p>
+<div class="io"><span>IN</span> <b>이미지·영상</b><i>→</i><span>OUT</span> <b>box + class + track ID</b></div>
+<div class="meta-row">
+<span class="vtag v-code">동료 수정 Tracking Colab</span>
+<span class="lic lic-caution">LICENSE · AGPL-3.0 / Enterprise</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1lK4JQFmdmJhZtnko0JsCO9W5lQfTdR1L?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Tracking Colab</a><a class="lk" href="https://huggingface.co/spaces/Ultralytics/YOLO26" rel="noopener noreferrer" target="_blank">검출 데모</a><a class="lk" href="https://docs.ultralytics.com/models/yolo26/" rel="noopener noreferrer" target="_blank">문서</a></div>
+<p class="note"><b>수업 메모</b> · 공개 샘플 영상을 자동 다운로드해 tracking을 바로 실행하고,
+    기본 모델의 성능이 아쉬울 때 더 큰 모델·다른 조합을 추가로 비교하도록 수정한 Colab입니다.</p>
+</article>
+<article class="card" data-run="browser" data-search="rf-detr nano 검출 roboflow transformer detector official demo">
+<div class="ctop">
+<div>
+<div class="taskchip">검출</div>
+<h3>RF-DETR Nano<em>Roboflow · real-time transformer detector</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">DETR 계열의 실시간 검출기이며 Nano부터 Large까지 선택할 수 있습니다. YOLO와 다른 구조를 비교하면서도 API가 단순하고, <strong>Apache-2.0</strong>이라 수업용 기준선으로 쓰기 좋습니다.</p>
+<div class="io"><span>IN</span> <b>이미지·짧은 영상</b><i>→</i><span>OUT</span> <b>box + class + score</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 T4 Space 실행 확인</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/Roboflow/RF-DETR" rel="noopener noreferrer" target="_blank">공식 데모</a><a class="lk" href="https://rfdetr.roboflow.com/latest/" rel="noopener noreferrer" target="_blank">공식 quickstart</a><a class="lk" href="https://github.com/roboflow/rf-detr" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>실행 방법</b> · 데모에서 <code>nano (object detection)</code>을 선택하면 가장 빠르게 결과를 확인할 수 있습니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="yoloe 텍스트 시각 프롬프트 open vocabulary detection segmentation iccv 2025 official demo">
+<div class="ctop">
+<div>
+<div class="taskchip">텍스트·시각 프롬프트 검출</div>
+<h3>YOLOE<em>THU-MIG · real-time seeing anything</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">“노란 안전모” 같은 텍스트, 다른 이미지의 물체, 또는 prompt-free 모드로 찾을 대상을 바꿉니다. <strong>open-vocabulary 검출과 분할</strong>을 실시간 계열 모델에서 체험할 수 있습니다.</p>
+<div class="io"><span>IN</span> <b>이미지 + 텍스트/시각 프롬프트</b><i>→</i><span>OUT</span> <b>box 또는 mask</b></div>
+<div class="meta-row">
+<span class="vtag v-code">동료 수정 Colab 제공</span>
+<span class="lic lic-caution">LICENSE · AGPL-3.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1CRt-gIOD5trtqggd5hc6zTGhyG2GOxbk?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Colab</a><a class="lk" href="https://github.com/THU-MIG/yoloe" rel="noopener noreferrer" target="_blank">공식 코드</a><a class="lk" href="https://huggingface.co/jameslahm/yoloe" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · 무료 GPU 데모의 사용 제한을 피하기 위해
+    동료가 Colab 실행 경로로 옮긴 버전입니다.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f3" style="--c:var(--f3)">
+<div class="fhead">
+<div class="fnum">03</div>
+<h2>픽셀 분할<small>Image &amp; Video Segmentation</small></h2>
+</div>
+<p class="why">검출의 출력은 사각형이고, 분할의 출력은 <strong>픽셀 단위 마스크</strong>입니다. 점·박스로 원하는 물체를 지정하는 promptable segmentation, 클래스별 semantic segmentation, 개체별 instance segmentation을 구분했습니다.</p>
+<div class="grid">
+<article class="card" data-run="colab" data-search="sam 2.1 프롬프트 분할 meta promptable image video segmentation official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">프롬프트 분할</div>
+<h3>SAM 2.1<em>Meta · promptable image/video segmentation</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">점이나 박스를 찍어 이미지의 물체를 자르고, 영상에서는 첫 프레임의 마스크를 뒤 프레임으로 전파합니다. <strong>라벨 제작·영상 객체 추적</strong>의 범용 부품입니다.</p>
+<div class="io"><span>IN</span> <b>이미지·영상 + 점/박스</b><i>→</i><span>OUT</span> <b>mask + video propagation</b></div>
+<div class="meta-row">
+<span class="vtag v-official">공식 Colab 경로 확인</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0 / BSD-3-Clause</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/image_predictor_example.ipynb" rel="noopener noreferrer" target="_blank">이미지 Colab</a><a class="lk" href="https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb" rel="noopener noreferrer" target="_blank">영상 Colab</a><a class="lk" href="https://github.com/facebookresearch/sam2" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 이미지와 영상 notebook을 분리했습니다. 첫 실습은 이미지 notebook으로 시작하고, 영상 전파는 별도 팀만 진행하는 편이 안전합니다.</p>
+</article>
+<article class="card" data-run="browser" data-search="yolo26 seg 인스턴스 분할 ultralytics instance segmentation official demo">
+<div class="ctop">
+<div>
+<div class="taskchip">인스턴스 분할</div>
+<h3>YOLO26 Seg<em>Ultralytics · real-time instance segmentation</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">사전학습 클래스의 개체마다 별도 마스크를 냅니다. SAM처럼 임의의 점으로 자르는 모델과 달리, <strong>검출 클래스와 인스턴스 마스크</strong>를 함께 예측합니다.</p>
+<div class="io"><span>IN</span> <b>이미지·영상</b><i>→</i><span>OUT</span> <b>box + class + instance mask</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 Space 실행 확인</span>
+<span class="lic lic-caution">LICENSE · AGPL-3.0 / Enterprise</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/Ultralytics/YOLO26" rel="noopener noreferrer" target="_blank">공식 데모</a><a class="lk" href="https://colab.research.google.com/github/ultralytics/ultralytics/blob/main/examples/tutorial.ipynb" rel="noopener noreferrer" target="_blank">공식 Colab</a><a class="lk" href="https://docs.ultralytics.com/tasks/segment/" rel="noopener noreferrer" target="_blank">문서</a></div>
+<p class="note"><b>실행 방법</b> · 데모의 모델 목록에서 <code>yolo26n-seg</code>를 선택하십시오.</p>
+</article>
+<article class="card" data-run="browser" data-search="rf-detr-seg nano 인스턴스 분할 roboflow real-time instance segmentation official demo">
+<div class="ctop">
+<div>
+<div class="taskchip">인스턴스 분할</div>
+<h3>RF-DETR-Seg Nano<em>Roboflow · transformer instance segmentation</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">RF-DETR의 검출 결과에 개체별 마스크를 더합니다. YOLO26 Seg와 <strong>동일 이미지·동일 mask AP</strong> 기준으로 비교하기 쉬운 Apache-2.0 대안입니다.</p>
+<div class="io"><span>IN</span> <b>이미지</b><i>→</i><span>OUT</span> <b>box + instance mask</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 T4 Space 실행 확인</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/Roboflow/RF-DETR" rel="noopener noreferrer" target="_blank">공식 데모</a><a class="lk" href="https://rfdetr.roboflow.com/latest/" rel="noopener noreferrer" target="_blank">공식 quickstart</a><a class="lk" href="https://github.com/roboflow/rf-detr" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>실행 방법</b> · 데모에서 <code>nano (instance segmentation)</code>을 고르고, 검출 카드와 같은 입력을 넣어 box와 mask의 차이를 확인하십시오.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f4" style="--c:var(--f4)">
+<div class="fhead">
+<div class="fnum">04</div>
+<h2>사람 자세 · 3D 모션<small>Human Pose &amp; Motion</small></h2>
+</div>
+<p class="why">2D 관절 좌표, 영상 속 동일 인물 추적, 3D 관절·SMPL 몸체 복원은 난이도와 출력이 크게 다릅니다. <strong>2D pose부터 성공시킨 뒤</strong> 실제로 3D가 필요한 팀만 human mesh recovery로 내려가십시오.</p>
+<div class="grid">
+<article class="card" data-run="browser" data-search="mediapipe pose landmarker 단일인 2d·준3d 자세 google · browser/cpu pose">
+<div class="ctop">
+<div>
+<div class="taskchip">단일인 2D·준3D 자세</div>
+<h3>MediaPipe Pose Landmarker<em>Google · browser/CPU pose</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">웹캠에서 33개 몸 관절과 정규화 좌표·world landmarks를 실시간으로 냅니다. 설치 없이 시작하기 가장 쉽고 CPU에서도 동작합니다.</p>
+<div class="io"><span>IN</span> <b>이미지·영상·웹캠</b><i>→</i><span>OUT</span> <b>33 pose landmarks</b></div>
+<div class="meta-row">
+<span class="vtag v-live">웹 샘플 확인</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://google-ai-edge.github.io/mediapipe-samples-web/" rel="noopener noreferrer" target="_blank">웹 샘플</a><a class="lk" href="https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker" rel="noopener noreferrer" target="_blank">공식 문서</a><a class="lk" href="https://github.com/google-ai-edge/mediapipe-samples" rel="noopener noreferrer" target="_blank">예제 코드</a></div>
+<p class="note"><b>수업 메모</b> · Pose Landmarker 자체는 손·얼굴 전체 키포인트를 함께 내지 않습니다. 필요하면 Hand·Face 또는 Holistic 태스크를 별도로 연결하십시오.</p>
+</article>
+<article class="card" data-run="colab" data-search="yolo26 pose + track 다중인 2d 자세·추적 ultralytics · multi-person 2d pose">
+<div class="ctop">
+<div>
+<div class="taskchip">다중인 2D 자세·추적</div>
+<h3>YOLO26 Pose + Track<em>Ultralytics · multi-person 2D pose</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">한 프레임의 여러 사람을 찾고 COCO 관절을 예측하며 영상에서는 ID를 이어 갑니다. MediaPipe보다 <strong>다중인 장면과 영상 파이프라인</strong>에 편합니다.</p>
+<div class="io"><span>IN</span> <b>이미지·영상</b><i>→</i><span>OUT</span> <b>2D keypoints + person ID</b></div>
+<div class="meta-row">
+<span class="lic lic-caution">LICENSE · AGPL-3.0 / Enterprise</span>
+</div>
+<div class="links"><a class="lk pri" href="https://docs.ultralytics.com/tasks/pose/" rel="noopener noreferrer" target="_blank">Pose 문서</a><a class="lk" href="https://colab.research.google.com/github/ultralytics/ultralytics/blob/main/examples/object_tracking.ipynb" rel="noopener noreferrer" target="_blank">Tracking Colab</a></div>
+<p class="note"><b>수업 메모</b> · 깊이가 포함된 진짜 3D 포즈가 아니라 이미지 평면의 2D keypoint입니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="gvhmr 3d 인체·전역 모션 zju3dv · world-grounded human motion recovery simplevo colab">
+<div class="ctop">
+<div>
+<div class="taskchip">3D 인체·전역 모션</div>
+<h3>GVHMR<em>ZJU3DV · world-grounded human motion recovery</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">단안 영상에서 SMPL/SMPL-X 자세와 전역 이동을 복원합니다. 카메라가 움직이는 영상에서도 <strong>세계 좌표계의 사람 모션</strong>을 얻는 심화 주제입니다.</p>
+<div class="io"><span>IN</span> <b>사람이 나온 단안 영상</b><i>→</i><span>OUT</span> <b>SMPL/SMPL-X + world trajectory</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 수정 Colab 제공</span>
+<span class="lic lic-caution">LICENSE · 연구·교육·비영리 한정</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1c-D_QBsqM1GUfgPJwjE7kXxVn5PVkmkX?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Colab</a><a class="lk" href="https://huggingface.co/spaces/LittleFrog/GVHMR" rel="noopener noreferrer" target="_blank">브라우저 데모</a><a class="lk" href="https://github.com/zju3dv/GVHMR" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 연결된 수정 Colab은 Python 3.10 가상환경과 내장 SimpleVO를 사용하도록 구성했습니다. SMPL·PyTorch3D 의존성과 비상업 라이선스는 그대로이므로 선택 팀의 심화 실습으로 권합니다.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f5" style="--c:var(--f5)">
+<div class="fhead">
+<div class="fnum">05</div>
+<h2>깊이 · 카메라 · 3D<small>Depth, Geometry &amp; 3D Reconstruction</small></h2>
+</div>
+<p class="why">단일 이미지 깊이, 여러 이미지의 카메라·깊이 기반 3D 복원, 물체 메쉬 생성은 서로 다른 3D 문제입니다. <strong>metric scale이 필요한지</strong>, 여러 뷰가 있는지, 출력이 depth인지 mesh인지 먼저 정하십시오.</p>
+<div class="grid">
+<article class="card" data-run="colab" data-search="depth anything 3 small/base 깊이·다시점 기하 bytedance seed · depth &amp; geometry">
+<div class="ctop">
+<div>
+<div class="taskchip">깊이·다시점 기하</div>
+<h3>Depth Anything 3 Small/Base<em>ByteDance Seed · depth &amp; geometry</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">단일 또는 여러 이미지에서 깊이와 기하 정보를 예측합니다. 수업에서는 Small/Base로 시작하면 무료 GPU에 맞추기 쉽고, 시각화 결과도 즉시 확인할 수 있습니다.</p>
+<div class="io"><span>IN</span> <b>이미지 1장 또는 여러 장</b><i>→</i><span>OUT</span> <b>depth (+ camera/geometry)</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 수정 Colab 제공</span>
+<span class="lic lic-safe">LICENSE · Small/Base Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1T3EKy7tNlMq89bwx5G55JyVuaFXryyBB?usp=sharing" rel="noopener noreferrer" target="_blank">수정 Colab</a><a class="lk" href="https://colab.research.google.com/github/ByteDance-Seed/Depth-Anything-3/blob/main/notebooks/da3.ipynb" rel="noopener noreferrer" target="_blank">공식 Colab</a><a class="lk" href="https://github.com/ByteDance-Seed/Depth-Anything-3" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 연결된 수정 Colab은 Python 3.12 가상환경, DA3-BASE, 처리 해상도 504로 T4에 맞췄습니다. Large/Giant는 별도 비상업 조건이 있으므로 사내 실습 기본값은 Base로 유지합니다.</p>
+</article>
+<article class="card" data-run="browser" data-search="vggt omega vggt-omega vggt-ω 카메라·깊이·3d 재구성 meta oxford vgg · scalable feed-forward reconstruction">
+<div class="ctop">
+<div>
+<div class="taskchip">카메라·깊이·3D 재구성</div>
+<h3>VGGT-Ω<em>Meta AI × Oxford VGG · scalable feed-forward reconstruction</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">여러 이미지 또는 짧은 영상을 한 번에 넣어 카메라 자세와 깊이를 예측하고, 이를 3D point cloud로 시각화합니다. 기존 VGGT보다 정적·동적 장면을 폭넓게 다루는 <strong>최신 후속 모델</strong>입니다.</p>
+<div class="io"><span>IN</span> <b>이미지 여러 장 또는 짧은 영상</b><i>→</i><span>OUT</span> <b>camera pose + depth + 3D point cloud</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 ZeroGPU Space 확인</span>
+<span class="lic lic-caution">LICENSE · 비상업 연구용</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/facebook/vggt-omega" rel="noopener noreferrer" target="_blank">공식 데모</a><a class="lk" href="https://huggingface.co/spaces/silentchen/vggt-omega" rel="noopener noreferrer" target="_blank">Author 미러</a><a class="lk" href="https://github.com/facebookresearch/vggt-omega" rel="noopener noreferrer" target="_blank">GitHub</a><a class="lk" href="https://vggt-omega.github.io/" rel="noopener noreferrer" target="_blank">Project</a></div>
+<p class="note"><b>수업 메모</b> · 공개 Space는 계정 승인 없이 사용할 수 있지만, 로컬 체크포인트 다운로드는 Hugging Face 접근 승인이 필요합니다. 코드·가중치·출력은 비상업 연구 조건이므로 삼성 사내 제품 적용 대상으로 해석하면 안 됩니다.</p>
+</article>
+<article class="card" data-run="browser" data-search="triposr 단일 이미지 3d 메쉬 stability ai × tripo ai · image-to-3d">
+<div class="ctop">
+<div>
+<div class="taskchip">단일 이미지 3D 메쉬</div>
+<h3>TripoSR<em>Stability AI × Tripo AI · image-to-3D</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">배경이 비교적 깨끗한 물체 사진 한 장에서 빠르게 3D 메쉬를 만듭니다. 최신 최고 품질보다는 <strong>입력 한 장 → 3D 결과</strong>를 가장 낮은 진입장벽으로 보여 주는 안정적인 데모입니다.</p>
+<div class="io"><span>IN</span> <b>물체 이미지 1장</b><i>→</i><span>OUT</span> <b>3D mesh</b></div>
+<div class="meta-row">
+<span class="vtag v-live">공식 Space 실행 중</span>
+<span class="lic lic-safe">LICENSE · MIT</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/stabilityai/TripoSR" rel="noopener noreferrer" target="_blank">바로 열기</a><a class="lk" href="https://github.com/VAST-AI-Research/TripoSR" rel="noopener noreferrer" target="_blank">GitHub</a><a class="lk" href="https://huggingface.co/stabilityai/TripoSR" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · 사람 전체나 복잡한 장면 복원용이 아닙니다. 배경 제거와 정면 중심의 물체 이미지를 쓰면 성공률이 높습니다.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f6" style="--c:var(--f6)">
+<div class="fhead">
+<div class="fnum">06</div>
+<h2>생성 · 편집<small>Generative Models &amp; Image Editing</small></h2>
+</div>
+<p class="why">텍스트에서 새 이미지를 만드는 생성과, 입력 이미지의 일부를 지시대로 바꾸는 편집을 나눴습니다. 이 분야는 데모는 쉽지만 로컬 실행은 무거우므로 <strong>브라우저 데모와 작은 교육용 모델</strong>을 우선합니다.</p>
+<div class="grid">
+<article class="card" data-run="browser" data-search="minit2i 경량 텍스트→이미지 minimal text-to-image educational stack browser demo official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">경량 텍스트→이미지</div>
+<h3>MiniT2I<em>minimal text-to-image · educational stack</em></h3>
+</div>
+<span class="badge run-browser">브라우저</span>
+</div>
+<p class="desc">대형 생성 모델을 블랙박스로 호출하는 대신, 작은 코드베이스에서 추론·LoRA·학습 흐름을 읽을 수 있게 만든 교육용 구현입니다. <strong>생성 모델 구조를 만지는 팀</strong>에 적합합니다.</p>
+<div class="io"><span>IN</span> <b>텍스트 프롬프트</b><i>→</i><span>OUT</span> <b>생성 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-live">HF Staff Space 실행 확인</span>
+<span class="lic lic-safe">LICENSE · MIT</span>
+</div>
+<div class="links"><a class="lk pri" href="https://huggingface.co/spaces/multimodalart/MiniT2I" rel="noopener noreferrer" target="_blank">브라우저 데모</a><a class="lk" href="https://colab.research.google.com/github/Hope7Happiness/minit2i-torch/blob/main/notebooks/minit2i_colab_demo.ipynb" rel="noopener noreferrer" target="_blank">공식 Colab</a><a class="lk" href="https://github.com/Hope7Happiness/minit2i-torch" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 브라우저에서 먼저 입력·출력을 확인하고, 구조를 읽거나 LoRA·학습 설정을 바꿀 때 공식 Colab으로 내려가십시오. 최고 품질 경쟁 모델이 아니라 교육용 구현입니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="flux.2 klein 4b quantized colab 이미지 생성·다중참조 편집 black forest labs generation editing">
+<div class="ctop">
+<div>
+<div class="taskchip">이미지 생성·다중참조 편집</div>
+<h3>FLUX.2 [klein] 4B<em>Black Forest Labs · quantized Colab workflow</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">텍스트 생성과 참조 이미지 기반 편집을 한 파이프라인에서 실험합니다. 연결된 수업용 notebook은 <strong>quantized model을 활용해 Colab GPU에서 실행</strong>하도록 구성한 버전입니다.</p>
+<div class="io"><span>IN</span> <b>텍스트 (+ 참조 이미지)</b><i>→</i><span>OUT</span> <b>생성·편집 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 구성 quantized Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1gVrU1vk6MxUUg8DXVGlcTocSdrkoGLXm?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/black-forest-labs/FLUX.2-klein-4B" rel="noopener noreferrer" target="_blank">모델 카드</a><a class="lk" href="https://github.com/black-forest-labs/flux2" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 공식 비양자화 모델의 메모리 요구량과 이 Colab의 실행 구성을 혼동하지 마십시오. 수업 전 notebook의 기본 해상도와 GPU 메모리 사용량을 한 번 기록해 두는 편이 안전합니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="z-image-turbo z image turbo 고속 텍스트 이미지 생성 tongyi mai 6b 8 step colab">
+<div class="ctop">
+<div>
+<div class="taskchip">고속 텍스트→이미지</div>
+<h3>Z-Image-Turbo<em>Tongyi-MAI · distilled 8-NFE text-to-image</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">6B 규모의 distilled text-to-image 모델로, 적은 diffusion step에서 사진·일러스트와 영문·중문 텍스트 렌더링을 실험합니다. <strong>Qwen-Image보다 Colab 실습에 맞춘 대체 경로</strong>로 연결했습니다.</p>
+<div class="io"><span>IN</span> <b>텍스트 프롬프트</b><i>→</i><span>OUT</span> <b>생성 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 구성 Colab 제공</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1n8-3YkPBt_YroOQYWpru3aixW_PexF7V?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/Tongyi-MAI/Z-Image-Turbo" rel="noopener noreferrer" target="_blank">모델 카드</a><a class="lk" href="https://github.com/Tongyi-MAI/Z-Image" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 이 체크포인트는 이미지 편집 모델이 아니라 text-to-image 생성 모델입니다. Turbo 설정은 적은 step에 맞춰져 있으므로 일반 diffusion 모델의 CFG·step 관례를 그대로 적용하지 마십시오.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f7" style="--c:var(--f7)">
+<div class="fhead">
+<div class="fnum">07</div>
+<h2>비전–언어 · OCR<small>Vision–Language Models &amp; Document AI</small></h2>
+</div>
+<p class="why">자유형 이미지 질의응답에 더해
+    <strong>VLM LoRA fine-tuning, 문장 기반 pointing, 짧은 영상의 사건 이해</strong>를 실습합니다.
+    Fine-tuning에서는 데이터 양과 shortcut bias를 비교하고, 추론 실습에서는 spatial grounding과
+    temporal reasoning을 직접 확인해 보십시오.</p>
+<div class="grid">
+<article class="card" data-run="colab" data-search="qwen3-vl 2b qwen vision language image multimodal reasoning t4 colab">
+<div class="ctop">
+<div>
+<div class="taskchip">이미지 질의응답·추론</div>
+<h3>Qwen3-VL-2B-Instruct<em>Qwen · compact multimodal model</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">2B Instruct 모델을 무료 Colab T4에서 직접 실행합니다. FP16/NF4 자동 선택, visual-token budget 제한, SDPA, 짧은 greedy decoding을 사용해 <strong>작은 GPU에서도 이미지 질의응답·OCR·간단한 시각 추론</strong>을 빠르게 실습하도록 구성했습니다.</p>
+<div class="io"><span>IN</span> <b>이미지 + 질문</b><i>→</i><span>OUT</span> <b>텍스트 답변</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1aNC3xkY4utcpZ2CsKWBZhSwtLr7U3xP9?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct" rel="noopener noreferrer" target="_blank">2B 모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · 기본 Fast preset은 visual token을 줄여 속도를 우선하고, 작은 문자나 복잡한 화면은 Balanced/Detail로 올려 비교하십시오. 숫자·규격처럼 정확성이 중요한 정보는 OCR 결과로 교차검증하십시오.</p>
+</article>
+<article class="card" data-run="colab" data-search="smolvlm 256m lora fine tuning synthetic secret badge visual language peft training colab">
+<div class="ctop">
+<div>
+<div class="taskchip">VLM LoRA fine-tuning</div>
+<h3>SmolVLM Secret Badge Academy<em>Hugging Face · synthetic VQA adaptation</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">원·삼각형·사각형·별에 임의의 비밀 코드명을 붙이고
+    <strong>Balanced-48, Balanced-192, color-shortcut-192</strong> 데이터로 각각
+    SmolVLM-256M LoRA를 학습합니다. 같은 held-out test에서 데이터 양과 shortcut bias가
+    generalization에 미치는 차이를 비교합니다.</p>
+<div class="io"><span>IN</span> <b>48/192장 합성 배지 + secret-code 정답</b>
+<i>→</i><span>OUT</span> <b>3개 LoRA + 성능 비교</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 fine-tuning Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/161BOxgPdpe7FHYcAZneldLzBQEzYFEnh?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/HuggingFaceTB/SmolVLM-256M-Instruct" rel="noopener noreferrer" target="_blank">모델 카드</a><a class="lk" href="https://huggingface.co/docs/peft/main/package_reference/lora" rel="noopener noreferrer" target="_blank">LoRA 문서</a></div>
+<p class="note"><b>재미 포인트</b> · Balanced-48과 Balanced-192로 데이터 양의 효과를 비교하고,
+    color-shortcut-192로 학습한 모델이 색상 규칙이 바뀐 test에서 어떤 feature를 사용하는지 분석하십시오.</p>
+</article>
+<article class="card" data-run="colab" data-search="moondream2 pointing grounding object detection visual query point language spatial vlm colab">
+<div class="ctop">
+<div>
+<div class="taskchip">언어 기반 pointing·grounding</div>
+<h3>Moondream2 Pointing Game<em>Moondream · point, detect &amp; grounded query</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">“왼쪽 사람”, “파란 버튼”, “가장 작은 부품”처럼 대상을 문장으로 적고, 결과를 <strong>점이나 bounding box로 직접 확인</strong>합니다. 말로 답하는 VLM과 공간적 근거를 내는 VLM의 차이가 즉시 보입니다.</p>
+<div class="io"><span>IN</span> <b>이미지 + 대상 문구</b><i>→</i><span>OUT</span> <b>point / box / answer</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1NXVoJEndICL6DrXFtsr93y1tTeGic-pQ?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/vikhyatk/moondream2" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>재미 포인트</b> · 이미지에 없는 대상을 요청하거나, <code>person</code>과 <code>person wearing glasses</code>를 비교해 false positive와 fine-grained grounding 한계를 관찰하십시오.</p>
+</article>
+
+<article class="card" data-run="colab" data-search="smolvlm2 video detective video understanding temporal reasoning event order 500m colab">
+<div class="ctop">
+<div>
+<div class="taskchip">짧은 영상 사건 이해</div>
+<h3>SmolVLM2 Video Detective<em>Hugging Face · compact video VLM</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">짧은 영상을 보고 <strong>어떤 사건이 어떤 순서로 일어났는지</strong>, 무엇이 움직이거나 새로 나타났는지 질문합니다. 256M·500M·2.2B 모델 크기별 답도 비교할 수 있습니다.</p>
+<div class="io"><span>IN</span> <b>짧은 영상 + 질문</b><i>→</i><span>OUT</span> <b>사건 순서·영상 답변</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1drgStI2Z8ZHKObS3Fo-YJDMmguKgscNA?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct" rel="noopener noreferrer" target="_blank">500M 모델 카드</a></div>
+<p class="note"><b>재미 포인트</b> · 같은 영상에 대해 “무엇이 보이나?”와 “언제 무엇이 변했나?”를 비교하면 static recognition과 temporal reasoning의 차이가 선명합니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="florence-2 base ft multitask caption object detection ocr colab microsoft">
+<div class="ctop">
+<div>
+<div class="taskchip">프롬프트 기반 다중 태스크</div>
+<h3>Florence-2-base-ft<em>Microsoft · prompt-driven vision model</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">하나의 모델에서 caption, detailed caption, object detection, OCR을 모두 수행합니다. <strong>같은 입력을 task prompt만 바꿔 여러 방식으로 해석</strong>해 볼 수 있어 수업 데모에 적합합니다.</p>
+<div class="io"><span>IN</span> <b>이미지 + task prompt</b><i>→</i><span>OUT</span> <b>caption / box / OCR</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 Colab</span>
+<span class="lic lic-safe">LICENSE · MIT</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1UqiTjzHShdrW2zdJsp29xNBrkWuLoI12?usp=sharing" rel="noopener noreferrer" target="_blank">로컬 Colab 파일</a><a class="lk" href="https://huggingface.co/microsoft/Florence-2-base-ft" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · object detection과 OCR-with-region을 시각화하도록 구성했습니다. 자유형 VLM과 비교해 <strong>출력 구조가 얼마나 안정적인지</strong> 살펴보십시오.</p>
+</article>
+<article class="card" data-run="colab" data-search="trocr printed ocr colab microsoft vision encoder decoder printed text">
+<div class="ctop">
+<div>
+<div class="taskchip">전용 OCR 기준선</div>
+<h3>TrOCR-base-printed<em>Microsoft · printed text OCR</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">영문 printed text를 가볍게 읽는 전용 OCR 기준선입니다. 범용 VLM과 달리 <strong>한 줄 또는 몇 줄짜리 crop에서 단순하고 빠른 OCR</strong>을 실습하기 좋습니다.</p>
+<div class="io"><span>IN</span> <b>텍스트 crop 이미지</b><i>→</i><span>OUT</span> <b>문자열</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 경량 Colab</span>
+<span class="lic lic-safe">LICENSE · MIT</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1o3ptwxFkcYUg-n5up6c2bY8e0kdTSWn8?usp=sharing" rel="noopener noreferrer" target="_blank">로컬 Colab 파일</a><a class="lk" href="https://huggingface.co/microsoft/trocr-base-printed" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · 문서 전체보다는 line-level crop에서 가장 안정적입니다. OCR 전처리(autocontrast, grayscale, sharpen)가 성능에 미치는 영향을 비교해 보십시오.</p>
+</article>
+</div>
+</section>
+<section class="field" id="f8" style="--c:var(--f8)">
+<div class="fhead">
+<div class="fnum">08</div>
+<h2>이미지 복원 · 화질 개선<small>Image Restoration &amp; Enhancement</small></h2>
+</div>
+<p class="why">노이즈·블러·저해상도·저조도처럼 <strong>촬영이나 전송 과정에서 손상된 입력</strong>을 더 읽기 쉬운 영상으로 복원합니다. 보기 좋은 결과만 비교하지 말고, 복원 전후의 PSNR·SSIM과 함께 검출·OCR 같은 <strong>후속 태스크 성능이 실제로 좋아지는지</strong>를 확인해야 합니다.</p>
+<div class="grid">
+<article class="card" data-run="colab" data-search="real-esrgan 초해상도 압축 아티팩트 제거 tencent arc real-world super-resolution official colab">
+<div class="ctop">
+<div>
+<div class="taskchip">초해상도·아티팩트 완화</div>
+<h3>Real-ESRGAN<em>Tencent ARC · real-world super-resolution</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">작거나 압축된 이미지를 2×·4×로 키우면서 흐림과 압축 흔적을 함께 완화합니다. 설치와 추론 경로가 단순해 <strong>super-resolution의 기준선</strong>으로 쓰기 좋습니다.</p>
+<div class="io"><span>IN</span> <b>저해상도·압축 이미지</b><i>→</i><span>OUT</span> <b>고해상도 복원 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 self-contained Colab</span>
+<span class="lic lic-safe">LICENSE · BSD-3-Clause</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1xLzCxLdEYg--P6GKEtQEH5A8vCdALpWh?usp=sharing" rel="noopener noreferrer" target="_blank">수업용 Colab</a><a class="lk" href="https://github.com/xinntao/Real-ESRGAN" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 기존 공식 Colab의 의존성 문제를 피하도록 단일 notebook으로 다시 구성했습니다. GAN 기반 복원은 실제로 없던 질감을 만들 수 있으므로 원본과 OCR 결과를 함께 비교하십시오.</p>
+</article>
+<article class="card" data-run="colab" data-search="swin2sr restoration super-resolution transformer caidas colab">
+<div class="ctop">
+<div>
+<div class="taskchip">Transformer 기반 복원</div>
+<h3>Swin2SR<em>CAIDAS · transformer super-resolution</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">Swin Transformer 기반 초해상도 모델입니다. classical, lightweight, real-world checkpoint를 바꿔 보면서 <strong>모델 설계와 복원 특성의 차이</strong>를 비교할 수 있습니다.</p>
+<div class="io"><span>IN</span> <b>저해상도·압축 이미지</b><i>→</i><span>OUT</span> <b>복원 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 T4 Colab</span>
+<span class="lic lic-safe">LICENSE · Apache-2.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1px7CHOsqnmPZS7Szn-wP5gL-kwo2Aqhv?usp=sharing" rel="noopener noreferrer" target="_blank">로컬 Colab 파일</a><a class="lk" href="https://huggingface.co/caidas/swin2SR-classical-sr-x4-64" rel="noopener noreferrer" target="_blank">모델 카드</a></div>
+<p class="note"><b>수업 메모</b> · classical/lightweight/real-world checkpoint를 교체하면서 출력 차이를 비교해 보십시오. Real-ESRGAN과 달리 transformer 계열 기준선으로 볼 수 있습니다.</p>
+</article>
+<article class="card" data-run="colab" data-search="zero-dce++ low-light enhancement colab zero reference deep curve estimation">
+<div class="ctop">
+<div>
+<div class="taskchip">저조도 향상</div>
+<h3>Zero-DCE++<em>Nankai · zero-reference low-light enhancement</em></h3>
+</div>
+<span class="badge run-colab">COLAB</span>
+</div>
+<p class="desc">어두운 이미지를 밝게 보정하는 경량 저조도 향상 모델입니다. 별도의 정답 이미지 없이 학습된 zero-reference 계열이어서, <strong>밝기 향상과 정보 왜곡 사이의 trade-off</strong>를 보기 좋습니다.</p>
+<div class="io"><span>IN</span> <b>저조도 이미지</b><i>→</i><span>OUT</span> <b>밝기 향상 이미지</b></div>
+<div class="meta-row">
+<span class="vtag v-code">조교 제작 경량 Colab</span>
+<span class="lic lic-warn">LICENSE · CC BY-NC 4.0</span>
+</div>
+<div class="links"><a class="lk pri" href="https://colab.research.google.com/drive/1aBK3GXY-hx7QQnXSG1sFc5UxlPYIBuCY?usp=sharing" rel="noopener noreferrer" target="_blank">로컬 Colab 파일</a><a class="lk" href="https://github.com/Li-Chongyi/Zero-DCE_extension" rel="noopener noreferrer" target="_blank">GitHub</a></div>
+<p class="note"><b>수업 메모</b> · 밝아 보이는 결과가 곧 좋은 결과는 아닙니다. 향상 전후 이미지를 같은 OCR·검출기에 넣어 실제 downstream 개선이 있는지 확인하십시오.</p>
+</article>
+</div>
+</section>
+<div class="no-results" id="noResults">조건에 맞는 카드가 없습니다.</div>
+<section class="closing">
+<div class="split">
+<div class="box">
+<h3>팀 주제를 고르는 순서</h3>
+<ol>
+<li><b>태스크를 한 문장으로 고정합니다.</b> “불량을 찾는다”가 아니라 이미지 분류인지, box 검출인지, pixel anomaly map인지 정합니다.</li>
+<li><b>IN → OUT을 카드처럼 적습니다.</b> 평가할 수 없는 출력이라면 주제도 아직 모호한 것입니다.</li>
+<li><b>가장 작은 기준선을 먼저 통과합니다.</b> 브라우저 → 사전학습 Colab → 커스텀 데이터 학습 순서로 갑니다.</li>
+<li><b>모델 두 개를 잇기 전에 각각을 따로 평가합니다.</b> 앞단 오류와 뒷단 오류를 분리할 수 있어야 합니다.</li>
+<li><b>라이선스와 데이터 반출 조건을 발표 전에 확인합니다.</b> 오픈소스라는 말이 사내 자유 사용을 뜻하지는 않습니다.</li>
+</ol>
+</div>
+<div class="box">
+<h3>수업 전 검증 체크</h3>
+<ul>
+<li>수업에서 사용할 Colab을 GPU 런타임으로 열고 <b>설치 셀부터 최종 출력 저장까지</b> 한 번씩 실행</li>
+<li>각 브라우저 Space에 샘플 하나를 넣어 <b>대기열·런타임 오류·출력 저장</b> 확인</li>
+<li>실습용 샘플은 개인정보·기밀이 없는 공개 이미지로 고정</li>
+<li>성공 화면뿐 아니라 <b>실패 입력 1개와 예상 실패 이유</b>도 준비</li>
+<li>검증 날짜·Python·CUDA·패키지 버전을 발표 자료에 기록</li>
+</ul>
+</div>
+</div>
+<div class="box full">
+<h3>초안에서 바꾼 핵심</h3>
+<div class="tblwrap"><table>
+<thead><tr><th>변경</th><th>이유</th></tr></thead>
+<tbody>
+<tr><td>5개 → 8개 분야</td><td>검출과 분할, 분류와 이상탐지, depth와 object mesh, 자유형 VLM과 OCR을 명시적으로 구분하고 저수준 비전인 이미지 복원·화질 개선을 별도 분야로 추가했습니다.</td></tr>
+<tr><td>이미지 복원·화질 개선 신설</td><td>초해상도, 노이즈·블러 복원, 자연어 기반 통합 복원을 나눠 보고, 보기 좋은 결과뿐 아니라 downstream 검출·OCR 성능과 내용 보존까지 평가하도록 구성했습니다.</td></tr>
+<tr><td>실행 링크 전수 재감사</td><td>1·2·3·6·7·8번의 모든 카드가 직접 열 수 있는 Colab 또는 입력 가능한 웹 데모를 하나 이상 갖도록 정리했습니다. 특히 7·8번은 수업 시간에 다양하게 돌려볼 수 있도록 조교 제작 Colab 중심으로 재구성했습니다.</td></tr>
+<tr><td>복원 Colab 다양화</td><td>Real-ESRGAN 외에 transformer 계열 Swin2SR와 저조도 향상 Zero-DCE++ Colab을 추가해 같은 복원 분야 안에서도 접근 방식이 다른 실습을 비교할 수 있게 했습니다.</td></tr>
+<tr><td>SAM 3.1은 보류</td><td>최신이지만 Python 3.12·CUDA 12.6·승인 체크포인트 조건이 무료 Colab 공통 실습과 맞지 않아 SAM 2.1을 안정판으로 유지했습니다.</td></tr>
+<tr><td>산업 이상탐지 신설</td><td>삼성 DS 맥락에서 직접적인 Anomalib 2.6을 추가하고 분류와 다른 출력·평가 방식을 드러냈습니다.</td></tr>
+<tr><td>VLM 상호작용 실습 2종 추가</td><td>OCR 외에도 언어 기반 pointing과 짧은 영상 사건 이해를 직접 체험하도록 Moondream2와 SmolVLM2 video Colab을 추가했습니다.</td></tr>
+<tr><td>VLM LoRA fine-tuning 추가</td><td>SmolVLM-256M을 Balanced-48, Balanced-192, color-shortcut-192 데이터로 각각 학습해 데이터 양과 shortcut bias의 영향을 비교하는 실습을 추가했습니다.</td></tr>
+<tr><td>VLM·OCR Colab 다양화</td><td>Qwen3-VL-2B-Instruct 외에 Florence-2-base-ft와 TrOCR Colab을 추가해 자유형 질의응답, 프롬프트 기반 다중 태스크, 전용 OCR을 나란히 실습할 수 있게 했습니다.</td></tr>
+<tr><td>GVHMR·DA3 수정 Colab 연결</td><td>조교가 수정한 Google Colab 공유 링크로 교체해 HTML 파일만 배포해도 바로 열 수 있도록 했습니다.</td></tr>
+<tr><td>VGGT → VGGT-Ω</td><td>기존 VGGT Hugging Face 링크를 최신 공식 VGGT-Ω ZeroGPU 데모로 교체하고, 출력 설명도 camera pose·depth·3D point cloud에 맞게 정정했습니다.</td></tr>
+<tr><td>라이선스 표시</td><td>YOLO 계열 AGPL, GVHMR 및 VGGT-Ω의 비상업 조건처럼 사내 활용에 중요한 제약을 카드에서 바로 보이게 했습니다.</td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="box full">
+<h3>이번에는 본문에 넣지 않은 최신 후보</h3>
+<div class="tblwrap"><table>
+<thead><tr><th>후보</th><th>보류 이유</th><th>다시 볼 조건</th></tr></thead>
+<tbody>
+<tr><td>SAM 3.1</td><td>최신 기능은 좋지만 런타임·CUDA·체크포인트 접근 요구가 공통 Colab 실습에 무겁습니다.</td><td>수업용 고정 런타임과 가중치 접근을 미리 준비했을 때</td></tr>
+<tr><td>DINOv3</td><td>강력한 feature backbone이지만 가중치 접근과 사용 조건, 후속 헤드 구성이 초심자 데모보다 복잡합니다.</td><td>표현 학습·few-shot 전용 팀이 생겼을 때</td></tr>
+<tr><td>LTX-2 / 대형 영상 생성</td><td>무료 Colab의 VRAM과 실행시간을 넘기기 쉽고, 공개 데모 큐가 수업 진행을 불안정하게 만듭니다.</td><td>유료 GPU 또는 사전 생성 결과를 쓸 때</td></tr>
+<tr><td>대형 image-to-3D 생성기</td><td>품질은 TripoSR보다 높을 수 있지만 커스텀 CUDA·다단계 다운로드·긴 실행시간이 많습니다.</td><td>3D 전담 팀과 고정 GPU 환경이 있을 때</td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="box full">
+<h3>프로젝트 씨앗 — 태스크가 섞이지 않게 연결하기</h3>
+<ol class="seeds">
+<li><span><b>불량 위치 설명기</b> — Anomalib이 픽셀 anomaly map을 만들고, Qwen3-VL이 그 영역을 crop한 뒤 결함 형태를 설명한다.</span></li>
+<li><span><b>안전장구 추적</b> — YOLOE로 텍스트 기반 후보를 찾고, YOLO26 Track으로 사람별 착용 상태 변화를 시간축에서 집계한다.</span></li>
+<li><span><b>반자동 라벨 제작</b> — YOLOE가 box 후보를 만들고 SAM 2.1이 마스크를 정교화한 뒤 사람이 최종 승인한다.</span></li>
+<li><span><b>동작 구간 검색</b> — MediaPipe 또는 YOLO Pose 시퀀스를 임베딩해 긴 영상에서 유사 동작 구간을 찾는다.</span></li>
+<li><span><b>다시점 현장 기록</b> — VGGT-Ω로 카메라 자세·깊이·3D point cloud를 만들고, Qwen3-VL이 각 시점에서 보이는 설비 상태를 구조화한다.</span></li>
+<li><span><b>비밀 시각 언어</b> — 팀마다 shape-to-code 규칙을 정해 SmolVLM LoRA를 학습하고, 색·위치 shortcut을 뒤집은 test set에서 generalization을 비교한다.</span></li>
+<li><span><b>문서–이미지 검사</b> — TrOCR 또는 Florence-2 OCR로 작업지시서의 부품명·규격을 추출하고 SigLIP 2 또는 검출기로 실제 이미지와 대조한다.</span></li>
+<li><span><b>말로 가리키는 검사 보조</b> — Moondream2에 “오른쪽의 빨간 커넥터”처럼 입력하고, point/box가 실제 작업 대상과 일치하는지 평가한다.</span></li>
+
+<li><span><b>짧은 공정 영상 사건 요약</b> — SmolVLM2가 물체의 등장·이동·사라짐 순서를 기술하고 frame sampling과 모델 크기에 따른 오류를 분석한다.</span></li>
+<li><span><b>복원 전처리의 실효성</b> — Real-ESRGAN·Swin2SR·Zero-DCE++로 개선한 이미지와 원본을 같은 검출기·OCR에 넣고, 인식률 향상과 새로 생긴 아티팩트를 함께 측정한다.</span></li>
+</ol>
+</div>
+</section>
+<footer><span><b>삼성 DS · Computer Vision Project Board</b> — 분야·오픈소스·실행경로 개정</span><span>검증일 2026-08-23 · VLM 상호작용 2종 + LoRA fine-tuning 반영</span></footer>
+</main>
+<script>
+(() => {
+  const buttons=[...document.querySelectorAll('.filter')];
+  const cards=[...document.querySelectorAll('.card')];
+  const search=document.getElementById('search');
+  const count=document.getElementById('count');
+  const noResults=document.getElementById('noResults');
+  let active='all';
+  function update(){
+    const q=search.value.trim().toLowerCase();
+    let shown=0;
+    for(const card of cards){
+      const runOK=active==='all'||card.dataset.run===active;
+      const text=(card.dataset.search+' '+card.textContent).toLowerCase();
+      const searchOK=!q||text.includes(q);
+      card.hidden=!(runOK&&searchOK);
+      if(!card.hidden) shown++;
+    }
+    count.textContent=`${shown} / ${cards.length} 표시`;
+    noResults.classList.toggle('show',shown===0);
+  }
+  buttons.forEach(btn=>btn.addEventListener('click',()=>{
+    active=btn.dataset.filter;
+    buttons.forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+    update();
+  }));
+  search.addEventListener('input',update);
+  update();
+})();
+</script>
+</body>
+</html>

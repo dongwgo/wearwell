@@ -19,6 +19,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
+from avatar_body import VIEW_YAW, BodyTarget, build_avatar_prompt, build_body_reference
+from tryon_prompt import build_tryon_prompt, order_garments
+
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
@@ -29,7 +32,16 @@ INFERENCE_SIZE = (
     int(os.getenv("IMAGE_HEIGHT", "1152")),
 )
 INFERENCE_STEPS = int(os.getenv("FLUX_STEPS", "4"))
+# 다중 참조 편집은 단일 텍스트 생성보다 스텝이 더 필요하다. klein은 4스텝 증류
+# 모델이지만 참조가 5~7장으로 늘면 4스텝에서 레이어가 뭉개진다.
+TRYON_STEPS = int(os.getenv("FLUX_TRYON_STEPS", "8"))
 GUIDANCE_SCALE = float(os.getenv("FLUX_GUIDANCE", "1.0"))
+# 파인튜닝한 try-on LoRA 경로(.safetensors). 비어 있으면 base 모델로만 돈다.
+TRYON_LORA_PATH = os.getenv("FLUX_TRYON_LORA", "")
+TRYON_LORA_SCALE = float(os.getenv("FLUX_TRYON_LORA_SCALE", "1.0"))
+MAX_TRYON_GARMENTS = int(os.getenv("MAX_TRYON_GARMENTS", "6"))
+# 0으로 두면 예전처럼 치수를 텍스트로만 넘긴다. 개선 전/후 A/B 비교용 스위치.
+AVATAR_BODY_REFERENCE = os.getenv("AVATAR_BODY_REFERENCE", "1") == "1"
 MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
@@ -125,12 +137,18 @@ class Measurements(BaseModel):
     hip: float | None = Field(default=None, ge=60, le=180)
     inseam: float | None = Field(default=None, ge=50, le=110)
     seed: int = 20260825
+    # 만들 시점 목록. front는 항상 먼저 만들어지고 측면·후면의 인물 기준이 된다.
+    views: list[Literal["front", "side", "back"]] = Field(default_factory=lambda: ["front"], max_length=3)
 
 
 class AvatarResponse(BaseModel):
     image: str
     engine: str
     gpu: str | None
+    # 치수 목표 대비 실제 달성치와 cm 오차. 텍스트 전용 경로에서는 비어 있다.
+    fit: dict = Field(default_factory=dict)
+    # 시점 이름 -> 이미지. image 필드는 항상 views[0](= front)와 같다.
+    views: dict[str, str] = Field(default_factory=dict)
     disclaimer: str = "입력한 치수를 시각적으로 근사한 이미지이며 실제 체형이나 의류 사이즈를 보증하지 않습니다."
 
 
@@ -142,7 +160,7 @@ class GarmentInput(BaseModel):
 
 class TryOnRequest(BaseModel):
     avatar: str = Field(min_length=1, max_length=8_000_000)
-    garments: list[GarmentInput] = Field(min_length=1, max_length=4)
+    garments: list[GarmentInput] = Field(min_length=1, max_length=MAX_TRYON_GARMENTS)
     seed: int = 42
 
 
@@ -151,6 +169,12 @@ class VLMImageRequest(BaseModel):
     name: str = Field(default="이미지", max_length=120)
     category: str | None = Field(default=None, max_length=30)
     gender: Literal["women", "men"] | None = None
+
+
+class TryOnJudgeRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    # 입히기로 한 아이템 목록을 사람이 읽는 문장으로. 심판은 이 목록과 사진만 본다.
+    manifest: str = Field(min_length=1, max_length=2_000)
 
 
 class SegmentationRequest(BaseModel):
@@ -192,20 +216,11 @@ def cuda_info() -> tuple[bool, str | None]:
 
 
 class FluxImageEngine:
-    CATEGORY_LABELS = {
-        "upper": "upper-body garment",
-        "lower": "lower-body garment",
-        "overall": "one-piece or full-body garment",
-        "outer": "outerwear layer",
-        "shoes": "pair of shoes",
-        "bag": "bag",
-        "accessory": "fashion accessory",
-    }
-
     def __init__(self, pipeline_factory=None) -> None:
         self.pipe = None
         self.pipeline_factory = pipeline_factory
         self.dtype: str | None = None
+        self.lora_name: str | None = None
 
     def _load(self):
         if self.pipe is not None:
@@ -226,6 +241,17 @@ class FluxImageEngine:
             pipe.to("cuda")
         if hasattr(pipe, "set_progress_bar_config"):
             pipe.set_progress_bar_config(disable=True)
+        # 파인튜닝한 try-on edit-LoRA가 지정돼 있으면 얹는다. 실패해도 base 모델로
+        # 서비스는 계속 돌아가야 하므로 예외를 삼키고 로그만 남긴다.
+        if TRYON_LORA_PATH:
+            try:
+                pipe.load_lora_weights(TRYON_LORA_PATH)
+                if hasattr(pipe, "fuse_lora"):
+                    pipe.fuse_lora(lora_scale=TRYON_LORA_SCALE)
+                self.lora_name = os.path.basename(TRYON_LORA_PATH)
+            except Exception:
+                logging.exception("Try-on LoRA load failed; continuing with the base model")
+                self.lora_name = None
         self.pipe = pipe
         return pipe
 
@@ -267,7 +293,14 @@ class FluxImageEngine:
             details.append(f"waist-to-hip ratio {data.waist / data.hip:.2f}")
         return ", ".join(details)
 
-    def _run(self, *, prompt: str, seed: int, images: list[Image.Image] | None = None) -> Image.Image:
+    def _run(
+        self,
+        *,
+        prompt: str,
+        seed: int,
+        images: list[Image.Image] | None = None,
+        steps: int | None = None,
+    ) -> Image.Image:
         import torch
 
         pipe = self._load()
@@ -276,7 +309,7 @@ class FluxImageEngine:
             "height": INFERENCE_SIZE[1],
             "width": INFERENCE_SIZE[0],
             "guidance_scale": GUIDANCE_SCALE,
-            "num_inference_steps": INFERENCE_STEPS,
+            "num_inference_steps": steps or INFERENCE_STEPS,
             "generator": torch.Generator(device="cuda").manual_seed(seed),
         }
         if images:
@@ -286,46 +319,98 @@ class FluxImageEngine:
             torch.cuda.empty_cache()
         return output.resize(INFERENCE_SIZE, Image.Resampling.LANCZOS)
 
-    def generate_avatar(self, data: Measurements) -> tuple[Image.Image, str]:
+    def generate_avatar(self, data: Measurements) -> tuple[dict[str, Image.Image], str, dict]:
+        """치수 -> 시점별 아바타 이미지, 엔진 이름, 치수 정확도 리포트.
+
+        치수를 프롬프트 문장으로만 넘기면 확산 모델이 숫자를 길이로 해석하지
+        못한다. 먼저 치수를 체형 실루엣 이미지로 바꿔 참조 이미지 1로 넣고,
+        프롬프트는 "이 실루엣을 그대로 따라라"만 시킨다.
+
+        측면·후면은 정면을 만든 뒤 그 결과를 참조 이미지 2로 함께 넘긴다.
+        체형 가이드만 보고 각 시점을 독립 생성하면 매번 다른 사람이 나온다.
+        """
         has_cuda, _ = cuda_info()
-        if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
-            prompt = (
-                "Create a photorealistic full-body studio fitting avatar. The subject is "
-                f"{self._shape_description(data)}. Accurately reflect the stated height, weight, body build, "
-                "and body proportions without slimming or exaggeration. Front-facing relaxed symmetrical A-pose, "
-                "arms slightly away from the torso, both feet fully visible, eye-level camera, 85 mm catalog lens. "
-                "Wear a plain fitted charcoal crew-neck top and fitted mid-thigh charcoal shorts so the body outline "
-                "is clearly visible. Clean warm-gray seamless background, soft even studio lighting, realistic skin, "
-                "natural Korean facial features, no accessories, no outerwear, no text, no watermark."
+        if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
+            return {"front": self.fallback_avatar(data)}, "measurement-preview-fallback", {}
+
+        if AVATAR_BODY_REFERENCE:
+            target = BodyTarget(
+                gender=data.gender,
+                height=data.height,
+                weight=data.weight,
+                chest=data.chest,
+                waist=data.waist,
+                hip=data.hip,
+                shoulder=data.shoulder,
+                inseam=data.inseam,
             )
-            return self._run(prompt=prompt, seed=data.seed), self.engine_name
-        return self.fallback_avatar(data), "measurement-preview-fallback"
+            # front가 나머지 시점의 인물 기준이므로 반드시 먼저, 반드시 포함한다.
+            requested = list(dict.fromkeys(["front", *data.views]))
+            images: dict[str, Image.Image] = {}
+            report: dict = {}
+            for view in requested:
+                reference = build_body_reference(target, view=view)
+                references = [reference.image]
+                if view != "front":
+                    references.append(images["front"])
+                images[view] = self._run(
+                    prompt=build_avatar_prompt(
+                        target, view=view, identity_reference=view != "front"
+                    ),
+                    # 시점마다 시드를 흘리면 같은 사람이 나올 확률이 떨어진다.
+                    seed=data.seed,
+                    images=references,
+                )
+                if view == "front":
+                    report = {
+                        "bodyReference": reference.source,
+                        "targetMeasurements": reference.target,
+                        "achievedMeasurements": reference.achieved,
+                        "measurementErrorCm": reference.errors(),
+                        "meanAbsoluteErrorCm": reference.mean_absolute_error(),
+                        "betas": reference.betas,
+                    }
+            report["views"] = requested
+            return images, f"{self.engine_name}+{report['bodyReference']}", report
+
+        # 텍스트 전용 경로 (비교 기준선)
+        prompt = (
+            "Create a photorealistic full-body studio fitting avatar. The subject is "
+            f"{self._shape_description(data)}. Accurately reflect the stated height, weight, body build, "
+            "and body proportions without slimming or exaggeration. Front-facing relaxed symmetrical A-pose, "
+            "arms slightly away from the torso, both feet fully visible, eye-level camera, 85 mm catalog lens. "
+            "Wear a plain fitted charcoal crew-neck top and fitted mid-thigh charcoal shorts so the body outline "
+            "is clearly visible. Clean warm-gray seamless background, soft even studio lighting, realistic skin, "
+            "natural Korean facial features, bare arms and legs, single frame, clean image with no lettering."
+        )
+        return (
+            {"front": self._run(prompt=prompt, seed=data.seed)},
+            f"{self.engine_name}+text-only",
+            {"bodyReference": "text-only", "views": ["front"]},
+        )
 
     def generate_tryon(self, request: TryOnRequest) -> tuple[Image.Image, str]:
         person = decode_image(request.avatar)
-        garments = [decode_image(item.image) for item in request.garments]
+        # 참조 이미지 번호가 레이어 순서와 어긋나면 모델이 번호를 레이어 힌트로
+        # 오해한다. 디코딩 전에 안쪽 레이어부터 정렬하고 슬롯 충돌을 정리한다.
+        ordered = order_garments(list(request.garments), limit=MAX_TRYON_GARMENTS)
+        garments = [decode_image(item.image) for item in ordered]
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
-            garment_roles = "; ".join(
-                f"reference image {index + 2}: {self.CATEGORY_LABELS[item.category]} named '{item.name}'"
-                for index, item in enumerate(request.garments)
+            prompt = build_tryon_prompt(ordered)
+            image = self._run(
+                prompt=prompt,
+                seed=request.seed,
+                images=[person, *garments],
+                steps=TRYON_STEPS,
             )
-            prompt = (
-                "Virtual try-on edit using all reference images together. Reference image 1 is the person and must "
-                f"remain the same person with the same face, hair, body proportions, pose, hands, legs, and background. {garment_roles}. "
-                "Dress the person in exactly those referenced garments. Preserve each garment's actual color, fabric, "
-                "pattern, logo placement, neckline, sleeve length, cut, and silhouette; remove any original model or "
-                "background visible in the garment references. Replace only the clothing categories provided and keep "
-                "the remaining base clothing unchanged. Make the fit physically plausible with correct layering, folds, "
-                "occlusion, body contact, and consistent studio lighting. Photorealistic Korean fashion e-commerce "
-                "full-body result, no extra garments, no invented accessories, no text, no collage, no split screen."
-            )
-            return self._run(prompt=prompt, seed=request.seed, images=[person, *garments]), self.engine_name
-        return self.fallback_tryon(person, request.garments), "tryon-preview-fallback"
+            return image, self.engine_name
+        return self.fallback_tryon(person, ordered), "tryon-preview-fallback"
 
     @property
     def engine_name(self) -> str:
-        return f"flux2-klein-4b-cuda-{self.dtype or 'auto'}"
+        base = f"flux2-klein-4b-cuda-{self.dtype or 'auto'}"
+        return f"{base}+lora:{self.lora_name}" if self.lora_name else base
 
     @staticmethod
     def fallback_avatar(data: Measurements) -> Image.Image:
@@ -373,6 +458,21 @@ class FluxImageEngine:
 class QwenVLMEngine:
     GARMENT_PROMPT = """이 사진에서 주된 옷 한 벌만 분석해 한국어 JSON으로만 답해. 보이지 않는 정보는 추측하지 말고 '확인 어려움'으로 써. 스키마: {"category":"상의/하의/아우터/원피스/신발/가방/액세서리","subcategory":"구체 종류","primaryColor":"주색","secondaryColors":["보조색"],"material":"소재 추정","texture":"표면 질감","fit":"슬림/레귤러/세미오버/오버/스트레이트/세미와이드/와이드/커브드","silhouette":"실루엣","wrinkle":"주름의 정도와 형태","finish":"광택·워싱·표면 마감","construction":["봉제선·단추·지퍼·포켓·밑단 등 보이는 디테일"],"pattern":"패턴","season":["계절"],"weather":["어울리는 날씨"],"summary":"한 문장 요약"}"""
     LOOKBOOK_PROMPT = """이 패션 룩북에서 가장 크게 보이는 한 사람의 착장을 분석해. 착장 전체를 한 항목으로 요약하지 말고 눈에 보이는 옷을 실제 경계대로 각각 분리해 한국어 JSON으로만 답해. 재킷 안에 셔츠가 있으면 아우터와 상의를 별도 pieces 항목으로 쓰고 같은 카테고리의 레이어도 합치지 마. 보이지 않는 옷이나 색은 추측하지 말고 색상은 각 옷 자체의 주조색부터 최대 2개만 써. 신발·가방도 충분히 보일 때만 별도 항목으로 써. bbox는 전체 이미지 왼쪽 위를 0,0, 오른쪽 아래를 1000,1000으로 본 옷의 경계야. 스키마: {"summary":"색·실루엣·레이어링 한 문장","mood":"스타일 무드","pieces":[{"pieceId":"고유 번호","label":"화이트 셔츠처럼 옷을 구별하는 이름","layer":"아우터/이너/단독/하의/신발/가방","category":"상의/하의/아우터/원피스/신발/가방/액세서리","bbox":[0,0,1000,1000],"colors":["정확한 주조색"],"materials":["소재 추정"],"fits":["핏"],"details":["주름·마감·봉제·형태 디테일"],"confidence":0.0}]}"""
+    # 착장 결과 자동 채점용. 정답 이미지가 없는 태스크라 픽셀 지표(SSIM/LPIPS)로는
+    # "상의가 아우터 안쪽인가"를 잴 수 없어서 VLM 이진 판정을 쓴다.
+    # 근거를 먼저 쓰게 하면 판정이 눈에 띄게 안정된다 — 결론부터 내라고 하면
+    # 첫 토큰에 걸려 뒤 근거를 결론에 끼워 맞춘다.
+    TRYON_JUDGE_PROMPT = """너는 가상 착장 결과를 채점하는 심판이야. 사진은 한 사람에게 옷을 합성한 결과야.
+입히기로 한 아이템 목록:
+{manifest}
+
+각 항목을 보이는 대로만 판정하고 한국어 JSON으로만 답해. 확신이 서지 않으면 false로 둬. 스키마: {{"reasons":"보이는 근거 두 문장","layering_ok":true,"items_present":["실제로 보이는 아이템 이름"],"extra_items":["목록에 없는데 추가로 생긴 옷·가방·액세서리"],"merged_items":["두 벌이 한 벌로 합쳐져 보이는 아이템 이름"],"accessories_placed_ok":true,"identity_ok":true,"artifacts":["손가락 뭉개짐·팔 개수 이상 등 눈에 띄는 결함"]}}
+
+판정 기준:
+- layering_ok: 상의와 아우터가 함께 있을 때 상의가 안쪽, 아우터가 바깥이면 true. 아우터가 상의 밑으로 들어갔거나 둘이 한 벌로 합쳐졌으면 false. 몸통 레이어가 한 겹뿐이면 true.
+- accessories_placed_ok: 가방과 액세서리가 각각 맞는 부위에 있으면 true. 모자가 몸에 붙어 있거나 가방끈이 옷 속을 통과하면 false. 목록에 가방·액세서리가 없으면 true.
+- identity_ok: 얼굴, 체형, 포즈가 원래 사람과 같으면 true."""
+
     BODY_PROMPT = """전신사진에서 의상과 포즈의 영향을 감안해 보이는 체형 특징만 한국어 JSON으로 답해. 키나 몸무게 숫자를 추측하지 마. 스키마: {"body_shape":"보통/마른 체형/탄탄한 체형/상체가 발달한 체형/하체가 발달한 체형/통통한 체형 중 하나","proportion":"상하체 비율 설명","shoulderLine":"어깨선 설명","silhouette":"전체 실루엣 설명"}"""
 
     def __init__(self, model_factory=None, processor_factory=None) -> None:
@@ -512,6 +612,11 @@ def health():
         "queueTimeoutSeconds": GPU_QUEUE_TIMEOUT,
         "rateLimitPerMinute": RATE_LIMIT_PER_MINUTE,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
+        "tryonSteps": TRYON_STEPS,
+        "maxTryonGarments": MAX_TRYON_GARMENTS,
+        "tryonLora": os.path.basename(TRYON_LORA_PATH) if TRYON_LORA_PATH else None,
+        "avatarBodyReference": AVATAR_BODY_REFERENCE,
+        "avatarViews": sorted(VIEW_YAW),
     }
 
 
@@ -519,9 +624,12 @@ def health():
 def generate_avatar(data: Measurements):
     acquire_inference_slot()
     try:
-        image, engine = image_engine.generate_avatar(data)
+        images, engine, report = image_engine.generate_avatar(data)
         _, gpu = cuda_info()
-        return AvatarResponse(image=encode_image(image), engine=engine, gpu=gpu)
+        encoded = {view: encode_image(image) for view, image in images.items()}
+        return AvatarResponse(
+            image=encoded["front"], engine=engine, gpu=gpu, fit=report, views=encoded
+        )
     except Exception as error:
         logging.exception("Avatar generation failed")
         raise HTTPException(status_code=500, detail="Avatar generation failed") from error
@@ -565,9 +673,21 @@ def segment_closet_photo(request: SegmentationRequest):
 def generate_tryon(request: TryOnRequest):
     acquire_inference_slot()
     try:
+        applied = order_garments(list(request.garments), limit=MAX_TRYON_GARMENTS)
         image, engine = image_engine.generate_tryon(request)
         _, gpu = cuda_info()
-        return {"image": encode_image(image), "engine": engine, "gpu": gpu, "garmentCount": len(request.garments)}
+        return {
+            "image": encode_image(image),
+            "engine": engine,
+            "gpu": gpu,
+            "garmentCount": len(applied),
+            "requestedCount": len(request.garments),
+            # 레이어 순서대로 정렬된 결과. 요청 순서와 다를 수 있고, 같은 부위가
+            # 겹치면 안쪽 레이어만 남으므로 실제로 입힌 목록을 그대로 돌려준다.
+            "appliedGarments": [
+                {"name": item.name, "category": item.category} for item in applied
+            ],
+        }
     except ValueError as error:
         raise HTTPException(status_code=422, detail="Invalid image payload") from error
     except Exception as error:
@@ -605,6 +725,13 @@ def analyze_lookbook(request: VLMImageRequest):
 def analyze_body(request: VLMImageRequest):
     context = f"\n사용자가 선택한 성별은 {request.gender or '미지정'}이야."
     return run_vlm_request(request, QwenVLMEngine.BODY_PROMPT + context, 320)
+
+
+@app.post("/api/vlm/tryon-judge")
+def judge_tryon(request: TryOnJudgeRequest):
+    """착장 결과 자동 채점. scripts/eval_tryon.py가 개선 전/후 수치를 낼 때 쓴다."""
+    prompt = QwenVLMEngine.TRYON_JUDGE_PROMPT.format(manifest=request.manifest)
+    return run_vlm_request(VLMImageRequest(image=request.image, name="tryon-judge"), prompt, 700)
 
 
 @app.post("/api/warmup")

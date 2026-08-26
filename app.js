@@ -179,13 +179,126 @@ function localAvatarPreview(data) {
   return canvas.toDataURL("image/jpeg", .9);
 }
 
-function showAvatar(image, engine = "") {
+// 아바타 시점. 순서가 곧 드래그했을 때 도는 순서다(정면 -> 측면 -> 후면).
+const AVATAR_VIEW_ORDER = ["front", "side", "back"];
+const AVATAR_VIEW_LABELS = { front: "정면", side: "측면", back: "후면" };
+// 한 시점에서 다음 시점으로 넘어가는 데 필요한 드래그 거리(px).
+const AVATAR_ROTATE_STEP = 48;
+
+let avatarViews = { front: null };
+let avatarViewIndex = 0;
+
+function availableAvatarViews() {
+  return AVATAR_VIEW_ORDER.filter(view => avatarViews[view]);
+}
+
+function renderAvatarPreview() {
+  const views = availableAvatarViews();
+  const preview = $("#avatarPreview");
+  if (!views.length) {
+    preview.classList.remove("rotatable");
+    preview.innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
+    return;
+  }
+  avatarViewIndex = Math.min(avatarViewIndex, views.length - 1);
+  const view = views[avatarViewIndex];
+  // 시점이 하나뿐이면 회전 UI를 붙이지 않는다 — 돌아가지 않는데 돌릴 수 있어
+  // 보이는 게 더 나쁘다.
+  const rotatable = views.length > 1;
+  preview.classList.toggle("rotatable", rotatable);
+  preview.innerHTML = `<img src="${avatarViews[view]}" alt="내 체형 아바타 (${AVATAR_VIEW_LABELS[view]})" draggable="false" />`
+    + (rotatable
+      ? `<span class="avatar-view-label">${AVATAR_VIEW_LABELS[view]} · 드래그해서 돌리기</span>`
+        + `<span class="avatar-view-dots">${views.map((_, i) => `<i class="${i === avatarViewIndex ? "active" : ""}"></i>`).join("")}</span>`
+      : "");
+}
+
+function setAvatarView(index) {
+  const views = availableAvatarViews();
+  if (!views.length) return;
+  // 끝에서 다시 처음으로 — 실제 회전처럼 한 바퀴 돌게 한다.
+  const next = ((index % views.length) + views.length) % views.length;
+  if (next === avatarViewIndex) return;
+  avatarViewIndex = next;
+  renderAvatarPreview();
+}
+
+function bindAvatarRotation() {
+  const preview = $("#avatarPreview");
+  let originX = null;
+  let originIndex = 0;
+
+  const start = event => {
+    if (availableAvatarViews().length < 2) return;
+    originX = event.clientX;
+    originIndex = avatarViewIndex;
+    preview.setPointerCapture?.(event.pointerId);
+  };
+  const move = event => {
+    if (originX === null) return;
+    // 누적 이동량으로 계산해야 드래그를 되돌렸을 때 원래 시점으로 돌아온다.
+    setAvatarView(originIndex + Math.round((event.clientX - originX) / AVATAR_ROTATE_STEP));
+  };
+  const end = event => {
+    if (originX === null) return;
+    originX = null;
+    preview.releasePointerCapture?.(event.pointerId);
+  };
+
+  preview.addEventListener("pointerdown", start);
+  preview.addEventListener("pointermove", move);
+  preview.addEventListener("pointerup", end);
+  preview.addEventListener("pointercancel", end);
+  // 마우스가 없는 환경을 위해 키보드로도 돌릴 수 있게 한다.
+  preview.tabIndex = 0;
+  preview.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft") { setAvatarView(avatarViewIndex - 1); event.preventDefault(); }
+    if (event.key === "ArrowRight") { setAvatarView(avatarViewIndex + 1); event.preventDefault(); }
+  });
+}
+
+function showAvatar(image, engine = "", views = null) {
   avatarImage = image;
+  // 착장·저장은 항상 정면을 쓴다. 옷 사진이 정면 기준이라 다른 시점에 합성하면
+  // 소매·프린트 위치가 어긋난다.
+  avatarViews = views && views.front ? { ...views } : { front: image };
+  avatarViewIndex = 0;
   try { localStorage.setItem("오늘옷-avatar", image); } catch {}
-  $("#avatarPreview").innerHTML = `<img src="${image}" alt="내 체형 아바타" />`;
+  renderAvatarPreview();
   $("#profileAvatar").classList.add("has-image");
   $("#profileAvatar").style.backgroundImage = `url(${image})`;
+  // 측면·후면은 생성 비용이 정면과 같아서 기본으로 만들지 않는다. 정면이
+  // 나온 뒤에 사용자가 원하면 누르게 한다.
+  const viewsButton = $("#generateAvatarViews");
+  // 저장된 아바타로 복귀한 경우에도 눌러서 만들 수 있어야 한다. 전신사진 기반
+  // 아바타는 회전시킬 방법이 없으므로 제외한다.
+  const canRotate = engine.includes("cuda") || engine === "saved";
+  if (viewsButton) viewsButton.hidden = !canRotate || availableAvatarViews().length > 1;
   if (engine) $("#avatarEngineStatus").textContent = engine === "photo-reference" ? "전신사진을 아바타 기준으로 준비했어요" : engine.includes("cuda") ? "내 체형 아바타가 완성됐어요" : "기본 아바타 미리보기";
+}
+
+async function generateAvatarViews() {
+  if (!avatarMeasurements || avatarMeasurements.photoBased) return showToast("먼저 치수로 아바타를 만들어주세요");
+  const button = $("#generateAvatarViews");
+  const card = $("#avatarGeneratorCard");
+  card.classList.add("generating");
+  button.disabled = true;
+  $("#avatarEngineStatus").textContent = "측면과 후면을 만들고 있어요… 30초쯤 걸려요";
+  interactiveGpuRequests += 1;
+  try {
+    const result = await fetchGpuJson("/api/avatar", { ...avatarMeasurements, views: ["front", "side", "back"] }, () => {
+      $("#avatarEngineStatus").textContent = "앞선 작업이 끝나면 바로 만들게요";
+    });
+    showAvatar(result.views?.front || result.image, result.engine, result.views);
+    $("#avatarEngineStatus").textContent = "드래그하면 아바타를 돌려볼 수 있어요";
+  } catch {
+    $("#avatarEngineStatus").textContent = "지금은 측면·후면을 만들지 못했어요. 잠시 후 다시 시도해주세요";
+    button.hidden = false;
+  } finally {
+    interactiveGpuRequests = Math.max(0, interactiveGpuRequests - 1);
+    card.classList.remove("generating");
+    button.disabled = false;
+  }
 }
 
 async function generateAvatar() {
@@ -224,7 +337,7 @@ async function runGenerateAvatar() {
     const result = await fetchGpuJson("/api/avatar", data, () => {
       $("#avatarEngineStatus").textContent = "앞선 분석이 끝나면 바로 아바타를 만들게요";
     });
-    showAvatar(result.image, result.engine);
+    showAvatar(result.image, result.engine, result.views);
   } catch {
     showAvatar(localAvatarPreview(data), "fallback");
   } finally {
@@ -264,6 +377,22 @@ function garmentType(category) {
   return ({ 상의: "upper", 하의: "lower", 원피스: "overall", 아우터: "outer", 신발: "shoes", 가방: "bag", 액세서리: "accessory" })[category] || null;
 }
 
+// 피부에서 바깥으로 나가는 순서. backend/tryon_prompt.py의 LAYER_RANK와 같은 값이어야
+// 프론트에서 자른 결과와 백엔드가 실제로 입히는 순서가 어긋나지 않는다.
+const LAYER_RANK = { overall: 10, lower: 20, upper: 30, outer: 40, shoes: 50, bag: 60, accessory: 70 };
+const MAX_TRYON_GARMENTS = 6;
+
+// 옷장에 담긴 순서대로 앞에서 잘라 보내면 뒤에 있던 신발·가방이 통째로 사라진다.
+// 자르기 전에 레이어 순서로 정렬한다.
+function orderGarmentsForTryon(items) {
+  return items
+    .filter(item => garmentType(item.category))
+    .map((item, index) => ({ item, index, rank: LAYER_RANK[garmentType(item.category)] ?? 99 }))
+    .sort((a, b) => a.rank - b.rank || a.index - b.index)
+    .map(entry => entry.item)
+    .slice(0, MAX_TRYON_GARMENTS);
+}
+
 function renderTryonStage(reference, output = null, loading = false) {
   const resultPane = loading
     ? '<div class="tryon-compare-loading"><div class="generation-loader"><span></span><strong>내 옷을 입혀보는 중</strong><small>룩북의 비율과 분위기를 비교해요</small></div></div>'
@@ -301,7 +430,7 @@ async function runTryOnItems(items, comparison = null) {
     const cached = tryonCache.get(cacheKey); renderTryonStage(comparison, cached); return;
   }
   try {
-    const wearableItems = items.filter(item => garmentType(item.category)).slice(0, 4);
+    const wearableItems = orderGarmentsForTryon(items);
     if (!wearableItems.length) throw new Error("No supported garments");
     const garments = await Promise.all(wearableItems.map(async item => ({ image: await imageToDataUrl(item.image), category: garmentType(item.category), name: item.name })));
     const result = await fetchGpuJson("/api/tryon", { avatar: avatarImage, garments, seed: 42 }, () => {
@@ -860,7 +989,7 @@ function renderGenderChoices() {
     if (selectedGender !== button.dataset.gender) {
       selectedStyles.clear(); selectedInfluencerLookIds.clear(); avatarMeasurements = null; avatarImage = null; fullBodyPhoto = null;
       localStorage.removeItem("오늘옷-avatar");
-      $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
+      avatarViews = { front: null }; avatarViewIndex = 0; renderAvatarPreview();
       $("#profileAvatar").classList.remove("has-image"); $("#profileAvatar").style.backgroundImage = "";
     }
     selectedGender = button.dataset.gender;
@@ -1128,7 +1257,7 @@ function initEvents() {
   $$("[data-body-method]").forEach(button => button.addEventListener("click", () => {
     if (bodyInputMethod !== button.dataset.bodyMethod) {
       avatarImage = null; avatarMeasurements = null;
-      $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
+      avatarViews = { front: null }; avatarViewIndex = 0; renderAvatarPreview();
     }
     setBodyInputMethod(button.dataset.bodyMethod);
   }));
@@ -1141,6 +1270,8 @@ function initEvents() {
     $("#avatarEngineStatus").textContent = "이 사진을 아바타 기준으로 사용할 수 있어요";
   });
   $("#generateAvatar").addEventListener("click", generateAvatar);
+  $("#generateAvatarViews")?.addEventListener("click", generateAvatarViews);
+  bindAvatarRotation();
   $("#nextBody").addEventListener("click", async () => { if (!avatarImage) await generateAvatar(); renderPreferenceChoices(); updatePreferenceCount(); showPreferenceStep(3); });
   $("#backGender").addEventListener("click", () => showPreferenceStep(2));
   $("#nextPreferences").addEventListener("click", () => showPreferenceStep(4));
