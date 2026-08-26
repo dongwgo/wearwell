@@ -1,0 +1,772 @@
+{
+  "items": [
+    {
+      "id": "93fffeb2897d",
+      "filename": "93fffeb2897d.png",
+      "createdAt": "2026-08-25T06:13:54.963141+00:00",
+      "spec": {
+        "size": "S",
+        "garments": [
+          {
+            "id": "5dc885f82ac7",
+            "name": "티셔츠 01",
+            "category": "티셔츠",
+            "size": "M",
+            "measurements": {
+              "chest": 108
+            }
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 89,
+            "waist": 76,
+            "hip": 92
+          }
+        },
+        "fit": {
+          "parts": [
+            {
+              "key": "chest",
+              "label": "가슴",
+              "garment": 108.0,
+              "body": 89.0,
+              "ease": 19.0,
+              "verdict": "루즈핏",
+              "score": 0.7
+            }
+          ],
+          "verdict": "가슴 기준 루즈핏입니다.",
+          "score": 0.7
+        },
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "fcbc8961b9cf",
+      "filename": "fcbc8961b9cf.png",
+      "createdAt": "2026-08-25T06:14:09.303866+00:00",
+      "spec": {
+        "size": "XL",
+        "garments": [
+          {
+            "id": "5dc885f82ac7",
+            "name": "티셔츠 01",
+            "category": "티셔츠",
+            "size": "M",
+            "measurements": {
+              "chest": 108
+            }
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 89,
+            "waist": 76,
+            "hip": 92
+          }
+        },
+        "fit": {
+          "parts": [
+            {
+              "key": "chest",
+              "label": "가슴",
+              "garment": 108.0,
+              "body": 89.0,
+              "ease": 19.0,
+              "verdict": "루즈핏",
+              "score": 0.7
+            }
+          ],
+          "verdict": "가슴 기준 루즈핏입니다.",
+          "score": 0.7
+        },
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "4ef181e45ff3",
+      "filename": "4ef181e45ff3.png",
+      "createdAt": "2026-08-25T06:36:46.214329+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "63e026058b7c",
+            "name": "니트/스웨터 07",
+            "category": "",
+            "size": "",
+            "measurements": {}
+          },
+          {
+            "id": "c2a723b40560",
+            "name": "청바지 05",
+            "category": "청바지",
+            "size": "M",
+            "measurements": {
+              "waist": 78,
+              "hip": 98
+            }
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 91,
+            "waist": 78,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "00a018890d24",
+      "filename": "00a018890d24.png",
+      "createdAt": "2026-08-25T06:45:46.290526+00:00",
+      "spec": {
+        "size": "XS",
+        "garments": [
+          {
+            "id": "e829c2bd9fff",
+            "name": "후드/맨투맨 02",
+            "category": "",
+            "size": "",
+            "measurements": {}
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 91,
+            "waist": 78,
+            "hip": 95
+          }
+        },
+        "fit": {
+          "parts": [],
+          "verdict": "치수를 입력하면 핏을 계산합니다.",
+          "score": null
+        },
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "820c35e3825f",
+      "filename": "820c35e3825f.png",
+      "createdAt": "2026-08-25T06:46:17.410109+00:00",
+      "spec": {
+        "size": "XS",
+        "garments": [
+          {
+            "id": "e829c2bd9fff",
+            "name": "후드/맨투맨 02",
+            "category": "",
+            "size": "",
+            "measurements": {}
+          },
+          {
+            "id": "c2a723b40560",
+            "name": "청바지 05",
+            "category": "청바지",
+            "size": "M",
+            "measurements": {
+              "waist": 78,
+              "hip": 98
+            }
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 91,
+            "waist": 78,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "03a495819c4d",
+      "filename": "03a495819c4d.png",
+      "createdAt": "2026-08-25T06:46:42.790405+00:00",
+      "spec": {
+        "size": "XL",
+        "garments": [
+          {
+            "id": "e829c2bd9fff",
+            "name": "후드/맨투맨 02",
+            "category": "",
+            "size": "",
+            "measurements": {}
+          },
+          {
+            "id": "c2a723b40560",
+            "name": "청바지 05",
+            "category": "청바지",
+            "size": "M",
+            "measurements": {
+              "waist": 78,
+              "hip": 98
+            }
+          }
+        ],
+        "body": {
+          "height": 175,
+          "weight": 74,
+          "gender": 0.9,
+          "muscle": 0.5,
+          "measurements": {
+            "chest": 91,
+            "waist": 78,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "6572432a1cea",
+      "filename": "6572432a1cea.png",
+      "createdAt": "2026-08-25T07:44:52.238551+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "b2d7bef74918",
+            "name": "전신reference",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.69,
+          "measurements": {
+            "chest": 91,
+            "waist": 79,
+            "hip": 95
+          }
+        },
+        "fit": {
+          "parts": [],
+          "verdict": "치수를 입력하면 핏을 계산합니다.",
+          "score": null
+        },
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "65d1f06cb214",
+      "filename": "65d1f06cb214.png",
+      "createdAt": "2026-08-25T07:45:25.251530+00:00",
+      "spec": {
+        "size": "XXL",
+        "garments": [
+          {
+            "id": "9b88cbcf3be0",
+            "name": "전신reference",
+            "category": "상의",
+            "size": "XXL",
+            "measurements": {
+              "chest": 126
+            },
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.69,
+          "measurements": {
+            "chest": 91,
+            "waist": 79,
+            "hip": 95
+          }
+        },
+        "fit": {
+          "parts": [
+            {
+              "key": "chest",
+              "label": "가슴",
+              "garment": 126.0,
+              "body": 91.0,
+              "ease": 35.0,
+              "verdict": "많이 큼",
+              "score": 0.3
+            }
+          ],
+          "verdict": "가슴이 많이 큼 — 사이즈 조정을 고려해보세요.",
+          "score": 0.3
+        },
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "98a34b1e88b3",
+      "filename": "98a34b1e88b3.png",
+      "createdAt": "2026-08-25T07:53:51.267389+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "ae2902baf49f",
+            "name": "6951158 17871220354703 big",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "ec66b3501a4e",
+            "name": "[WKNDRS X FIT THE SIZE] EAGLE DENIM PANTS (BLACK)",
+            "category": "하의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.69,
+          "measurements": {
+            "chest": 91,
+            "waist": 79,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "9ddceccec075",
+      "filename": "9ddceccec075.png",
+      "createdAt": "2026-08-25T07:54:45.438836+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "3c5dec7f2aa1",
+            "name": "[WKNDRS X FIT THE SIZE] EAGLE DENIM PANTS (BLACK)",
+            "category": "하의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "79092b97df34",
+            "name": "6951162 17860703202136 big",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "90e52e97cfc8",
+            "name": "에어 포스 1 07 M - 화이트 / CW2288-111",
+            "category": "신발",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "d354d91ddb9f",
+            "name": "에이엠백 02 (블랙)",
+            "category": "가방",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.69,
+          "measurements": {
+            "chest": 91,
+            "waist": 79,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "a34a3a15ec75",
+      "filename": "a34a3a15ec75.png",
+      "createdAt": "2026-08-25T08:00:16.785774+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "54e6ede880b9",
+            "name": "detail 6951162 17860703313985 big",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "7e02b021e88c",
+            "name": "[WKNDRS X FIT THE SIZE] EAGLE DENIM PANTS (BLACK)",
+            "category": "하의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "c6ad7b78d325",
+            "name": "홀리 홀스하이드 컴포트 더비 슈즈 블랙",
+            "category": "신발",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.69,
+          "measurements": {
+            "chest": 91,
+            "waist": 79,
+            "hip": 95
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "8c447749b4b8",
+      "filename": "8c447749b4b8.png",
+      "createdAt": "2026-08-26T00:33:46.050783+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "21874090fae5",
+            "name": "snap-083 - 하의",
+            "category": "하의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "e39dc04f117c",
+            "name": "베이식 드레스 셔츠 [화이트]",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "96ad68b59384",
+            "name": "홀리 홀스하이드 컴포트 더비 슈즈 블랙",
+            "category": "신발",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "373600943f54",
+            "name": "NJ1DR78A 남성 1994 힘 다운 파카 (RDS) BLACK",
+            "category": "아우터",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.64,
+          "measurements": {}
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "d36bd643f523",
+      "filename": "d36bd643f523.png",
+      "createdAt": "2026-08-26T00:34:27.504585+00:00",
+      "spec": {
+        "size": "",
+        "garments": [
+          {
+            "id": "87a76377a0f8",
+            "name": "snap-083 - 상의",
+            "category": "상의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "2b4de6053bf1",
+            "name": "[WKNDRS X FIT THE SIZE] EAGLE DENIM PANTS (BLACK)",
+            "category": "하의",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "6adc82e0323b",
+            "name": "홀리 홀스하이드 컴포트 더비 슈즈 블랙",
+            "category": "신발",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "a6973447ac4d",
+            "name": "NJ1DR78A 남성 1994 힘 다운 파카 (RDS) BLACK",
+            "category": "아우터",
+            "size": "",
+            "measurements": {},
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.64,
+          "measurements": {}
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "50e93549c03f",
+      "filename": "50e93549c03f.png",
+      "createdAt": "2026-08-26T00:35:08.543966+00:00",
+      "spec": {
+        "size": "XL",
+        "garments": [
+          {
+            "id": "806c3b19ae8e",
+            "name": "snap-083 - 상의",
+            "category": "상의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "48cf3355afd0",
+            "name": "[WKNDRS X FIT THE SIZE] EAGLE DENIM PANTS (BLACK)",
+            "category": "하의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "961f4cd25d2a",
+            "name": "홀리 홀스하이드 컴포트 더비 슈즈 블랙",
+            "category": "신발",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "5f2c48523497",
+            "name": "NJ1DR78A 남성 1994 힘 다운 파카 (RDS) BLACK",
+            "category": "아우터",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.64,
+          "measurements": {}
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "ec6fb80ab739",
+      "filename": "ec6fb80ab739.png",
+      "createdAt": "2026-08-26T00:36:05.169634+00:00",
+      "spec": {
+        "size": "XL",
+        "garments": [
+          {
+            "id": "756cd760aaa3",
+            "name": "snap-082 - 하의",
+            "category": "하의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "df8997341f8e",
+            "name": "아틀레티코 마드리드 2026/27 스타디움 어웨이 드라이 핏 축구 레플리카 저지 M - 블랙:볼트 / II1",
+            "category": "상의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "0bedfef7bf3b",
+            "name": "에어 포스 1 07 M - 화이트 / CW2288-111",
+            "category": "신발",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "20ecd5671180",
+            "name": "인더시티 콘트라스트 스티치 윈드브레이커 블랙 4RF523G UB1",
+            "category": "아우터",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 0.64,
+          "measurements": {}
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-3.1-flash-image"
+      }
+    },
+    {
+      "id": "9b7e33e8b106",
+      "filename": "9b7e33e8b106.png",
+      "createdAt": "2026-08-26T00:42:59.493564+00:00",
+      "spec": {
+        "size": "XL",
+        "garments": [
+          {
+            "id": "c2652c195461",
+            "name": "snap-031 - 신발",
+            "category": "신발",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "5be408bd2fb6",
+            "name": "아틀레티코 마드리드 2026/27 스타디움 어웨이 드라이 핏 축구 레플리카 저지 M - 블랙:볼트 / II1",
+            "category": "상의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "b5bc7fd699bf",
+            "name": "[여름원단추가] 유니섹스 세미 와이드 밴딩 슬랙스 블랙",
+            "category": "하의",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          },
+          {
+            "id": "4c76c35f5cbf",
+            "name": "인더시티 콘트라스트 스티치 윈드브레이커 블랙 4RF523G UB1",
+            "category": "아우터",
+            "size": "XL",
+            "measurements": {
+              "chest": 120
+            },
+            "measurementSource": "사이즈표 기본값"
+          }
+        ],
+        "body": {
+          "height": 181,
+          "weight": 71,
+          "gender": 1.0,
+          "muscle": 1.0,
+          "measurements": {
+            "chest": 90,
+            "waist": 79,
+            "hip": 94
+          }
+        },
+        "fit": null,
+        "note": "",
+        "model": "google/gemini-2.5-flash-image"
+      }
+    }
+  ]
+}

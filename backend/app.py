@@ -19,6 +19,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
+import segment_models
+
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
 VLM_LOAD_IN_4BIT = os.getenv("VLM_LOAD_IN_4BIT", "1") == "1"
@@ -34,6 +36,10 @@ MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_000_000
 MAX_REQUEST_BYTES = 32_000_000
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+# 세그멘테이션 모델 비교 도구(/api/dev/*). 로컬 개발용이라 기본은 켜짐이고,
+# 공개 터널에 붙일 때는 0으로 끈다 — 모델을 여러 개 올려 메모리를 크게 쓴다.
+DEV_TOOLS_ENABLED = os.getenv("WEARWELL_DEV_TOOLS", "1") == "1"
+MAX_COMPARE_MODELS = 4
 GPU_QUEUE_TIMEOUT = float(os.getenv("GPU_QUEUE_TIMEOUT", "300"))
 GPU_LOCK = threading.RLock()
 INFERENCE_GATE = threading.Lock()
@@ -156,6 +162,14 @@ class VLMImageRequest(BaseModel):
 class SegmentationRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
     name: str = Field(default="full-body photo", max_length=120)
+    # 비우면 프로덕션 기본 모델. segment_models.MODELS의 key를 넣으면 그 모델로 돈다.
+    model: str | None = Field(default=None, max_length=60)
+
+
+class SegmentCompareRequest(BaseModel):
+    image: str = Field(min_length=1, max_length=8_000_000)
+    name: str = Field(default="full-body photo", max_length=120)
+    models: list[str] = Field(default_factory=list, max_length=MAX_COMPARE_MODELS)
 
 
 def decode_image(value: str) -> Image.Image:
@@ -499,7 +513,9 @@ def health():
         "gpu": name,
         "model": IMAGE_MODEL,
         "avatarModel": IMAGE_MODEL,
-        "segmentationModel": "mattmdjaga/segformer_b2_clothes",
+        "segmentationModel": segment_models.MODELS[segment_models.PRODUCTION_MODEL].model_id,
+        "segmentationModelKey": segment_models.PRODUCTION_MODEL,
+        "devTools": DEV_TOOLS_ENABLED,
         "tryonModel": IMAGE_MODEL,
         "vlmModel": VLM_MODEL,
         "modelLoaded": image_engine.pipe is not None,
@@ -538,8 +554,9 @@ def segment_closet_photo(request: SegmentationRequest):
         image.save(source, format="PNG")
         import segment_service
 
-        detections = segment_service.segment(source.getvalue())
+        detections = segment_service.segment(source.getvalue(), request.model)
         return {
+            "model": segment_models.resolve(request.model).as_dict(),
             "items": [
                 {
                     "id": f"segment-{int(time.time() * 1000)}-{index}",
@@ -552,6 +569,8 @@ def segment_closet_photo(request: SegmentationRequest):
                 for index, item in enumerate(detections)
             ]
         }
+    except KeyError as error:
+        raise HTTPException(status_code=422, detail=str(error.args[0])) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except Exception as error:
@@ -559,6 +578,108 @@ def segment_closet_photo(request: SegmentationRequest):
         raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
     finally:
         INFERENCE_GATE.release()
+
+
+def require_dev_tools() -> None:
+    if not DEV_TOOLS_ENABLED:
+        raise HTTPException(status_code=404, detail="Dev tools are disabled")
+
+
+@app.get("/api/dev/segment/models")
+def list_segmentation_models():
+    """비교 탭이 띄울 모델 목록. 모델을 적재하지 않으므로 torch 없이도 응답한다."""
+    require_dev_tools()
+    loaded: list[str] = []
+    try:
+        import segment_service
+
+        loaded = segment_service.loaded_keys()
+    except Exception:  # torch 미설치 등 — 목록 자체는 그대로 내려준다
+        logging.debug("segment_service unavailable while listing models", exc_info=True)
+    return {
+        "models": [spec.as_dict() for spec in segment_models.MODELS.values()],
+        "default": segment_models.DEFAULT_COMPARE,
+        "production": segment_models.PRODUCTION_MODEL,
+        "loaded": loaded,
+        "categoryColors": {name: f"#{r:02x}{g:02x}{b:02x}" for name, (r, g, b) in segment_models.CATEGORY_COLORS.items()},
+        "thresholds": segment_models.QUALITY_THRESHOLDS,
+    }
+
+
+@app.post("/api/dev/segment/compare")
+def compare_segmentation_models(request: SegmentCompareRequest):
+    """같은 사진을 여러 모델에 돌려 결과를 나란히 돌려준다.
+
+    GPU/CPU를 순차로 쓰도록 추론 게이트 안에서 한 모델씩 처리한다. 모델별로
+    독립 실패를 허용한다 — 하나가 못 뜬다고 비교 전체를 버리면 쓸모가 없다.
+    """
+    require_dev_tools()
+    keys = request.models or segment_models.DEFAULT_COMPARE
+    unknown = [key for key in keys if key not in segment_models.MODELS]
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"알 수 없는 모델: {', '.join(unknown)}")
+
+    acquire_inference_slot()
+    try:
+        image = decode_image(request.image)
+        source = io.BytesIO()
+        image.save(source, format="PNG")
+        raw = source.getvalue()
+        import segment_service
+
+        results, masks_by_model = [], {}
+        for key in keys:
+            try:
+                analysis = segment_service.analyze(raw, key)
+            except Exception as error:
+                logging.exception("Segmentation comparison failed for %s", key)
+                results.append({
+                    "model": segment_models.MODELS[key].as_dict(),
+                    "error": str(error) or "모델 실행에 실패했습니다",
+                })
+                continue
+            masks_by_model[key] = analysis.pop("_masks")
+            analysis["overlay"] = "data:image/png;base64," + base64.b64encode(analysis.pop("overlay_png_bytes")).decode()
+            for item in analysis["items"]:
+                item["image"] = "data:image/png;base64," + base64.b64encode(item.pop("png_bytes")).decode()
+            results.append(analysis)
+
+        return {
+            "name": request.name,
+            "requested": keys,
+            "results": results,
+            "agreement": pairwise_agreement(masks_by_model, segment_service.mask_iou),
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except HTTPException:
+        raise
+    except Exception as error:
+        logging.exception("Segmentation comparison failed")
+        raise HTTPException(status_code=503, detail="Segmentation model is unavailable") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+def pairwise_agreement(masks_by_model: dict, iou) -> list[dict]:
+    """모델 쌍마다 카테고리별 IoU. 어느 옷에서 의견이 갈리는지 보려는 것이다.
+
+    한쪽만 검출한 카테고리는 IoU가 0이므로 빠뜨리지 않고 함께 싣는다.
+    """
+    keys = list(masks_by_model)
+    rows = []
+    for index, left in enumerate(keys):
+        for right in keys[index + 1:]:
+            left_masks, right_masks = masks_by_model[left], masks_by_model[right]
+            categories = sorted(set(left_masks) | set(right_masks), key=segment_models.CATEGORIES.index)
+            scores = {}
+            for category in categories:
+                if category in left_masks and category in right_masks:
+                    scores[category] = iou(left_masks[category], right_masks[category])
+                else:
+                    scores[category] = {"onlyIn": left if category in left_masks else right}
+            rows.append({"left": left, "right": right, "categories": scores})
+    return rows
 
 
 @app.post("/api/tryon")

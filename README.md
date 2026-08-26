@@ -68,6 +68,7 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/lookbook`
 - `POST /api/vlm/body`
 - `POST /api/warmup`
+- `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (아래 Seg Lab 참고)
 
 모델 추론 endpoint는 `Authorization: Bearer <token>`이 필요합니다. CORS는 `localhost`와 `127.0.0.1`에서 실행되는 프론트엔드만 허용합니다.
 
@@ -87,6 +88,58 @@ window.WEARWELL_CONFIG = {
 - `ONEULOUT_GPU`: `1`이면 GPU 추론 활성화
 - `SEGMENTATION_DEVICE`: `auto`(기본), `cuda`, `cpu` 중 하나. `auto`는 GPU가 있으면 GPU를 사용
 - `WEARWELL_API_TOKEN`: API bearer token
+- `WEARWELL_DEV_TOOLS`: `1`(기본)이면 Seg Lab endpoint를 노출. 공개 터널에서는 `0` 권장
+- `SEGMENT_MODEL_CACHE_SIZE`: 동시에 메모리에 올려둘 세그멘테이션 모델 수, 기본값 `3`
+
+## Seg Lab — 옷 분리 모델 비교 (개발용)
+
+전신샷 한 장을 여러 세그멘테이션 모델에 돌려 결과를 나란히 비교하는 개발 탭입니다.
+모델을 바꿔가며 옷 분리 성능을 보기 위한 것으로, 일반 사용자 화면에는 나오지 않습니다.
+
+등록된 모델은 [`backend/segment_models.py`](backend/segment_models.py)에 있습니다.
+
+| key | 모델 | 라벨 체계 | 가중치 | 특징 |
+| --- | --- | --- | --- | --- |
+| `b2_clothes` | `mattmdjaga/segformer_b2_clothes` | ATR 18 | 110MB | 프로덕션 기본값. 가장 가볍고 빠름 |
+| `b3_clothes` | `sayeed99/segformer_b3_clothes` | ATR 18 | 189MB | B2와 라벨이 같고 인코더만 큼. 용량 효과만 비교 |
+| `b3_fashion` | `sayeed99/segformer-b3-fashion` | Fashionpedia 46 | 189MB | 유일하게 상의와 아우터를 구분 |
+| `b5_human_parsing` | `matei-dorian/segformer-b5-finetuned-human-parsing` | ATR 18 | 339MB | 가장 큰 ATR 모델. 기본 선택에는 빠져 있음 |
+
+ATR 라벨에는 아우터 클래스가 없어 코트도 `Upper-clothes`로 나옵니다. 아우터 컬럼이
+`b3_fashion`에만 뜨는 것은 버그가 아니라 라벨 체계 차이입니다. 반대로 Fashionpedia는
+소매·카라를 별도 클래스로 떼어내 본체 마스크에 구멍을 냅니다 — 결과 카드의
+"모델이 예측한 원본 라벨"에서 그 비율을 확인할 수 있습니다.
+
+### 실행
+
+```bash
+# 1) 백엔드 (GPU가 없으면 SEGMENTATION_DEVICE=cpu로 자동 폴백)
+cd backend
+WEARWELL_API_TOKEN=wearwell-local-dev uvicorn app:app --host 127.0.0.1 --port 8787
+
+# 2) 정적 프론트엔드
+python -m http.server 8000 --bind 127.0.0.1
+```
+
+`local-config.js`의 `LOCAL_API_TOKEN`을 위 `WEARWELL_API_TOKEN`과 같게 맞춘 뒤
+`http://127.0.0.1:8000`을 열면 상단에 **Seg Lab** 탭이 나옵니다. 탭은 `localhost`/`127.0.0.1`
+에서 열었거나 `?dev=1`을 붙였을 때만 보입니다.
+
+비교 결과에는 통과한 아이템뿐 아니라 **품질 필터에 걸러진 후보와 그 이유**(면적·채움·확신도
+중 어느 기준을 못 넘었는지), 모델이 예측한 원본 라벨 분포, 카테고리별 오버레이,
+모델 쌍별 IoU가 함께 나옵니다. 오버레이 색은 모델이 아니라 카테고리로 고정되어 있어
+나란히 놓고 눈으로 비교할 수 있습니다.
+
+세그멘테이션 자체는 원본 해상도로 돌리고, 응답에 싣는 이미지만 줄입니다(오버레이 860px,
+크롭 420px). 처음 쓰는 모델은 가중치를 내려받느라 오래 걸리며, 적재 시간은 추론 시간과
+구분해서 표시합니다.
+
+### 테스트
+
+```bash
+cd backend && pytest tests -q          # 백엔드 라우트와 레지스트리
+node scripts/seg-lab-test.mjs          # 두 서버가 뜬 상태에서 탭 전체 E2E
+```
 
 ## 개발 검증
 
