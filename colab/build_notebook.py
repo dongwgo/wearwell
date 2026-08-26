@@ -31,6 +31,7 @@ add(MD, r"""
 | 레이어 뒤집힘 | 아우터가 상의 밑으로 들어가거나 둘이 한 벌로 합쳐짐 | 레이어 순서가 명시된 캡션으로 학습 |
 | 아이템 누락·환각 | 고른 옷이 안 나오거나 없던 옷이 생김 | 재구성(reconstruction) 목적 학습 |
 | 가방·액세서리 오배치 | 모자가 몸통에 붙고 가방끈이 옷 속을 통과 | 착용 지점(anchor) 문장이 들어간 캡션 |
+| 작은 아이템 증발 | 안경·시계·귀걸이가 아예 안 그려짐 | 작은 bbox도 학습에 포함 + 강조 문장 |
 
 **핵심 설계**: 학습 캡션을 `backend/tryon_prompt.py`의 `build_tryon_prompt()`로
 만든다. 추론 때 백엔드가 보내는 문장과 **글자 그대로 같은 형식**이어야 LoRA가
@@ -160,7 +161,7 @@ print(len(sources), "장의 원본 후보")
 
 add(CODE, r"""
 from dataclasses import dataclass
-from tryon_prompt import build_tryon_prompt, order_garments, LAYER_RANK
+from tryon_prompt import build_tryon_prompt, order_garments, layer_rank, resolve_spec
 
 @dataclass
 class Item:
@@ -209,7 +210,7 @@ for path in sources:
         pieces = [p for p in analysis.get("pieces", []) if p.get("bbox") and piece_slot(p)]
         # 신뢰도가 낮은 검출은 학습 데이터를 오염시킨다.
         pieces = [p for p in pieces if float(p.get("confidence") or 0) >= 0.6]
-        pieces.sort(key=lambda p: LAYER_RANK.get(piece_slot(p), 99))
+        pieces.sort(key=lambda p: layer_rank(Item(piece_slot(p), p.get("label") or "")))
         slots = [piece_slot(p) for p in pieces]
         if not is_useful(slots):
             skipped += 1
@@ -217,7 +218,14 @@ for path in sources:
 
         chosen = pieces[:MAX_CONTROL_GARMENTS]
         boxes = [bbox_to_pixels(p["bbox"], image.size) for p in chosen]
-        if any((b[2] - b[0]) < 40 or (b[3] - b[1]) < 40 for b in boxes):
+        # 최소 크기 기준을 하나로 두면 안경·시계처럼 원래 작은 아이템이 통째로
+        # 걸러진다. 정작 착장에서 가장 자주 빠지는 게 그 아이템들이라, 학습
+        # 데이터에서까지 빼면 파인튜닝으로 고칠 방법이 없어진다.
+        def min_side(piece):
+            spec = resolve_spec(piece_slot(piece), piece.get("label") or "")
+            return 12 if (spec and spec.small) else 40
+
+        if any(min(b[2] - b[0], b[3] - b[1]) < min_side(p) for p, b in zip(chosen, boxes)):
             skipped += 1
             continue
 

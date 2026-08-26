@@ -21,8 +21,14 @@ from pydantic import BaseModel, Field
 from PIL import Image, ImageDraw
 
 import segment_models
-from avatar_body import VIEW_YAW, BodyTarget, build_avatar_prompt, build_body_reference
-from tryon_prompt import build_tryon_prompt, order_garments
+from avatar_body import (
+    VIEW_YAW,
+    BodyTarget,
+    build_avatar_prompt,
+    build_body_reference,
+    pad_for_full_body,
+)
+from tryon_prompt import build_tryon_prompt, build_tryon_view_prompt, order_garments
 
 IMAGE_MODEL = os.getenv("IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 VLM_MODEL = os.getenv("VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
@@ -181,6 +187,13 @@ class TryOnRequest(BaseModel):
     avatar: str = Field(min_length=1, max_length=8_000_000)
     garments: list[GarmentInput] = Field(min_length=1, max_length=MAX_TRYON_GARMENTS)
     seed: int = 42
+    # 만들 시점. front는 항상 먼저 만들어지고 나머지 시점의 기준이 된다.
+    views: list[Literal["front", "side", "back"]] = Field(default_factory=lambda: ["front"], max_length=3)
+    # 아바타를 시점별로 만들어 뒀다면 여기에 담아 보낸다. 없으면 체형 가이드
+    # 없이 정면 결과만 보고 돌린다.
+    avatarViews: dict[Literal["front", "side", "back"], str] = Field(default_factory=dict)
+    # 체형 가이드를 다시 그리기 위한 치수. 없으면 아바타 이미지만으로 회전한다.
+    measurements: Measurements | None = None
 
 
 class VLMImageRequest(BaseModel):
@@ -232,6 +245,23 @@ class ClosetRefineRequest(BaseModel):
     steps: int | None = Field(default=None, ge=1, le=50)
 
 
+def flatten_transparency(image: Image.Image, background=(255, 255, 255)) -> Image.Image:
+    """투명 배경을 흰색으로 메운 뒤 RGB로 바꾼다.
+
+    `.convert("RGB")`를 바로 부르면 알파 채널만 버리고 그 아래 RGB 값은 그대로
+    남는다. segment_service가 만드는 옷 PNG는 알파로만 옷 영역을 표시하고 RGB
+    채널에는 원본 사진이 그대로 들어 있어서, 그냥 변환하면 잘라냈다고 생각한
+    사람과 배경이 통째로 되살아난다. 지시문에는 "옷만 남기고 원래 모델과
+    배경은 지워라"라고 써 놓고 실제로는 그 배경을 다시 넣어 주고 있었던 셈이다.
+    """
+    if image.mode not in ("RGBA", "LA") and not (image.mode == "P" and "transparency" in image.info):
+        return image.convert("RGB")
+    rgba = image.convert("RGBA")
+    canvas = Image.new("RGB", rgba.size, background)
+    canvas.paste(rgba, mask=rgba.split()[3])
+    return canvas
+
+
 def decode_image(value: str) -> Image.Image:
     try:
         encoded = value.split(",", 1)[1] if value.startswith("data:") else value
@@ -242,7 +272,7 @@ def decode_image(value: str) -> Image.Image:
         if width * height > MAX_IMAGE_PIXELS:
             raise ValueError("Image pixel count exceeds the limit")
         image.load()
-        return image.convert("RGB")
+        return flatten_transparency(image)
     except ValueError:
         raise
     except Exception as error:
@@ -292,44 +322,47 @@ class FluxImageEngine:
         self._load_lock = threading.Lock()
 
     def _load(self):
-        if self.pipes:
+        if self.pipe is not None:
             return self.pipe
         with self._load_lock:
-            if self.pipes:
-                return self.pipe
-            import torch
+            if self.pipe is None:
+                self._build_pipeline()
+        return self.pipe
 
-            if self.pipeline_factory is None:
-                from diffusers import Flux2KleinPipeline
+    def _build_pipeline(self) -> None:
+        """VRAM 여유에 맞춘 독립 FLUX worker들을 한 번만 구성한다."""
+        import torch
 
-                self.pipeline_factory = Flux2KleinPipeline
+        if self.pipeline_factory is None:
+            from diffusers import Flux2KleinPipeline
 
-            dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-            self.dtype = str(dtype).removeprefix("torch.")
-            for worker_id in range(GPU_CONCURRENCY):
-                load_options = {"torch_dtype": dtype}
-                if HF_TOKEN:
-                    load_options["token"] = HF_TOKEN
-                pipe = self.pipeline_factory.from_pretrained(IMAGE_MODEL, **load_options)
-                if os.getenv("FLUX_CPU_OFFLOAD", "0") == "1":
-                    pipe.enable_model_cpu_offload()
-                else:
-                    pipe.to("cuda")
-                if hasattr(pipe, "set_progress_bar_config"):
-                    pipe.set_progress_bar_config(disable=True)
-                if TRYON_LORA_PATH:
-                    try:
-                        pipe.load_lora_weights(TRYON_LORA_PATH, adapter_name="wearwell_tryon")
-                        if hasattr(pipe, "disable_lora"):
-                            pipe.disable_lora()
-                        self.lora_name = os.path.basename(TRYON_LORA_PATH)
-                        self._lora_workers.add(worker_id)
-                    except Exception:
-                        logging.exception("Try-on LoRA load failed on worker %s; using base model", worker_id)
-                self.pipes.append(pipe)
-                self._available.put(worker_id)
-            self.pipe = self.pipes[0]
-            return self.pipe
+            self.pipeline_factory = Flux2KleinPipeline
+
+        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        self.dtype = str(dtype).removeprefix("torch.")
+        for worker_id in range(GPU_CONCURRENCY):
+            load_options = {"torch_dtype": dtype}
+            if HF_TOKEN:
+                load_options["token"] = HF_TOKEN
+            pipe = self.pipeline_factory.from_pretrained(IMAGE_MODEL, **load_options)
+            if os.getenv("FLUX_CPU_OFFLOAD", "0") == "1":
+                pipe.enable_model_cpu_offload()
+            else:
+                pipe.to("cuda")
+            if hasattr(pipe, "set_progress_bar_config"):
+                pipe.set_progress_bar_config(disable=True)
+            if TRYON_LORA_PATH:
+                try:
+                    pipe.load_lora_weights(TRYON_LORA_PATH, adapter_name="wearwell_tryon")
+                    if hasattr(pipe, "disable_lora"):
+                        pipe.disable_lora()
+                    self.lora_name = os.path.basename(TRYON_LORA_PATH)
+                    self._lora_workers.add(worker_id)
+                except Exception:
+                    logging.exception("Try-on LoRA load failed on worker %s; using base model", worker_id)
+            self.pipes.append(pipe)
+            self._available.put(worker_id)
+        self.pipe = self.pipes[0]
 
     def unload(self) -> None:
         if not self.pipes:
@@ -496,27 +529,60 @@ class FluxImageEngine:
             {"bodyReference": "text-only", "views": ["front"]},
         )
 
-    def generate_tryon(self, request: TryOnRequest) -> tuple[Image.Image, str]:
-        person = decode_image(request.avatar)
+    def generate_tryon(self, request: TryOnRequest) -> tuple[dict[str, Image.Image], str, list[GarmentInput]]:
+        """착장 요청 -> 시점별 결과 이미지.
+
+        측면·후면은 옷 사진을 다시 넣지 않고 **완성된 정면 결과**를 참조로 돌린다.
+        착장이 이미 조립돼 있으니 참조 수도 줄고 옷 일관성도 낫다.
+        """
         # 참조 이미지 번호가 레이어 순서와 어긋나면 모델이 번호를 레이어 힌트로
         # 오해한다. 디코딩 전에 안쪽 레이어부터 정렬하고 슬롯 충돌을 정리한다.
         ordered = order_garments(list(request.garments), limit=MAX_TRYON_GARMENTS)
         garments = [decode_image(item.image) for item in ordered]
+        # 정면은 필수라 실패하면 그대로 올린다. 측면·후면은 부가 정보이므로
+        # 하나가 깨져도 정면 착장까지 같이 죽이지 않는다.
+        # 정면의 출처는 언제나 request.avatar다. avatarViews에 front가 섞여
+        # 들어와도 무시해서 "어느 쪽이 이기는가"를 고민할 일을 없앤다.
+        person_views = {"front": decode_image(request.avatar)}
+        for view, payload in request.avatarViews.items():
+            if view == "front":
+                continue
+            try:
+                person_views[view] = decode_image(payload)
+            except ValueError:
+                logging.warning("Skipping unreadable avatar view: %s", view)
+
         has_cuda, _ = cuda_info()
-        if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
-            prompt = build_tryon_prompt(ordered)
-            image = self._run(
-                prompt=prompt,
+        if not (has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1"):
+            return {"front": self.fallback_tryon(person_views["front"], ordered)}, "tryon-preview-fallback", ordered
+
+        requested = [view for view in dict.fromkeys(["front", *request.views]) if view in person_views]
+        results: dict[str, Image.Image] = {}
+        for view in requested:
+            if view == "front":
+                # 넣어준 사람 사진이 종아리에서 끝나면 결과도 거기서 끝난다.
+                # 참조에 실제 여백을 만들어 "여기까지가 화면"이라고 보여준다.
+                person = pad_for_full_body(person_views["front"])
+                results["front"] = self._run(
+                    prompt=build_tryon_prompt(ordered),
+                    seed=request.seed,
+                    images=[person, *garments],
+                    steps=TRYON_STEPS,
+                    use_tryon_lora=True,
+                )
+                continue
+            guide = pad_for_full_body(person_views[view])
+            results[view] = self._run(
+                prompt=build_tryon_view_prompt(view, ordered),
                 seed=request.seed,
-                images=[person, *garments],
+                images=[guide, results["front"]],
                 steps=TRYON_STEPS,
                 use_tryon_lora=True,
             )
-            engine = self.engine_name
-            if self.lora_name:
-                engine += f"+lora:{self.lora_name}"
-            return image, engine
-        return self.fallback_tryon(person, ordered), "tryon-preview-fallback"
+        engine = self.engine_name
+        if self.lora_name:
+            engine += f"+lora:{self.lora_name}"
+        return results, engine, ordered
 
     def refine_garment(self, garment: Image.Image, category: str, name: str, seed: int, steps: int | None = None):
         """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
@@ -610,7 +676,9 @@ class QwenVLMEngine:
 판정 기준:
 - layering_ok: 상의와 아우터가 함께 있을 때 상의가 안쪽, 아우터가 바깥이면 true. 아우터가 상의 밑으로 들어갔거나 둘이 한 벌로 합쳐졌으면 false. 몸통 레이어가 한 겹뿐이면 true.
 - accessories_placed_ok: 가방과 액세서리가 각각 맞는 부위에 있으면 true. 모자가 몸에 붙어 있거나 가방끈이 옷 속을 통과하면 false. 목록에 가방·액세서리가 없으면 true.
-- identity_ok: 얼굴, 체형, 포즈가 원래 사람과 같으면 true."""
+- identity_ok: 얼굴, 체형, 포즈가 원래 사람과 같으면 true.
+- 속옷이 목록에 있으면 겉옷 아래로 완전히 가려져 보이지 않아야 layering_ok가 true다. 바지 위에 팬티가 보이면 false.
+- 양말과 신발이 함께 있으면 양말이 신발 안에 들어가 있어야 true. 양말이 신발 위로 나와 있으면 false."""
 
     BODY_PROMPT = """전신사진에서 의상과 포즈의 영향을 감안해 보이는 체형 특징만 한국어 JSON으로 답해. 키나 몸무게 숫자를 추측하지 마. 스키마: {"body_shape":"보통/마른 체형/탄탄한 체형/상체가 발달한 체형/하체가 발달한 체형/통통한 체형 중 하나","proportion":"상하체 비율 설명","shoulderLine":"어깨선 설명","silhouette":"전체 실루엣 설명"}"""
 
@@ -1033,19 +1101,27 @@ def compare_segmentation_models(request: SegmentCompareRequest):
 def generate_tryon(request: TryOnRequest):
     acquire_inference_slot()
     try:
-        applied = order_garments(list(request.garments), limit=MAX_TRYON_GARMENTS)
-        image, engine = image_engine.generate_tryon(request)
+        images, engine, applied = image_engine.generate_tryon(request)
         _, gpu = cuda_info()
+        encoded = {view: encode_image(image) for view, image in images.items()}
+        applied_keys = {id(item) for item in applied}
         return {
-            "image": encode_image(image),
+            "image": encoded["front"],
+            "views": encoded,
             "engine": engine,
             "gpu": gpu,
             "garmentCount": len(applied),
             "requestedCount": len(request.garments),
-            # 레이어 순서대로 정렬된 결과. 요청 순서와 다를 수 있고, 같은 부위가
-            # 겹치면 안쪽 레이어만 남으므로 실제로 입힌 목록을 그대로 돌려준다.
+            # 레이어 순서대로 정렬된 결과. 요청 순서와 다를 수 있다.
             "appliedGarments": [
                 {"name": item.name, "category": item.category} for item in applied
+            ],
+            # 같은 자리를 다투다 빠진 아이템. 화면에서 조용히 사라지면 사용자는
+            # "옷이 반영되지 않았다"고 읽으므로 무엇이 빠졌는지 함께 돌려준다.
+            "droppedGarments": [
+                {"name": item.name, "category": item.category}
+                for item in request.garments
+                if id(item) not in applied_keys
             ],
         }
     except ValueError as error:

@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,6 +20,8 @@ if str(BACKEND) not in sys.path:
 from tryon_prompt import (  # noqa: E402
     LAYER_RANK,
     build_tryon_prompt,
+    build_tryon_view_prompt,
+    layer_rank,
     order_garments,
     resolve_placement,
 )
@@ -101,7 +104,7 @@ def test_bag_placement_follows_the_bag_type(name, expected):
         ("코튼 볼캡", "on the head"),
         ("울 머플러", "around the neck"),
         ("가죽 벨트", "around the waist"),
-        ("메탈 선글라스", "over the eyes"),
+        ("메탈 선글라스", "squarely over both eyes"),
         ("실버 목걸이", "around the neck"),
     ],
 )
@@ -162,4 +165,99 @@ def test_prompt_demands_the_whole_body_including_the_shoes():
     # 신발을 신기면 발끝이 프레임 밖으로 밀려 잘리던 문제.
     prompt = build_tryon_prompt(order_garments([Garment("upper"), Garment("shoes", "스니커즈")]))
     assert "soles of the shoes" in prompt
-    assert "both feet fully visible" in prompt
+    # 넣어준 사람 사진이 종아리에서 끝나도 아래로 구도를 넓히라고 지시해야 한다.
+    assert "widen the composition downward" in prompt
+
+
+def test_socks_go_on_before_the_shoes():
+    ordered = order_garments([Garment("shoes", "화이트 스니커즈"), Garment("accessory", "크루 양말")])
+    assert [item.name for item in ordered] == ["크루 양말", "화이트 스니커즈"]
+
+
+def test_belt_sits_between_the_top_and_the_outerwear():
+    ordered = order_garments([
+        Garment("outer", "블레이저"), Garment("accessory", "가죽 벨트"),
+        Garment("upper", "셔츠"), Garment("lower", "슬랙스"),
+    ])
+    assert [item.name for item in ordered] == ["슬랙스", "셔츠", "가죽 벨트", "블레이저"]
+
+
+def test_scarf_goes_over_the_outerwear_but_hat_comes_last():
+    ordered = order_garments([
+        Garment("accessory", "볼캡"), Garment("accessory", "울 머플러"), Garment("outer", "코트"),
+    ])
+    assert [item.name for item in ordered] == ["코트", "울 머플러", "볼캡"]
+
+
+def test_layer_rank_separates_accessories_by_what_they_are():
+    # 양말과 모자는 둘 다 '액세서리'지만 착용 순서가 완전히 다르다.
+    assert layer_rank(Garment("accessory", "크루 양말")) < layer_rank(Garment("shoes", "스니커즈"))
+    assert layer_rank(Garment("accessory", "볼캡")) > layer_rank(Garment("shoes", "스니커즈"))
+    # 이름을 알 수 없는 액세서리는 기본 순위로 떨어진다.
+    assert layer_rank(Garment("accessory", "정체불명")) == 70
+
+
+def test_prompt_spells_out_the_sock_then_shoe_order():
+    prompt = build_tryon_prompt(
+        order_garments([Garment("shoes", "화이트 스니커즈"), Garment("accessory", "크루 양말")])
+    )
+    assert "'크루 양말' goes on the bare foot first, then '화이트 스니커즈' goes on over it" in prompt
+
+
+def test_sock_order_sentence_is_omitted_without_shoes():
+    prompt = build_tryon_prompt(order_garments([Garment("accessory", "크루 양말"), Garment("upper")]))
+    assert "goes on the bare foot first" not in prompt
+
+
+def test_small_accessories_are_named_again_so_they_do_not_vanish():
+    prompt = build_tryon_prompt(
+        order_garments([Garment("upper", "셔츠"), Garment("accessory", "메탈 선글라스"),
+                        Garment("accessory", "실버 시계")])
+    )
+    # 나열 순서는 착용 순서를 따른다 — 시계(손목, 44)가 선글라스(얼굴, 72)보다 앞.
+    assert "'실버 시계', '메탈 선글라스' are small in the frame and must still be clearly visible" in prompt
+
+
+def test_large_accessories_do_not_trigger_the_small_item_clause():
+    prompt = build_tryon_prompt(order_garments([Garment("upper", "셔츠"), Garment("accessory", "볼캡")]))
+    assert "small in the frame" not in prompt
+
+
+def test_view_prompt_rotates_the_finished_outfit_instead_of_redressing():
+    prompt = build_tryon_view_prompt("side", [Garment("upper", "셔츠"), Garment("outer", "코트")])
+    assert "Reference image 2 is the finished photograph" in prompt
+    assert "The outfit is '셔츠', '코트'" in prompt
+    assert "exact left profile" in prompt
+    # 회전 중에 레이어가 뒤집히지 않도록 순서를 다시 못 박는다.
+    assert "outer layers still outside the inner ones" in prompt
+
+
+def test_view_prompt_rejects_an_unknown_view():
+    with pytest.raises(ValueError):
+        build_tryon_view_prompt("top-down", [Garment("upper")])
+
+
+# --- 프론트엔드와 공유하는 순서 픽스처 -------------------------------------
+# app.js가 6벌로 자르기 전에 무엇을 남길지 스스로 정해야 해서, 같은 규칙이
+# 양쪽에 존재한다. 두 구현이 갈라지지 않도록 같은 픽스처로 양쪽을 못 박는다.
+# (JS 쪽은 scripts/avatar-view-test.mjs가 같은 파일을 읽어서 검사한다.)
+
+CATEGORY_BY_KOREAN = {
+    "상의": "upper", "하의": "lower", "원피스": "overall", "아우터": "outer",
+    "신발": "shoes", "가방": "bag", "액세서리": "accessory",
+}
+ORDERING_CASES = json.loads(
+    (BACKEND.parent / "eval" / "ordering-cases.json").read_text(encoding="utf-8")
+)
+
+
+@pytest.mark.parametrize("case", ORDERING_CASES, ids=[c["title"] for c in ORDERING_CASES])
+def test_shared_ordering_fixture(case):
+    items = [Garment(CATEGORY_BY_KOREAN[i["category"]], i["name"]) for i in case["items"]]
+    assert [item.name for item in order_garments(items, limit=6)] == case["expected"]
+
+
+def test_ordering_fixture_covers_the_rules_that_bit_us():
+    titles = " ".join(case["title"] for case in ORDERING_CASES)
+    for topic in ("속옷", "양말", "벨트", "원피스", "브라운"):
+        assert topic in titles, f"{topic} 케이스가 픽스처에서 빠졌다"

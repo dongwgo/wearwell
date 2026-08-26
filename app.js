@@ -126,14 +126,26 @@ function genderLabel() { return selectedGender === "men" ? "남성" : "여성"; 
 
 const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
+// 한 번의 GPU 호출에 허용할 최대 시간. 착장은 시점 3개면 1분을 넘길 수 있어
+// 넉넉하게 잡되, 무한정 매달리지는 않게 한다.
+const GPU_REQUEST_TIMEOUT = 240000;
+
 async function fetchGpuJson(path, payload, onQueued = () => {}) {
   const retryDelays = [15000, 25000, 35000];
   for (let attempt = 0; ; attempt += 1) {
-    const response = await fetch(`${API_BASE}${path}`, {
-      method: "POST",
-      headers: API_HEADERS,
-      body: JSON.stringify(payload)
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), GPU_REQUEST_TIMEOUT);
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        method: "POST",
+        headers: API_HEADERS,
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
+    }
     const result = await response.json().catch(() => ({}));
     if (response.ok) return result;
     if (response.status === 429 && attempt < retryDelays.length) {
@@ -192,82 +204,100 @@ function localAvatarPreview(data) {
   return canvas.toDataURL("image/jpeg", .9);
 }
 
-// 아바타 시점. 순서가 곧 드래그했을 때 도는 순서다(정면 -> 측면 -> 후면).
+// 시점. 순서가 곧 드래그했을 때 도는 순서다(정면 -> 측면 -> 후면).
 const AVATAR_VIEW_ORDER = ["front", "side", "back"];
 const AVATAR_VIEW_LABELS = { front: "정면", side: "측면", back: "후면" };
 // 한 시점에서 다음 시점으로 넘어가는 데 필요한 드래그 거리(px).
 const AVATAR_ROTATE_STEP = 48;
 
-let avatarViews = { front: null };
-let avatarViewIndex = 0;
+/**
+ * 시점 여러 장을 가로 드래그로 돌려 보는 뷰어.
+ *
+ * 아바타 미리보기와 착장 결과가 같은 동작을 해야 해서 한 곳에 모았다. 시점이
+ * 하나뿐이면 회전 UI를 아예 붙이지 않는다 — 돌아가지 않는데 돌릴 수 있어
+ * 보이는 게 더 나쁘다.
+ */
+function createRotatableView(element, altPrefix, emptyHtml = "") {
+  const state = { views: {}, index: 0 };
+  const available = () => AVATAR_VIEW_ORDER.filter(view => state.views[view]);
 
-function availableAvatarViews() {
-  return AVATAR_VIEW_ORDER.filter(view => avatarViews[view]);
-}
+  const render = () => {
+    const views = available();
+    if (!views.length) {
+      element.classList.remove("rotatable");
+      element.innerHTML = emptyHtml;
+      return;
+    }
+    state.index = Math.min(state.index, views.length - 1);
+    const view = views[state.index];
+    const rotatable = views.length > 1;
+    element.classList.toggle("rotatable", rotatable);
+    element.innerHTML =
+      `<img src="${escapeHtml(state.views[view])}" alt="${escapeHtml(altPrefix)} (${AVATAR_VIEW_LABELS[view]})" draggable="false" />`
+      + (rotatable
+        ? `<span class="avatar-view-label">${AVATAR_VIEW_LABELS[view]} · 드래그해서 돌리기</span>`
+          + `<span class="avatar-view-dots">${views.map((_, i) => `<i class="${i === state.index ? "active" : ""}"></i>`).join("")}</span>`
+        : "");
+  };
 
-function renderAvatarPreview() {
-  const views = availableAvatarViews();
-  const preview = $("#avatarPreview");
-  if (!views.length) {
-    preview.classList.remove("rotatable");
-    preview.innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
-    return;
-  }
-  avatarViewIndex = Math.min(avatarViewIndex, views.length - 1);
-  const view = views[avatarViewIndex];
-  // 시점이 하나뿐이면 회전 UI를 붙이지 않는다 — 돌아가지 않는데 돌릴 수 있어
-  // 보이는 게 더 나쁘다.
-  const rotatable = views.length > 1;
-  preview.classList.toggle("rotatable", rotatable);
-  preview.innerHTML = `<img src="${avatarViews[view]}" alt="내 체형 아바타 (${AVATAR_VIEW_LABELS[view]})" draggable="false" />`
-    + (rotatable
-      ? `<span class="avatar-view-label">${AVATAR_VIEW_LABELS[view]} · 드래그해서 돌리기</span>`
-        + `<span class="avatar-view-dots">${views.map((_, i) => `<i class="${i === avatarViewIndex ? "active" : ""}"></i>`).join("")}</span>`
-      : "");
-}
+  const step = index => {
+    const views = available();
+    if (!views.length) return;
+    // 끝에서 다시 처음으로 — 실제 회전처럼 한 바퀴 돌게 한다.
+    const next = ((index % views.length) + views.length) % views.length;
+    if (next === state.index) return;
+    state.index = next;
+    render();
+  };
 
-function setAvatarView(index) {
-  const views = availableAvatarViews();
-  if (!views.length) return;
-  // 끝에서 다시 처음으로 — 실제 회전처럼 한 바퀴 돌게 한다.
-  const next = ((index % views.length) + views.length) % views.length;
-  if (next === avatarViewIndex) return;
-  avatarViewIndex = next;
-  renderAvatarPreview();
-}
-
-function bindAvatarRotation() {
-  const preview = $("#avatarPreview");
   let originX = null;
   let originIndex = 0;
-
   const start = event => {
-    if (availableAvatarViews().length < 2) return;
+    if (available().length < 2) return;
     originX = event.clientX;
-    originIndex = avatarViewIndex;
-    preview.setPointerCapture?.(event.pointerId);
+    originIndex = state.index;
+    element.setPointerCapture?.(event.pointerId);
   };
   const move = event => {
     if (originX === null) return;
     // 누적 이동량으로 계산해야 드래그를 되돌렸을 때 원래 시점으로 돌아온다.
-    setAvatarView(originIndex + Math.round((event.clientX - originX) / AVATAR_ROTATE_STEP));
+    step(originIndex + Math.round((event.clientX - originX) / AVATAR_ROTATE_STEP));
   };
   const end = event => {
     if (originX === null) return;
     originX = null;
-    preview.releasePointerCapture?.(event.pointerId);
+    element.releasePointerCapture?.(event.pointerId);
   };
 
-  preview.addEventListener("pointerdown", start);
-  preview.addEventListener("pointermove", move);
-  preview.addEventListener("pointerup", end);
-  preview.addEventListener("pointercancel", end);
+  element.addEventListener("pointerdown", start);
+  element.addEventListener("pointermove", move);
+  element.addEventListener("pointerup", end);
+  element.addEventListener("pointercancel", end);
   // 마우스가 없는 환경을 위해 키보드로도 돌릴 수 있게 한다.
-  preview.tabIndex = 0;
-  preview.addEventListener("keydown", event => {
-    if (event.key === "ArrowLeft") { setAvatarView(avatarViewIndex - 1); event.preventDefault(); }
-    if (event.key === "ArrowRight") { setAvatarView(avatarViewIndex + 1); event.preventDefault(); }
+  element.tabIndex = 0;
+  element.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft") { step(state.index - 1); event.preventDefault(); }
+    if (event.key === "ArrowRight") { step(state.index + 1); event.preventDefault(); }
   });
+
+  return {
+    render,
+    available,
+    set(views) { state.views = views || {}; state.index = 0; render(); },
+    clear() { state.views = {}; state.index = 0; render(); },
+  };
+}
+
+let avatarViewer = null;
+let tryonViewer = null;
+let avatarViews = { front: null };
+
+function availableAvatarViews() {
+  return avatarViewer ? avatarViewer.available() : [];
+}
+
+function renderAvatarPreview() {
+  avatarViewer?.set(avatarViews);
 }
 
 function showAvatar(image, engine = "", views = null) {
@@ -275,7 +305,6 @@ function showAvatar(image, engine = "", views = null) {
   // 착장·저장은 항상 정면을 쓴다. 옷 사진이 정면 기준이라 다른 시점에 합성하면
   // 소매·프린트 위치가 어긋난다.
   avatarViews = views && views.front ? { ...views } : { front: image };
-  avatarViewIndex = 0;
   try { localStorage.setItem("오늘옷-avatar", image); } catch {}
   renderAvatarPreview();
   $("#profileAvatar").classList.add("has-image");
@@ -393,35 +422,142 @@ function garmentType(category) {
   return ({ 상의: "upper", 하의: "lower", 원피스: "overall", 아우터: "outer", 신발: "shoes", 가방: "bag", 액세서리: "accessory" })[category] || null;
 }
 
-// 피부에서 바깥으로 나가는 순서. backend/tryon_prompt.py의 LAYER_RANK와 같은 값이어야
-// 프론트에서 자른 결과와 백엔드가 실제로 입히는 순서가 어긋나지 않는다.
+// 아래 세 표는 backend/tryon_prompt.py의 축소판이다. 백엔드가 최종 판단을
+// 하지만, 프론트가 6벌로 자른 뒤에는 백엔드가 볼 수 없는 아이템이 생기므로
+// 무엇을 남길지는 여기서도 같은 기준으로 골라야 한다.
+// 순서·자리 규칙을 바꿀 때는 tryon_prompt.py와 함께 고칠 것.
 const LAYER_RANK = { overall: 10, lower: 20, upper: 30, outer: 40, shoes: 50, bag: 60, accessory: 70 };
+const BODY_SLOT = { overall: "torso+legs", upper: "torso", lower: "legs", outer: "outer-torso", shoes: "feet", bag: "carried", accessory: "accessory" };
 const MAX_TRYON_GARMENTS = 6;
 
-// 옷장에 담긴 순서대로 앞에서 잘라 보내면 뒤에 있던 신발·가방이 통째로 사라진다.
-// 자르기 전에 레이어 순서로 정렬한다.
-function orderGarmentsForTryon(items) {
-  return items
-    .filter(item => garmentType(item.category))
-    .map((item, index) => ({ item, index, rank: LAYER_RANK[garmentType(item.category)] ?? 99 }))
-    .sort((a, b) => a.rank - b.rank || a.index - b.index)
-    .map(entry => entry.item)
-    .slice(0, MAX_TRYON_GARMENTS);
+// 이름으로 알아보는 특수 케이스만 추린다. 나머지는 카테고리 기본값을 쓴다.
+const NAME_RULES = [
+  { match: /팬티|드로즈|드로어즈|트렁크|브래지어|브라탑|브라렛|캐미솔|속옷|언더웨어|이너웨어|boxer|brief|panty|panties|bralette|camisole|underwear|lingerie/,
+    exclude: /브라운|슬립온|브레이슬릿|bracelet|slip-?on|트렁크 ?케이스|트렁크캐리어/,
+    categories: ["upper", "lower", "accessory"],
+    rank: 5, slot: item => `underwear-${BODY_SLOT[garmentType(item.category)] || "misc"}` },
+  { match: /양말|삭스|sock/, rank: 45 },
+  { match: /벨트|belt|타이|넥타이|tie|목걸이|펜던트|necklace|pendant/, rank: 35 },
+  { match: /시계|팔찌|watch|반지|ring/, rank: 44 },
+  { match: /목도리|머플러|스카프|scarf|muffler|장갑|glove/, rank: 65 },
+  { match: /모자|캡|비니|버킷|cap|hat|beanie|안경|선글|glasses|귀걸이|earring/, rank: 72 },
+];
+
+function nameRuleFor(item) {
+  const slot = garmentType(item.category);
+  const name = String(item.name || "");
+  for (const rule of NAME_RULES) {
+    if (rule.categories && !rule.categories.includes(slot)) continue;
+    const cleaned = rule.exclude ? name.replace(rule.exclude, " ") : name;
+    if (rule.match.test(cleaned)) return rule;
+  }
+  return null;
 }
 
-function renderTryonStage(reference, output = null, loading = false) {
-  const resultPane = loading
-    ? '<div class="tryon-compare-loading"><div class="generation-loader"><span></span><strong>내 옷을 입혀보는 중</strong><small>룩북의 비율과 분위기를 비교해요</small></div></div>'
-    : `<img src="${escapeHtml(output)}" alt="내 아바타 착장 결과" />`;
-  if (!reference) {
-    $("#tryonStage").classList.remove("comparison");
-    $("#tryonStage").innerHTML = loading ? resultPane : `<img src="${escapeHtml(output)}" alt="AI 가상 착장 결과" />`;
-    return;
+function tryonRank(item) {
+  return nameRuleFor(item)?.rank ?? LAYER_RANK[garmentType(item.category)] ?? 99;
+}
+
+function tryonSlot(item) {
+  const rule = nameRuleFor(item);
+  if (rule?.slot) return rule.slot(item);
+  return BODY_SLOT[garmentType(item.category)] || garmentType(item.category);
+}
+
+// 옷장에 담긴 순서대로 앞에서 잘라 보내면 뒤에 있던 신발·가방이 통째로 사라진다.
+// 정렬 -> 같은 자리 중복 제거 -> 자르기 순서로 처리해야, 상의를 두 벌 고른
+// 탓에 신발이 밀려나는 일이 생기지 않는다.
+function orderGarmentsForTryon(items) {
+  const ordered = items
+    .filter(item => garmentType(item.category))
+    .map((item, index) => ({ item, index, rank: tryonRank(item) }))
+    .sort((a, b) => a.rank - b.rank || a.index - b.index);
+
+  const taken = new Set();
+  const kept = [];
+  for (const { item } of ordered) {
+    const slot = tryonSlot(item);
+    // 액세서리는 여러 개를 함께 착용할 수 있다.
+    const shared = slot === "accessory";
+    if (!shared && taken.has(slot)) continue;
+    if (!shared) taken.add(slot);
+    if (slot === "torso+legs") { taken.add("torso"); taken.add("legs"); }
+    kept.push(item);
+    if (kept.length >= MAX_TRYON_GARMENTS) break;
   }
-  $("#tryonStage").classList.add("comparison");
-  $("#tryonStage").innerHTML = `
+  return kept;
+}
+
+// 측면·후면을 나중에 만들 때 필요한 요청 정보. 착장이 성공해야 채워진다.
+let tryonContext = null;
+
+function renderTryonStage(reference, output = null, loading = false) {
+  const stage = $("#tryonStage");
+  const rotateButton = $("#tryonRotateButton");
+  // 비교 모드는 좌우 두 칸을 쓰므로 회전 뷰어를 붙이지 않는다. 회전은 결과
+  // 한 장만 보여주는 단독 모드에서만 동작한다.
+  const views = typeof output === "object" && output ? output : output ? { front: output } : {};
+
+  if (reference) {
+    if (rotateButton) rotateButton.hidden = true;
+    const resultPane = loading
+      ? '<div class="tryon-compare-loading"><div class="generation-loader"><span></span><strong>내 옷을 입혀보는 중</strong><small>룩북의 비율과 분위기를 비교해요</small></div></div>'
+      : `<img src="${escapeHtml(views.front || "")}" alt="내 아바타 착장 결과" />`;
+    stage.classList.remove("rotatable");
+    stage.classList.add("comparison");
+    stage.innerHTML = `
     <figure><div><img src="${escapeHtml(reference.image)}" alt="${escapeHtml(reference.title || "룩북 원본")}" /></div><figcaption><b>룩북 원본</b><span>${escapeHtml(reference.title || "")}</span></figcaption></figure>
     <figure><div>${resultPane}</div><figcaption><b>내 아바타 + 내 옷</b><span>${loading ? "생성 중" : "내 옷장으로 재현"}</span></figcaption></figure>`;
+    return;
+  }
+
+  stage.classList.remove("comparison");
+  if (loading) {
+    stage.classList.remove("rotatable");
+    stage.innerHTML = '<div class="generation-loader"><span></span><strong>내 아바타에 입혀보는 중</strong><small>선택한 옷을 한 번에 조합하고 있어요</small></div>';
+    if (rotateButton) rotateButton.hidden = true;
+    return;
+  }
+  tryonViewer?.set(views);
+  // 아바타에 측면·후면이 있어야 착장도 돌려 볼 수 있다. 정면 아바타뿐이면
+  // 돌릴 기준이 없으므로 버튼을 내린다.
+  if (rotateButton) {
+    rotateButton.hidden = Object.keys(views).length > 1 || availableAvatarViews().length < 2 || !tryonContext;
+  }
+}
+
+async function generateTryonViews() {
+  if (!tryonContext) return;
+  // 이 컨텍스트가 만들어진 뒤에 다른 착장을 시작했다면 이어서 만들지 않는다.
+  if (tryonContext.requestId !== tryonRequestId) return;
+  const context = tryonContext;
+  const button = $("#tryonRotateButton");
+  button.disabled = true;
+  $("#tryonStatusText").textContent = "측면과 후면 착장을 만들고 있어요… 1분쯤 걸려요";
+  interactiveGpuRequests += 1;
+  try {
+    const extra = availableAvatarViews().filter(view => view !== "front");
+    const avatarViewPayload = Object.fromEntries(extra.map(view => [view, avatarViews[view]]));
+    const result = await fetchGpuJson("/api/tryon", {
+      ...context.payload,
+      views: ["front", ...extra],
+      avatarViews: avatarViewPayload,
+    }, () => {
+      $("#tryonStatusText").textContent = "먼저 시작한 작업이 끝나면 바로 만들게요";
+    });
+    if (context.requestId !== tryonRequestId) return;
+    const views = result.views || { front: result.image };
+    rememberTryon(context.cacheKey, views);
+    renderTryonStage(null, views);
+    $("#tryonStatusText").textContent = "드래그하면 착장을 돌려볼 수 있어요";
+  } catch {
+    if (context.requestId !== tryonRequestId) return;
+    $("#tryonStatusText").textContent = "지금은 측면·후면을 만들지 못했어요. 잠시 후 다시 시도해주세요";
+    button.hidden = false;
+  } finally {
+    interactiveGpuRequests = Math.max(0, interactiveGpuRequests - 1);
+    button.disabled = false;
+  }
 }
 
 async function tryOnItems(items, comparison = null) {
@@ -433,9 +569,34 @@ async function tryOnItems(items, comparison = null) {
   }
 }
 
+// 진행 중인 착장 요청의 번호. 사용자가 연달아 다른 조합을 고르면 응답이 뒤섞여
+// 도착할 수 있고, 그때 먼저 보낸 요청의 결과가 나중 결과를 덮어쓰면 "고른 옷이
+// 반영되지 않는" 것처럼 보인다. 마지막 요청의 결과만 화면에 올린다.
+let tryonRequestId = 0;
+
+// 결과 이미지를 무한정 쌓아 두면 메모리를 계속 먹는다(한 항목이 최대 3장).
+const TRYON_CACHE_LIMIT = 12;
+
+function rememberTryon(cacheKey, views) {
+  if (tryonCache.size >= TRYON_CACHE_LIMIT) {
+    // Map은 삽입 순서를 지키므로 가장 오래된 항목이 맨 앞에 온다.
+    tryonCache.delete(tryonCache.keys().next().value);
+  }
+  tryonCache.set(cacheKey, views);
+}
+
 async function runTryOnItems(items, comparison = null) {
   if (!items.length) return showToast("입혀볼 옷을 먼저 골라주세요");
   if (!avatarImage) await generateAvatar();
+  // 아바타 생성까지 실패하면 입힐 대상이 없다. 여기서 멈추지 않으면 바로
+  // 아래에서 null을 건드리며 터진다.
+  if (!avatarImage) {
+    showToast("아바타를 먼저 만들어주세요");
+    return;
+  }
+  const requestId = ++tryonRequestId;
+  const isStale = () => requestId !== tryonRequestId;
+
   const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
   const cacheKey = `${items.map(item => item.id).join("-")}-${avatarKey}`;
   $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
@@ -443,24 +604,61 @@ async function runTryOnItems(items, comparison = null) {
   $("#tryonStatusText").textContent = "선택한 옷의 색과 형태를 살려 조합하고 있어요.";
   openDialog($("#avatarTryonDialog"));
   if (tryonCache.has(cacheKey)) {
-    const cached = tryonCache.get(cacheKey); renderTryonStage(comparison, cached); return;
+    renderTryonStage(comparison, tryonCache.get(cacheKey));
+    return;
   }
   try {
     const wearableItems = orderGarmentsForTryon(items);
     if (!wearableItems.length) throw new Error("No supported garments");
-    const garments = await Promise.all(wearableItems.map(async item => ({ image: await imageToDataUrl(item.image), category: garmentType(item.category), name: item.name })));
-    const result = await fetchGpuJson("/api/tryon", { avatar: avatarImage, garments, seed: 42 }, () => {
-      $("#tryonStatusText").textContent = "먼저 시작한 분석이 끝나는 대로 착장을 만들게요. 잠시만 기다려주세요.";
+    // 옷 사진 하나를 못 읽었다고 착장 전체를 포기하지 않는다. 읽힌 것만 입힌다.
+    const loaded = await Promise.all(wearableItems.map(async item => {
+      try {
+        return { image: await imageToDataUrl(item.image), category: garmentType(item.category), name: item.name };
+      } catch {
+        return null;
+      }
+    }));
+    const garments = loaded.filter(Boolean);
+    if (!garments.length) throw new Error("No readable garment images");
+    if (isStale()) return;
+
+    const payload = { avatar: avatarImage, garments, seed: 42 };
+    const result = await fetchGpuJson("/api/tryon", payload, () => {
+      if (!isStale()) $("#tryonStatusText").textContent = "먼저 시작한 분석이 끝나는 대로 착장을 만들게요. 잠시만 기다려주세요.";
     });
-    tryonCache.set(cacheKey, result.image);
-    renderTryonStage(comparison, result.image);
-    $("#tryonStatusText").textContent = comparison ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요." : "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
+    if (isStale()) return;
+
+    const views = result.views || { front: result.image };
+    rememberTryon(cacheKey, views);
+    // 측면·후면은 시간이 3배로 드니 기본으로는 만들지 않는다. 결과가 나온 뒤
+    // 사용자가 버튼을 누르면 이 컨텍스트로 이어서 만든다.
+    tryonContext = { payload, cacheKey, requestId };
+    renderTryonStage(comparison, views);
+    $("#tryonStatusText").textContent = tryonSummary(result, garments.length, wearableItems.length, comparison);
     $("#tryonEngineLabel").textContent = comparison ? "원본 ↔ 내 착장 비교" : "AI 착장 결과";
   } catch {
-    renderTryonStage(comparison, avatarImage);
+    if (isStale()) return;
+    tryonContext = null;
+    renderTryonStage(comparison, { front: avatarImage });
     $("#tryonStatusText").textContent = "지금은 착장 이미지를 만들지 못했어요. 잠시 후 다시 시도해주세요.";
     $("#tryonEngineLabel").textContent = "착장 미리보기";
   }
+}
+
+// 조용히 빠진 아이템이 있으면 말해 준다. 같은 부위를 두 벌 고르면 안쪽 한 벌만
+// 남는데, 아무 설명이 없으면 사용자는 "옷이 반영되지 않았다"고 읽는다.
+function tryonSummary(result, sentCount, selectedCount, comparison) {
+  const dropped = result.droppedGarments || [];
+  if (dropped.length) {
+    const names = dropped.map(item => item.name).filter(Boolean).join(", ");
+    return `같은 부위가 겹쳐서 ${names || `${dropped.length}벌`}은 빼고 입혔어요.`;
+  }
+  if (sentCount < selectedCount) {
+    return `옷 사진 ${selectedCount - sentCount}장을 불러오지 못해 나머지만 입혔어요.`;
+  }
+  return comparison
+    ? "왼쪽은 룩북 원본, 오른쪽은 내 옷장에서 고른 옷을 입힌 결과예요."
+    : "완성됐어요. 옷 사진의 디테일을 아바타 체형에 맞춰 표현했어요.";
 }
 
 function renderCurrentLook() {
@@ -1022,7 +1220,7 @@ function renderGenderChoices() {
     if (selectedGender !== button.dataset.gender) {
       selectedStyles.clear(); selectedInfluencerLookIds.clear(); avatarMeasurements = null; avatarImage = null; fullBodyPhoto = null;
       localStorage.removeItem("오늘옷-avatar");
-      avatarViews = { front: null }; avatarViewIndex = 0; renderAvatarPreview();
+      avatarViews = { front: null }; renderAvatarPreview();
       $("#profileAvatar").classList.remove("has-image"); $("#profileAvatar").style.backgroundImage = "";
     }
     selectedGender = button.dataset.gender;
@@ -1289,7 +1487,7 @@ function initEvents() {
   $$("[data-body-method]").forEach(button => button.addEventListener("click", () => {
     if (bodyInputMethod !== button.dataset.bodyMethod) {
       avatarImage = null; avatarMeasurements = null;
-      avatarViews = { front: null }; avatarViewIndex = 0; renderAvatarPreview();
+      avatarViews = { front: null }; renderAvatarPreview();
     }
     setBodyInputMethod(button.dataset.bodyMethod);
   }));
@@ -1317,7 +1515,10 @@ function initEvents() {
   });
   $("#generateAvatar").addEventListener("click", generateAvatar);
   $("#generateAvatarViews")?.addEventListener("click", generateAvatarViews);
-  bindAvatarRotation();
+  avatarViewer = createRotatableView($("#avatarPreview"), "내 체형 아바타",
+    "<span>내 아바타가<br />여기에 만들어져요</span>");
+  tryonViewer = createRotatableView($("#tryonStage"), "AI 착장 결과");
+  $("#tryonRotateButton")?.addEventListener("click", generateTryonViews);
   $("#nextBody").addEventListener("click", async () => { if (!avatarImage) await generateAvatar(); renderPreferenceChoices(); updatePreferenceCount(); showPreferenceStep(3); });
   $("#backGender").addEventListener("click", () => showPreferenceStep(2));
   $("#nextPreferences").addEventListener("click", () => showPreferenceStep(4));

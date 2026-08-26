@@ -5,6 +5,8 @@ import importlib
 import io
 import sys
 from pathlib import Path
+import threading
+import time
 from types import SimpleNamespace
 
 import pytest
@@ -613,9 +615,9 @@ def test_tryon_uses_person_and_all_garments_in_one_generation(backend_app, monke
         seed=31,
     )
 
-    result, _ = engine.generate_tryon(request)
+    images, _, _ = engine.generate_tryon(request)
 
-    assert result.size == (768, 1152)
+    assert images["front"].size == (768, 1152)
     assert len(calls) == 1
     assert len(calls[0]["images"]) == 3
     assert calls[0]["seed"] == 31
@@ -855,3 +857,208 @@ def test_avatar_route_rejects_an_unknown_view(backend_app):
         json={"gender": "men", "height": 178, "weight": 72, "views": ["top-down"]},
     )
     assert response.status_code == 422
+
+
+def test_tryon_pads_the_person_reference_so_the_feet_survive(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(
+        engine, "_run",
+        lambda **kwargs: calls.append(kwargs) or Image.new("RGB", backend_app.INFERENCE_SIZE),
+    )
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[{"image": image_payload("white"), "category": "upper", "name": "셔츠"}],
+    )
+
+    engine.generate_tryon(request)
+
+    # 사람 참조는 원본 그대로가 아니라 위아래 여백을 덧댄 뒤 목표 크기로 들어간다.
+    person = calls[0]["images"][0]
+    assert person.size == backend_app.INFERENCE_SIZE
+    assert person is not None
+
+
+def test_tryon_rotates_the_finished_front_for_other_views(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    calls = []
+    engine = backend_app.FluxImageEngine()
+
+    def fake_run(**kwargs):
+        calls.append(kwargs)
+        return Image.new("RGB", backend_app.INFERENCE_SIZE, (len(calls) * 30, 0, 0))
+
+    monkeypatch.setattr(engine, "_run", fake_run)
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[
+            {"image": image_payload("white"), "category": "upper", "name": "셔츠"},
+            {"image": image_payload("navy"), "category": "outer", "name": "코트"},
+        ],
+        views=["front", "side", "back"],
+        avatarViews={"side": image_payload("gray"), "back": image_payload("gray")},
+    )
+
+    images, _, _ = engine.generate_tryon(request)
+
+    assert set(images) == {"front", "side", "back"}
+    # 정면은 사람 + 옷 2장, 측면·후면은 체형 가이드 + 완성된 정면 결과만 받는다.
+    assert [len(call["images"]) for call in calls] == [3, 2, 2]
+    for call in calls[1:]:
+        assert call["images"][1] is images["front"]
+        assert "Reference image 2 is the finished photograph" in call["prompt"]
+    assert "exact left profile" in calls[1]["prompt"]
+    assert "directly behind" in calls[2]["prompt"]
+
+
+def test_tryon_skips_views_without_an_avatar_image(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(engine, "_run", lambda **k: Image.new("RGB", backend_app.INFERENCE_SIZE))
+    # 측면 아바타 없이 측면 착장을 요청해도 조용히 정면만 만든다.
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[{"image": image_payload("white"), "category": "upper"}],
+        views=["front", "side"],
+    )
+
+    images, _, _ = engine.generate_tryon(request)
+
+    assert set(images) == {"front"}
+
+
+def test_tryon_route_returns_every_generated_view(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    monkeypatch.setattr(
+        backend_app.image_engine,
+        "generate_tryon",
+        lambda request: (
+            {v: Image.new("RGB", (64, 96)) for v in ("front", "back")},
+            "stub",
+            list(request.garments),
+        ),
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/tryon",
+        headers={"Authorization": "Bearer test-token"},
+        json={
+            "avatar": image_payload(),
+            "garments": [{"image": image_payload(), "category": "upper", "name": "셔츠"}],
+            "views": ["front", "back"],
+            "avatarViews": {"back": image_payload()},
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert set(body["views"]) == {"front", "back"}
+    assert body["image"] == body["views"]["front"]
+
+
+def test_decode_image_flattens_transparency_instead_of_reviving_the_background(backend_app):
+    """segment_service가 만드는 옷 PNG는 알파로만 옷을 표시하고 RGB 채널에는
+    원본 사진이 그대로 남아 있다. 그냥 convert("RGB")하면 잘라냈다고 생각한
+    사람과 배경이 통째로 되살아난다."""
+    import numpy as np
+
+    photo = np.zeros((40, 30, 3), np.uint8)
+    photo[:, :] = (200, 40, 40)          # 배경(사람·스튜디오)
+    photo[10:30, 8:22] = (30, 30, 200)   # 실제 옷
+    mask = np.zeros((40, 30), bool)
+    mask[10:30, 8:22] = True
+    payload = io.BytesIO()
+    Image.fromarray(np.dstack([photo, (mask * 255).astype(np.uint8)]), "RGBA").save(payload, format="PNG")
+
+    decoded = backend_app.decode_image(base64.b64encode(payload.getvalue()).decode())
+
+    assert decoded.mode == "RGB"
+    assert decoded.getpixel((2, 2)) == (255, 255, 255)   # 투명했던 곳은 흰 배경
+    assert decoded.getpixel((15, 20)) == (30, 30, 200)   # 옷은 그대로
+
+
+def test_decode_image_leaves_opaque_images_alone(backend_app):
+    payload = io.BytesIO()
+    Image.new("RGB", (20, 20), (12, 34, 56)).save(payload, format="PNG")
+    decoded = backend_app.decode_image(base64.b64encode(payload.getvalue()).decode())
+    assert decoded.getpixel((5, 5)) == (12, 34, 56)
+
+
+def test_tryon_response_names_the_items_it_had_to_drop(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (False, None))
+    response = TestClient(backend_app.app).post(
+        "/api/tryon",
+        headers={"Authorization": "Bearer test-token"},
+        json={
+            "avatar": image_payload(),
+            "garments": [
+                {"image": image_payload(), "category": "upper", "name": "티셔츠"},
+                {"image": image_payload(), "category": "upper", "name": "셔츠"},
+            ],
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    # 같은 자리를 다투면 안쪽 한 벌만 남는다. 무엇이 빠졌는지 알려줘야 사용자가
+    # "옷이 반영되지 않았다"고 오해하지 않는다.
+    assert [item["name"] for item in body["appliedGarments"]] == ["티셔츠"]
+    assert [item["name"] for item in body["droppedGarments"]] == ["셔츠"]
+
+
+def test_tryon_reports_nothing_dropped_for_a_clean_outfit(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (False, None))
+    response = TestClient(backend_app.app).post(
+        "/api/tryon",
+        headers={"Authorization": "Bearer test-token"},
+        json={
+            "avatar": image_payload(),
+            "garments": [
+                {"image": image_payload(), "category": "upper", "name": "셔츠"},
+                {"image": image_payload(), "category": "lower", "name": "슬랙스"},
+            ],
+        },
+    )
+    assert response.json()["droppedGarments"] == []
+
+
+def test_tryon_survives_an_unreadable_side_avatar(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    engine = backend_app.FluxImageEngine()
+    monkeypatch.setattr(engine, "_run", lambda **k: Image.new("RGB", backend_app.INFERENCE_SIZE))
+    request = backend_app.TryOnRequest(
+        avatar=image_payload("gray"),
+        garments=[{"image": image_payload("white"), "category": "upper", "name": "셔츠"}],
+        views=["front", "side"],
+        avatarViews={"side": "not-a-valid-image"},
+    )
+
+    images, _, _ = engine.generate_tryon(request)
+
+    # 측면 아바타가 깨져도 정면 착장은 살아남는다.
+    assert set(images) == {"front"}
+
+
+def test_pipeline_is_only_built_once_under_concurrent_load(backend_app, monkeypatch: pytest.MonkeyPatch):
+    builds = []
+    engine = backend_app.FluxImageEngine()
+
+    def slow_build():
+        time.sleep(0.05)
+        builds.append(1)
+        engine.pipe = object()
+
+    monkeypatch.setattr(engine, "_build_pipeline", slow_build)
+    threads = [threading.Thread(target=engine._load) for _ in range(6)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert len(builds) == 1
