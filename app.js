@@ -652,8 +652,8 @@ function orderGarmentsForTryon(items) {
   return kept;
 }
 
-// 직접 고른 옷과 룩북 추천 옷 모두 실제 사진 분석값을 같은 형식으로 모델에 전달한다.
-// 백엔드 GarmentInput.name의 100자 제한보다 짧게 유지한다.
+// 직접 고른 옷과 룩북 추천 옷 모두 실제 사진 분석값을 같은 짧은 의류 설명으로 정규화해
+// 동일한 모델 입력으로 전달한다. 백엔드 GarmentInput.name의 100자 제한도 지킨다.
 const TRYON_PROMPT_VERSION = "garment-spec-v2";
 function tryonGarmentDescriptor(item) {
   const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item) || {};
@@ -1117,11 +1117,58 @@ async function cropLookPiece(imageSource, bbox) {
   return canvas.toDataURL("image/jpeg", .9);
 }
 
+// 내 옷장 "전신샷으로 한번에 채우기"와 같은 segmentation + FLUX 보정 결과를
+// 룩북의 개별 품목 참조로 사용한다. Qwen bbox 사각 크롭은 배경·얼굴·피부가 함께
+// 들어가므로, 의류 사진끼리의 SigLIP 비교에 부정확할 수 있다.
+const LOOKBOOK_REFERENCE_SEGMENT_VERSION = 1;
+async function refineUploadedLookbookReferences(look) {
+  // 기본 제공 룩북 전체를 자동 처리하면 GPU 대기열이 길어진다. 사용자가 직접 추가하고
+  // 선택한 룩북에만 같은 전신샷 파이프라인을 적용한다.
+  if (!look.userAdded || !selectedInfluencerLookIds.has(look.id) || look.referenceSegmentationVersion === LOOKBOOK_REFERENCE_SEGMENT_VERSION) return;
+  const categoriesToRefine = [...new Set((look.pieces || [])
+    .map(piece => piece.category)
+    .filter(category => ["상의", "하의", "아우터", "원피스", "신발"].includes(category)))];
+  if (!categoriesToRefine.length) return;
+  try {
+    look.referenceSegmentationState = "refining";
+    const refined = await fetchGpuJson("/api/closet/refine", {
+      image: look.image,
+      name: `${look.creator || "업로드 룩북"} 참고 의류`,
+      categories: categoriesToRefine,
+      categoryOverrides: Object.fromEntries(categoriesToRefine.map(category => [category, category])),
+      generate: true,
+      seed: 42,
+    });
+    const byCategory = new Map();
+    for (const item of refined.items || []) {
+      const category = item.sourceCategory || item.category;
+      const image = item.stages?.closet || item.stages?.normalized || item.image;
+      if (category && image) byCategory.set(category, image);
+    }
+    for (const piece of look.pieces || []) {
+      const image = byCategory.get(piece.category);
+      if (!image) continue;
+      piece.referenceImage = image;
+      // 기존 bbox 기반 벡터는 배경이 섞여 있으므로 의류 분할본으로 반드시 교체한다.
+      piece.visualEmbedding = null;
+      piece.visualEmbeddingEngine = "";
+    }
+    look.referenceSegmentationVersion = LOOKBOOK_REFERENCE_SEGMENT_VERSION;
+    look.referenceSegmentationState = "ready";
+  } catch (error) {
+    // 세그멘테이션 서버가 일시적으로 바쁘면 기존 bbox 비교로 폴백하되, 실패를 완료로
+    // 기록하지 않아 다음 갱신 때 다시 시도할 수 있다.
+    look.referenceSegmentationState = "failed";
+    console.warn("룩북 의류 분할·보정 실패", look.id, error);
+  }
+}
+
 async function enrichLookEmbeddings(look) {
   if (typeof window.WearwellVLM.embedImage !== "function") return;
   for (const piece of look.pieces || []) {
     if (Array.isArray(piece.visualEmbedding) && piece.visualEmbedding.length && String(piece.visualEmbeddingEngine || "").startsWith("siglip:")) continue;
-    piece.visualEmbedding = await window.WearwellVLM.embedImage(await cropLookPiece(look.image, piece.bbox));
+    const reference = piece.referenceImage || await cropLookPiece(look.image, piece.bbox);
+    piece.visualEmbedding = await window.WearwellVLM.embedImage(reference);
     piece.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
   }
   if (look.vlmAnalysis) look.vlmAnalysis.pieces = look.pieces;
@@ -1194,6 +1241,21 @@ function garmentSimilarity(item, requirement, lookId = null) {
   return garmentSimilarityDetail(item, requirement, lookId).total;
 }
 
+// 룩북 항목이 "같은 옷"인지 가르는 서명. 카테고리만으로 접으면 셔츠 위 티셔츠 같은
+// 레이어드 착장의 이너가 사라지므로, 색·형태 설명까지 같을 때만 중복으로 본다.
+function lookPieceSignature(piece, fallbackItem = null) {
+  const list = value => (Array.isArray(value) ? value : [value])
+    .filter(Boolean).map(entry => String(entry).trim().toLowerCase()).sort().join(",");
+  return [
+    String(piece.category || fallbackItem?.category || "item").trim().toLowerCase(),
+    list(piece.colors),
+    list(piece.details),
+    list(piece.subcategory),
+    list(piece.sleeveLength),
+    list(piece.length),
+  ].join("|");
+}
+
 function buildInfluencerMatch(look, variation = 0) {
   if (!look.analysisReady || !Array.isArray(look.pieces) || !look.pieces.length) {
     return { matches: [], pieces: [], fulfilled: 0, total: 0, similarity: 0, colorSimilarity: 0, score: 0, weatherHits: 0, analyzed: false };
@@ -1240,17 +1302,37 @@ function buildInfluencerMatch(look, variation = 0) {
     assign(position + 1, used, chosen, fulfilled, sum);
   };
   assign(0, new Set(), [], 0, 0);
-  const matches = Array(look.pieces.length).fill(null);
+  let matches = Array(look.pieces.length).fill(null);
   best.matches.forEach(match => { matches[match.requirementIndex] = match; });
-  const fulfilled = matches.filter(Boolean).length;
-  const similarity = fulfilled ? matches.filter(Boolean).reduce((sum, match) => sum + match.similarity, 0) / fulfilled : 0;
-  const colorSimilarity = fulfilled ? matches.filter(Boolean).reduce((sum, match) => sum + match.detail.color, 0) / fulfilled : 0;
+
+  // 세그멘테이션이 한 벌을 두 번 잡으면 같은 설명의 요구가 중복 생성된다. 그런 중복만
+  // 유사도 최고 1개로 접고, 셔츠+티셔츠처럼 설명이 다른 레이어드 착장은 그대로 둔다.
+  const winnerBySignature = new Map();
+  matches.forEach((match, index) => {
+    if (!match) return;
+    const key = lookPieceSignature(match.requirement, match.item);
+    const existing = winnerBySignature.get(key);
+    if (!existing || match.similarity > existing.match.similarity) winnerBySignature.set(key, { index, match });
+  });
+  matches.forEach((match, index) => {
+    if (!match) return;
+    if (winnerBySignature.get(lookPieceSignature(match.requirement, match.item))?.index !== index) matches[index] = null;
+  });
+
+  const selectedMatches = matches.filter(Boolean);
+  // matches는 룩북 원본 항목의 위치와 맞춰 카드에 표시해야 하므로 배열을 압축하지 않는다.
+  // 실제 가상 착장에는 아래 pieces처럼 중복을 접고 남은 상품만 전달한다.
+  const fulfilled = selectedMatches.length;
+  const uniqueTotal = new Set(look.pieces.map(piece => lookPieceSignature(piece))).size;
+  const similarity = fulfilled ? selectedMatches.reduce((sum, match) => sum + match.similarity, 0) / fulfilled : 0;
+  const colorSimilarity = fulfilled ? selectedMatches.reduce((sum, match) => sum + match.detail.color, 0) / fulfilled : 0;
   const weatherHits = look.weather.filter(tag => todayWeather.tags.includes(tag)).length;
   return {
     matches,
     pieces: matches.filter(Boolean).map(match => match.item),
     fulfilled,
-    total: look.pieces.length,
+    // 같은 옷이 여러 번 검출돼도 최상위 1개만 쓰므로, 표시 분모도 중복을 접은 수를 쓴다.
+    total: uniqueTotal,
     similarity,
     colorSimilarity,
     score: Math.round(Math.min(98, similarity * 88 + weatherHits * 3)),
@@ -1355,11 +1437,57 @@ async function persistGarment(item) {
     await window.WearwellDB.putGarment({
       id: item.id, image: item.userAdded ? item.image : undefined, userAdded: Boolean(item.userAdded),
       gender: item.gender, category: item.category, name: item.name, color: item.color,
+      // 분석 전에 새로고침해도 나중에 특징 기반 상품명으로 바꿀 수 있도록 이름 출처를 함께 남긴다.
+      nameSource: item.nameSource, sourceFileName: item.sourceFileName,
       analysis: item.analysis, referenceLookIds: item.referenceLookIds || [], updatedAt: new Date().toISOString()
     });
   } catch (error) {
     console.warn("옷 분석 저장 실패", error);
   }
+}
+
+// 업로드한 옷의 이름을 파일명 대신 분석된 특징으로 짓는다. 파일명은 "6951158_big"처럼
+// 의미가 없는 경우가 많은데, seedGarmentAnalysis가 이름에서 소재·핏을 읽어내므로
+// 그런 이름은 색상 미분류와 잘못된 시드 분석으로 그대로 이어진다.
+// 기존 상품명과 같은 어순(색 → 패턴 → 기장 → 핏 → 소재 → 품목)으로 맞춘다.
+const GARMENT_NAME_NOISE = new Set([
+  "확인 어려움", "색상 미분류", "기본", "보통", "무지", "레귤러", "의류", "단독", "없음", "기타"
+]);
+function garmentFeatureName(item, analysis = item.analysis) {
+  if (!analysis) return "";
+  const clean = value => String(value ?? "").trim();
+  const tokens = [];
+  const push = token => {
+    if (!token || GARMENT_NAME_NOISE.has(token)) return;
+    // "데님"과 "데님 팬츠"가 함께 나오면 겹쳐 쓰지 않고 더 구체적인 쪽만 남긴다.
+    const overlap = tokens.findIndex(existing => existing.includes(token) || token.includes(existing));
+    if (overlap === -1) tokens.push(token);
+    else if (token.length > tokens[overlap].length) tokens[overlap] = token;
+  };
+  for (const value of [
+    analysis.primaryColor,
+    analysis.pattern,
+    item.category === "하의" ? analysis.length : analysis.sleeveLength,
+    analysis.fit,
+    analysis.material,
+  ]) push(clean(value));
+  // 품목은 이름의 끝을 맡으므로 마지막에 붙인다. 못 읽었으면 카테고리로 대신한다.
+  const piece = clean(analysis.subcategory);
+  const named = !GARMENT_NAME_NOISE.has(piece) && piece;
+  // 색·소재만 남으면 파일명보다 나을 게 없으므로 이름을 바꾸지 않는다.
+  if (tokens.length < 2) return "";
+  push(named || clean(item.category));
+  return tokens.join(" ").slice(0, 40);
+}
+
+// 사용자가 직접 지은 이름은 건드리지 않는다. 파일명·세그멘테이션 라벨에서 임시로
+// 붙인 이름(nameSource: "auto")만 분석 결과가 나왔을 때 상품명으로 바꾼다.
+function applyGarmentFeatureName(item) {
+  if (item.nameSource !== "auto") return;
+  const name = garmentFeatureName(item);
+  if (!name) return;
+  item.name = name;
+  item.nameSource = "feature";
 }
 
 async function analyzeGarment(item, reopen = false) {
@@ -1371,6 +1499,7 @@ async function analyzeGarment(item, reopen = false) {
     if (["상의", "하의", "아우터", "원피스", "신발", "가방", "액세서리"].includes(detectedCategory)) item.category = detectedCategory;
     const detectedColor = String(item.analysis?.primaryColor || "").trim();
     if (detectedColor && !detectedColor.includes("확인 어려움")) item.color = detectedColor;
+    applyGarmentFeatureName(item);
     try {
       item.analysis.visualEmbedding = await window.WearwellVLM.embedImage(item.image);
       item.analysis.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
@@ -1435,6 +1564,7 @@ async function analyzeLookbooks(lookbooks) {
       let result = stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION ? stored.analysis : null;
       if (!result) result = await window.WearwellVLM.analyzeLookImage(look.image, look);
       applyLookAnalysis(look, result);
+      await refineUploadedLookbookReferences(look);
       await enrichLookEmbeddings(look);
       await window.WearwellDB.putLook({
         id: look.id, creator: look.creator, sourceUrl: look.sourceUrl, image: look.image,
@@ -1504,9 +1634,13 @@ async function addUploadedLookbooks() {
     const file = files[index];
     $("#lookbookPreview").innerHTML = `<div class="generation-loader"><span></span><strong>${index + 1}/${files.length}장 룩북 분석 중</strong><small>상의·하의·아우터를 구분하고 있어요</small></div>`;
     const look = createUploadedLook(`user-look-${Date.now()}-${index}`, file.preview);
+    // 분할·보정 단계는 선택된 사용자 룩북에만 적용하므로, 분석보다 먼저 선택 상태를 등록한다.
+    selectedInfluencerLookIds.add(look.id);
     try {
       const analysis = await window.WearwellVLM.analyzeLookImage(look.image, look);
       applyLookAnalysis(look, analysis);
+      // 업로드 직후 이미 선택 상태로 넣었으므로, 내 옷장 전신샷과 같은 분할·보정 참조를 만든다.
+      await refineUploadedLookbookReferences(look);
       await enrichLookEmbeddings(look);
       influencerLooks.push(look);
       selectedInfluencerLookIds.add(look.id);
@@ -1514,7 +1648,10 @@ async function addUploadedLookbooks() {
         ...look, analysis: { ...analysis, pieces: look.pieces }, analysisEngine: VLM_ANALYSIS_ENGINE,
         analysisVersion: LOOK_ANALYSIS_VERSION, updatedAt: new Date().toISOString()
       });
-    } catch (error) { showToast(`${file.name}: ${error.message || "룩북 분석 실패"}`); }
+    } catch (error) {
+      selectedInfluencerLookIds.delete(look.id);
+      showToast(`${file.name}: ${error.message || "룩북 분석 실패"}`);
+    }
   }
   lookbookUploadFiles = [];
   $("#lookbookFileInput").value = ""; $("#lookbookPreview").innerHTML = "";
@@ -1784,8 +1921,15 @@ async function addUploadsToWardrobe() {
     else if (/dress|원피스/.test(lower)) category = "원피스";
     else if (/shoe|boot|sneaker|loafer|신발/.test(lower)) category = "신발";
     else if (/bag|tote|가방/.test(lower)) category = "가방";
-    const item = { id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true, referenceLookIds: [] };
-    item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
+    // 파일명은 카테고리 추측에만 쓰고 이름으로는 남기지 않는다. 분석이 끝나면
+    // applyGarmentFeatureName이 특징으로 지은 상품명으로 바꿔 준다.
+    const item = {
+      id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category,
+      name: `새로 추가한 ${category}`, nameSource: "auto", sourceFileName: file.name,
+      color: "색상 미분류", worn: 0, userAdded: true, referenceLookIds: []
+    };
+    // 시드 분석은 이름에서 소재·핏을 읽으므로, 임시 이름 대신 파일명을 넘겨 힌트를 살린다.
+    item.analysis = window.WearwellVLM.seedGarmentAnalysis({ ...item, name: file.name });
     wardrobe.unshift(item);
     added.push(item);
     await persistGarment(item);
@@ -1918,7 +2062,9 @@ async function commitSegmentedGarments() {
         image: refined?.stages?.closet || refined?.stages?.normalized || detected.image,
         gender: selectedGender || "all",
         category: detected.category,
+        // 검출 라벨은 임시 이름일 뿐이다. 아래 analyzeGarment가 특징으로 상품명을 짓는다.
         name: detected.category === detected.sourceCategory ? detected.name : `${batch.name} - ${detected.category}`,
+        nameSource: "auto",
         color: "색상 미분류",
         worn: 0,
         userAdded: true,
@@ -1941,6 +2087,11 @@ async function commitSegmentedGarments() {
   renderCategoryFilters();
   renderWardrobe();
   showToast(added.length ? `옷 ${added.length}벌을 저장했어요${refineFailures ? ` · ${refineFailures}벌은 분리본으로 저장` : ""}` : "분리할 옷을 찾지 못했어요");
+  // 전신샷에서 분리한 옷도 업로드와 똑같이 분석해야 색과 상품명이 채워진다.
+  // 분리 결과를 먼저 보여 주고 분석은 뒤에서 이어 간다.
+  (async () => {
+    for (const item of added) await analyzeGarment(item);
+  })();
 }
 
 async function addSegmentPhotosToWardrobe() {
@@ -1993,6 +2144,7 @@ async function refreshStoredEmbeddings() {
   const targetLooks = influencerLooks.filter(look => look.userAdded || selectedInfluencerLookIds.has(look.id));
   await runLimited(targetLooks, 2, async look => {
     try {
+      await refineUploadedLookbookReferences(look);
       await enrichLookEmbeddings(look);
       const stored = await window.WearwellDB.getLook(look.id);
       if (stored) await window.WearwellDB.putLook({

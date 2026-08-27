@@ -166,7 +166,8 @@ const raceExpression = `
   const delays = { A: 400, B: 60 };
   const original = fetchGpuJson;
   fetchGpuJson = async (path, payload) => {
-    const tag = payload.garments[0].name;
+    // 착장 요청의 name은 색·형태를 덧붙인 설명자다. 첫 구간이 원래 옷 이름이다.
+    const tag = payload.garments[0].name.split("|")[0].trim();
     await new Promise(resolve => setTimeout(resolve, delays[tag]));
     return { image: pixel("result-" + tag), views: { front: pixel("result-" + tag) } };
   };
