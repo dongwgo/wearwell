@@ -1370,60 +1370,30 @@ async function persistGarment(item) {
 const GARMENT_NAME_NOISE = new Set([
   "확인 어려움", "색상 미분류", "기본", "보통", "무지", "레귤러", "의류", "단독", "없음", "기타"
 ]);
-// 소재는 대부분 코튼·폴리에스테르로 나와서 이름만 길어지고 옷을 구분해 주지 못한다.
-// 봤을 때 바로 그 옷이 떠오르는 소재만 이름에 넣는다.
-const GARMENT_NAME_MATERIALS = /데님|진|레더|가죽|스웨이드|무스탕|시어링|퍼|니트|스웨트|플리스|코듀로이|골덴|트위드|린넨|울|모직|캐시미어|실크|새틴|벨벳|레이스/;
-// 색 + 특징 둘 + 품목이면 충분히 구체적이다. 더 붙이면 상품명이 아니라 설명문이 된다.
-const GARMENT_NAME_MAX_FEATURES = 3;
-// 기장·소재와 품목이 같은 옷을 다른 말로 가리키면 "반바지 쇼츠"처럼 겹쳐 적힌다.
-// 글자가 안 겹치는 동의어를 묶어 한 번만 쓰게 한다.
-const GARMENT_NAME_SYNONYMS = [
-  ["반바지", "쇼츠", "숏팬츠", "하프팬츠"],
-  ["니트", "스웨터", "스웻", "스웨트"],
-  ["재킷", "자켓", "블루종"],
-  ["스니커즈", "운동화", "트레이너"],
-  ["패딩", "다운", "푸퍼"],
-  ["가죽", "레더"],
-];
 function garmentFeatureName(item, analysis = item.analysis) {
   if (!analysis) return "";
   const clean = value => String(value ?? "").trim();
   const tokens = [];
-  const sameThing = (left, right) => left.includes(right) || right.includes(left)
-    || GARMENT_NAME_SYNONYMS.some(group =>
-      group.some(word => left.includes(word)) && group.some(word => right.includes(word)));
-  // wins가 참이면(=품목) 이미 들어간 겹치는 말을 밀어내고 이름 끝자리를 차지한다.
-  const push = (token, wins = false) => {
+  const push = token => {
     if (!token || GARMENT_NAME_NOISE.has(token)) return;
-    // "데님"과 "데님 팬츠"가 함께 나오면 더 구체적인 쪽만 남긴다. 자리를 바꿔치기하지 않고
-    // 옛 토큰을 빼고 뒤에 붙여야 품목이 이름 끝에 오는 어순이 깨지지 않는다.
-    const overlap = tokens.findIndex(existing => sameThing(existing, token));
-    if (overlap !== -1) {
-      if (!wins && tokens[overlap].length >= token.length) return;
-      tokens.splice(overlap, 1);
-    }
-    tokens.push(token);
+    // "데님"과 "데님 팬츠"가 함께 나오면 겹쳐 쓰지 않고 더 구체적인 쪽만 남긴다.
+    const overlap = tokens.findIndex(existing => existing.includes(token) || token.includes(existing));
+    if (overlap === -1) tokens.push(token);
+    else if (token.length > tokens[overlap].length) tokens[overlap] = token;
   };
-  const material = clean(analysis.material);
-  // 소매는 상의·원피스에서만 옷을 갈라 준다. 아우터·신발은 어차피 대부분 긴팔로 나온다.
-  const sleeve = ["상의", "원피스"].includes(item.category) ? analysis.sleeveLength : "";
-  const length = ["하의", "원피스", "아우터"].includes(item.category) ? analysis.length : "";
-  // 바지는 거의 다 "롱"이라 핏이 기장보다 옷을 잘 가른다. 상의는 반대로 소매가 먼저다.
-  const shape = item.category === "하의" ? [analysis.fit, length] : [length, sleeve, analysis.fit];
   for (const value of [
     analysis.primaryColor,
     analysis.pattern,
-    // 소재가 핏·기장보다 먼저다. "레더 블루종"이 "긴팔 블루종"보다 그 옷을 잘 가리킨다.
-    GARMENT_NAME_MATERIALS.test(material) ? material : "",
-    ...shape,
+    item.category === "하의" ? analysis.length : analysis.sleeveLength,
+    analysis.fit,
+    analysis.material,
   ]) push(clean(value));
-  tokens.length = Math.min(tokens.length, GARMENT_NAME_MAX_FEATURES);
+  // 품목은 이름의 끝을 맡으므로 마지막에 붙인다. 못 읽었으면 카테고리로 대신한다.
   const piece = clean(analysis.subcategory);
   const named = !GARMENT_NAME_NOISE.has(piece) && piece;
-  // 품목도 특징도 못 읽었으면 "혼방 상의"처럼 파일명보다 나을 게 없는 이름이 되므로 그대로 둔다.
-  if (!tokens.length || (!named && tokens.length < 2)) return "";
-  // 품목은 이름의 끝을 맡으므로 마지막에 붙인다. 못 읽었으면 카테고리로 대신한다.
-  push(named || clean(item.category), true);
+  // 색·소재만 남으면 파일명보다 나을 게 없으므로 이름을 바꾸지 않는다.
+  if (tokens.length < 2) return "";
+  push(named || clean(item.category));
   return tokens.join(" ").slice(0, 40);
 }
 
@@ -2009,12 +1979,9 @@ async function commitSegmentedGarments() {
         image: refined?.stages?.closet || refined?.stages?.normalized || detected.image,
         gender: selectedGender || "all",
         category: detected.category,
-        // 백엔드가 붙여 주는 detected.name은 "<파일명> - 신발" 꼴이라 그대로 쓰면
-        // KakaoTalk_20260827_105730936 같은 파일명이 옷 이름으로 남는다. 분석이 끝나면
-        // applyGarmentFeatureName이 특징으로 지은 상품명으로 바꾸므로 임시 이름만 둔다.
-        name: `새로 찾은 ${detected.category}`,
+        // 검출 라벨은 임시 이름일 뿐이다. 아래 analyzeGarment가 특징으로 상품명을 짓는다.
+        name: detected.category === detected.sourceCategory ? detected.name : `${batch.name} - ${detected.category}`,
         nameSource: "auto",
-        sourceFileName: batch.name,
         color: "색상 미분류",
         worn: 0,
         userAdded: true,
