@@ -118,7 +118,7 @@
       <section class="view" id="discoverView">
         <div class="page-heading discover-heading">
           <div><p class="eyebrow">내 옷장 맞춤 추천</p><h1>새로 사지 않아도<br /><em>입을 수 있는 코디예요.</em></h1><p class="lede">참고 코디와 가장 비슷한 내 옷을 찾아서 조합했어요.</p></div>
-          <div class="saved-count"><span id="savedCount">0</span><small>저장한 코디</small></div>
+          <div class="page-heading-actions"><button class="quiet-button" id="uploadLookbookButton">+ 좋아하는 룩북 추가</button><div class="saved-count"><span id="savedCount">0</span><small>저장한 코디</small></div></div>
         </div>
         <div class="closet-analysis" id="closetAnalysis">
           <div class="analysis-icon">AI</div>
@@ -319,6 +319,18 @@
       </label>
       <div class="upload-preview" id="segmentPreview"></div>
       <div class="dialog-footer"><span id="segmentDialogHint">먼저 옷을 찾은 뒤, 옷마다 FLUX 변환 여부와 카테고리를 고를 수 있어요</span><button class="primary-button" id="addSegmentPhotos" disabled>옷 찾기</button></div>
+    </dialog>
+
+    <dialog id="lookbookUploadDialog" class="upload-dialog">
+      <button class="dialog-close" data-close-dialog aria-label="닫기">×</button>
+      <p class="eyebrow">좋아하는 룩북 추가</p><h2>참고할 착장 사진을<br /><em>업로드해주세요.</em></h2>
+      <p>전신 또는 상·하의가 보이는 사진이 좋아요. 얼굴 클로즈업 사진은 의류 비교 정확도가 낮아요.</p>
+      <label class="drop-zone" id="lookbookDropZone">
+        <input id="lookbookFileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+        <span class="upload-icon">↥</span><strong>룩북 사진을 여기에 놓아주세요</strong><small>JPG, PNG, WEBP · 한 번에 최대 4장</small>
+      </label>
+      <div class="upload-preview lookbook-upload-preview" id="lookbookPreview"></div>
+      <div class="dialog-footer"><span>업로드 후 Qwen과 SigLIP이 개별 의류를 분석해요</span><button class="primary-button" id="addLookbooks" disabled>룩북 분석 후 추가</button></div>
     </dialog>
 
     <dialog id="itemMatchDialog" class="item-match-dialog">

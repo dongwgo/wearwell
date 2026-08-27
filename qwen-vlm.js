@@ -25,6 +25,15 @@
 
   function seedGarmentAnalysis(item) {
     const name = item.name || "";
+    const sleeveLength = includes(name, /민소매|슬리브리스/) ? "민소매"
+      : includes(name, /반팔|short sleeve|s\/s/) ? "반팔"
+      : includes(name, /긴팔|long sleeve|l\/s|롱 슬리브/) ? "긴팔" : "확인 어려움";
+    const length = includes(name, /쇼츠|반바지|버뮤다|shorts/) ? "반바지"
+      : includes(name, /크롭/) ? "크롭"
+      : includes(name, /롱|long/) ? "롱" : "기본";
+    const neckline = includes(name, /폴로|카라|polo/) ? "카라·폴로"
+      : includes(name, /브이넥|v-neck/) ? "브이넥"
+      : includes(name, /터틀/) ? "터틀넥" : "라운드넥";
     const material = includes(name, /데님|jean/) ? "데님"
       : includes(name, /니트|knit|와플|스웨트/) ? "니트"
       : includes(name, /린넨/) ? "린넨"
@@ -78,11 +87,16 @@
       material,
       texture,
       fit,
+      sleeveLength,
+      length,
+      neckline,
       silhouette: ["와이드", "세미와이드", "커브드"].includes(fit) ? "여유 있는 실루엣" : fit === "크롭" ? "짧고 정돈된 실루엣" : "기본 실루엣",
       wrinkle,
       finish,
       construction: construction.length ? construction : ["기본 봉제"],
-      pattern: includes(name, /그래픽|레터링|로고/) ? "그래픽·로고" : "무지",
+      pattern: includes(name, /스트라이프|stripe|보더/) ? "스트라이프"
+        : includes(name, /체크|check|plaid/) ? "체크"
+        : includes(name, /그래픽|레터링|로고/) ? "그래픽·로고" : "무지",
       season,
       weather: material === "나일론" ? ["바람", "약한 비"] : includes(name, /쿨|린넨|반팔|메쉬/) ? ["더움", "습함"] : ["선선함"],
       summary: `${item.color || "색상 미분류"} ${subcategory(item)}. ${fit} 핏, ${texture}, ${finish}, ${wrinkle}.`,
@@ -160,6 +174,40 @@
     return { ...result, engine: "Qwen3-VL-8B-Instruct", analyzedAt: new Date().toISOString() };
   }
 
+  async function localImageFingerprint(imageSource) {
+    const source = await imageToDataUrl(imageSource);
+    const image = new Image();
+    await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = source; });
+    const side = 24;
+    const canvas = document.createElement("canvas");
+    canvas.width = side; canvas.height = side;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, side, side);
+    const data = context.getImageData(0, 0, side, side).data;
+    const vector = [];
+    for (let index = 0; index < data.length; index += 4) {
+      const mean = (data[index] + data[index + 1] + data[index + 2]) / 3;
+      vector.push((data[index] - mean) / 255, (data[index + 1] - mean) / 255, (data[index + 2] - mean) / 255);
+    }
+    const norm = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0)) || 1;
+    return vector.map(value => value / norm);
+  }
+
+  let lastEmbeddingEngine = "local-fingerprint-v1";
+
+  async function embedImage(imageSource) {
+    try {
+      const result = await apiRequest("/api/embedding", { image: await imageToDataUrl(imageSource) });
+      if (!Array.isArray(result.vector) || !result.vector.length) throw new Error("SigLIP 벡터가 비어 있어요.");
+      lastEmbeddingEngine = `siglip:${result.model || "unknown"}`;
+      return result.vector;
+    } catch (error) {
+      lastEmbeddingEngine = "local-fingerprint-v1";
+      console.warn("SigLIP API를 사용할 수 없어 로컬 이미지 지문으로 전환합니다.", error);
+      return localImageFingerprint(imageSource);
+    }
+  }
+
   async function analyzeBodyImage(imageSource, gender = "women") {
     emit("analyzing", "전신사진에서 체형 특징을 분석 중");
     const result = await apiRequest("/api/vlm/body", {
@@ -171,5 +219,8 @@
     return { ...result, engine: "Qwen3-VL-8B-Instruct" };
   }
 
-  window.WearwellVLM = { MODEL_ID, seedGarmentAnalysis, loadModel, analyzeImage, analyzeLookImage, analyzeBodyImage };
+  window.WearwellVLM = {
+    MODEL_ID, seedGarmentAnalysis, loadModel, analyzeImage, analyzeLookImage, analyzeBodyImage, embedImage,
+    getEmbeddingEngine: () => lastEmbeddingEngine
+  };
 })();

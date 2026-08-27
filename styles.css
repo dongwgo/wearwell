@@ -199,6 +199,10 @@ dialog::backdrop { background: rgba(30,30,27,.52); backdrop-filter: blur(4px); }
 .segment-category select { min-width: 0; flex: 1; padding: 5px; border: 1px solid var(--line); border-radius: 7px; background: white; font-size: 10px; }
 .upload-thumb { min-width: 75px; height: 88px; position: relative; }
 .upload-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.lookbook-upload-preview > div { flex: 0 0 110px; position: relative; }
+.lookbook-upload-preview img { width: 110px; height: 140px; object-fit: contain; background: var(--paper-deep); }
+.lookbook-upload-preview button { position: absolute; right: 5px; top: 5px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: rgba(20,20,20,.75); color: white; cursor: pointer; }
+.lookbook-upload-preview span { display: block; overflow: hidden; margin-top: 4px; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .upload-dialog .dialog-footer { margin-top: 20px; }
 .mini-dialog { width: min(390px, calc(100vw - 30px)); padding: 34px; }
 .mini-dialog h3 { font-family: var(--serif); font-size: 34px; font-weight: 400; margin: 13px 0 8px; }
@@ -337,13 +341,13 @@ dialog { border-radius: 28px; }
 .garment-analysis-panel dd { margin: 0; line-height: 1.45; }
 .analysis-rerun { width: 100%; margin-top: 10px; padding: 9px; border: 0; border-radius: 9px; background: #292929; color: white; font-size: 8px; font-weight: 800; cursor: pointer; }
 .analysis-rerun:disabled { opacity: .5; cursor: wait; }
-.influencer-choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0 24px; }
+.influencer-choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 580px; margin: 22px 0 24px; padding-right: 8px; overflow-y: auto; overscroll-behavior: contain; }
 .influencer-choice { min-width: 0; padding: 0; border: 2px solid transparent; border-radius: 17px; overflow: hidden; background: #f4f5f6; text-align: left; cursor: pointer; }
 .influencer-choice.selected { border-color: var(--clay); background: #fff6f3; }
 .influencer-choice.analyzing { opacity: .78; cursor: pointer; }
 .influencer-choice.analyzing .influencer-image::after { content: "옷별 분석 중"; position: absolute; inset: auto 9px 9px; padding: 5px 8px; border-radius: 999px; background: rgba(25,25,25,.78); color: white; font-size: 9px; text-align: center; }
-.influencer-image { display: block; height: 225px; position: relative; overflow: hidden; background: #ddd; }
-.influencer-image img { width: 100%; height: 100%; object-fit: cover; }
+.influencer-image { display: block; height: auto; aspect-ratio: 3 / 4; position: relative; overflow: hidden; background: #ddd; }
+.influencer-image img { width: 100%; height: 100%; object-fit: contain; }
 .influencer-image i { display: none; position: absolute; right: 8px; top: 8px; width: 25px; height: 25px; border-radius: 50%; place-items: center; background: var(--clay); color: white; font-style: normal; font-weight: 800; }
 .influencer-choice.selected .influencer-image i { display: grid; }
 .influencer-copy { display: grid; padding: 10px 11px 12px; }

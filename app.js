@@ -82,10 +82,12 @@ let activeCategory = "전체";
 let activeMood = "전체";
 let selectedStyles = new Set();
 let selectedInfluencerLookIds = new Set();
+let lookDatabaseRestored = false;
 let selectedPriorities = new Set(["날씨에 잘 맞기"]);
 let uploadFiles = [];
 let segmentFiles = [];
 let segmentBatches = [];
+let lookbookUploadFiles = [];
 let savedLooks = new Set(JSON.parse(localStorage.getItem("오늘옷-saved") || "[]"));
 let selectedWardrobeItem = null;
 let matchVariation = 0;
@@ -97,13 +99,14 @@ let bodyPhotoRevision = 0;
 const selectedGarmentIds = new Set();
 const tryonCache = new Map();
 const lookbookAnalysisQueued = new Set();
+const stableInfluencerMatches = new Map();
 const API_BASE = window.resolveWearwellApiBase();
 const API_TOKEN = window.resolveWearwellApiToken();
 const API_HEADERS = { "Content-Type": "application/json", ...(API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {}) };
 const LOCAL_API_BASE = String(window.WEARWELL_CONFIG.LOCAL_API_BASE || "http://127.0.0.1:8787").replace(/\/+$/, "");
 const LOCAL_API_TOKEN = String(window.WEARWELL_CONFIG.LOCAL_API_TOKEN || API_TOKEN);
 const todayWeather = { temperature: 22, condition: "약한 비", tags: ["선선함", "약한 비", "간절기", "습함"] };
-const LOOK_ANALYSIS_VERSION = 3;
+const LOOK_ANALYSIS_VERSION = 4;
 const VLM_ANALYSIS_ENGINE = "Qwen3-VL-8B-Instruct";
 let interactiveGpuRequests = 0;
 
@@ -911,9 +914,57 @@ function setSimilarity(actualValues, wantedValues, groups = []) {
   return best;
 }
 
-function garmentSimilarityDetail(item, requirement) {
+function cosineSimilarity(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length || !left.length) return null;
+  let dot = 0, leftNorm = 0, rightNorm = 0;
+  for (let index = 0; index < left.length; index++) {
+    dot += left[index] * right[index]; leftNorm += left[index] ** 2; rightNorm += right[index] ** 2;
+  }
+  return dot / Math.max(1e-12, Math.sqrt(leftNorm) * Math.sqrt(rightNorm));
+}
+
+function comparableEmbedding(leftEngine, rightEngine) {
+  const family = value => String(value || "").startsWith("siglip:") ? "siglip" : value === "local-fingerprint-v1" ? "local" : "";
+  return family(leftEngine) && family(leftEngine) === family(rightEngine);
+}
+
+async function cropLookPiece(imageSource, bbox) {
+  if (!Array.isArray(bbox) || bbox.length !== 4) return imageToDataUrl(imageSource);
+  const source = await imageToDataUrl(imageSource);
+  const image = new Image();
+  await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = source; });
+  const [left, top, right, bottom] = bbox;
+  const x = Math.max(0, Math.floor(image.width * left / 1000));
+  const y = Math.max(0, Math.floor(image.height * top / 1000));
+  const width = Math.max(1, Math.floor(image.width * (right - left) / 1000));
+  const height = Math.max(1, Math.floor(image.height * (bottom - top) / 1000));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.min(768, width); canvas.height = Math.min(768, height);
+  canvas.getContext("2d").drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", .9);
+}
+
+async function enrichLookEmbeddings(look) {
+  if (typeof window.WearwellVLM.embedImage !== "function") return;
+  for (const piece of look.pieces || []) {
+    if (Array.isArray(piece.visualEmbedding) && piece.visualEmbedding.length && String(piece.visualEmbeddingEngine || "").startsWith("siglip:")) continue;
+    piece.visualEmbedding = await window.WearwellVLM.embedImage(await cropLookPiece(look.image, piece.bbox));
+    piece.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
+  }
+  if (look.vlmAnalysis) look.vlmAnalysis.pieces = look.pieces;
+}
+
+function garmentSimilarityDetail(item, requirement, lookId = null) {
   const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item);
-  if (item.category !== requirement.category) return { total: 0, color: 0, material: 0, fit: 0, detail: 0 };
+  const directReference = Boolean(lookId && Array.isArray(item.referenceLookIds) && item.referenceLookIds.includes(lookId));
+  const categoryMismatch = item.category !== requirement.category;
+  const comparable = comparableEmbedding(analysis.visualEmbeddingEngine, requirement.visualEmbeddingEngine);
+  const cosine = comparable ? cosineSimilarity(analysis.visualEmbedding, requirement.visualEmbedding) : null;
+  const visual = cosine === null ? .5 : Math.max(0, Math.min(1, (cosine + 1) / 2));
+  // 카테고리가 다르면 정확한 출처 연결 또는 매우 높은 SigLIP 일치가 없는 한 제외한다.
+  if (categoryMismatch && !(comparable && visual >= .95)) {
+    return { total: 0, color: 0, material: 0, fit: 0, detail: 0, visual, compatible: false };
+  }
   const actualColors = knownColors(item.color, item.name, analysis.primaryColor, analysis.secondaryColors, analysis.dominantColors);
   const wantedColors = knownColors(requirement.colors);
   const color = actualColors.length && wantedColors.length
@@ -931,12 +982,14 @@ function garmentSimilarityDetail(item, requirement) {
     [analysis.subcategory, analysis.pattern, analysis.finish, ...(analysis.construction || []), item.name],
     requirement.details || []
   );
-  const total = .04 + color * .62 + material * .14 + fit * .12 + detail * .08;
-  return { total: Math.min(1, total), color, material, fit, detail };
+  let total = .03 + color * .49 + material * .11 + fit * .10 + detail * .07 + visual * .20;
+  if (directReference && !categoryMismatch) total = Math.max(total, .985);
+  else if (comparable && visual >= .92 && !categoryMismatch) total = Math.max(total, .92);
+  return { total: Math.min(1, total), color, material, fit, detail, visual, compatible: true, directReference };
 }
 
-function garmentSimilarity(item, requirement) {
-  return garmentSimilarityDetail(item, requirement).total;
+function garmentSimilarity(item, requirement, lookId = null) {
+  return garmentSimilarityDetail(item, requirement, lookId).total;
 }
 
 function buildInfluencerMatch(look, variation = 0) {
@@ -947,13 +1000,20 @@ function buildInfluencerMatch(look, variation = 0) {
     requirement,
     requirementIndex,
     candidates: wardrobe
-      .filter(item => itemMatchesGender(item) && item.category === requirement.category)
+      .filter(item => itemMatchesGender(item) && (item.category === requirement.category || item.userAdded))
       .map(item => {
-        const detail = garmentSimilarityDetail(item, requirement);
+        const detail = garmentSimilarityDetail(item, requirement, look.id);
         return { item, similarity: detail.total, detail };
       })
       .sort((a, b) => b.similarity - a.similarity || b.detail.color - a.detail.color || Number(Boolean(b.item.userAdded)) - Number(Boolean(a.item.userAdded)) || Number(a.item.sourceRank || 999) - Number(b.item.sourceRank || 999))
-  })).map(entry => ({ ...entry, candidates: entry.candidates.filter(candidate => candidate.detail.color >= .56 && candidate.similarity >= .56).slice(0, 5) }));
+  })).map(entry => ({
+    ...entry,
+    candidates: entry.candidates.filter(candidate =>
+      (candidate.detail.color >= .56 && candidate.similarity >= .56) ||
+      candidate.detail.directReference ||
+      (candidate.detail.compatible && candidate.detail.visual >= .92)
+    ).slice(0, 5)
+  }));
 
   // 같은 옷을 두 번 쓰지 않는 최대 가중치 1:1 배정. 후보가 적은 룩북 의류부터 탐색해 탐욕 매칭의 오판을 피한다.
   const searchOrder = [...candidateLists].sort((left, right) => left.candidates.length - right.candidates.length);
@@ -1007,12 +1067,24 @@ function bodySimilarity(look, measurements = avatarMeasurements || readMeasureme
 }
 
 function availableInfluencerMatches({ selectedOnly = false } = {}) {
+  const isUsable = result => result.match.fulfilled === result.match.total && result.match.colorSimilarity >= .58 && result.match.similarity >= .58;
   return influencerLooks
     .filter(look => look.gender === (selectedGender || "women"))
     .filter(look => look.analysisReady)
     .filter(look => !selectedOnly || selectedInfluencerLookIds.has(look.id))
-    .map(look => ({ look, match: buildInfluencerMatch(look), bodyScore: bodySimilarity(look) }))
-    .filter(result => result.match.fulfilled === result.match.total && result.match.colorSimilarity >= .62 && result.match.similarity >= .61)
+    .map(look => {
+      const fresh = { look, match: buildInfluencerMatch(look), bodyScore: bodySimilarity(look) };
+      if (isUsable(fresh)) {
+        stableInfluencerMatches.set(look.id, fresh);
+        return fresh;
+      }
+      const previous = stableInfluencerMatches.get(look.id);
+      if (previous && previous.match.pieces.every(item => wardrobe.some(candidate => candidate.id === item.id))) {
+        return { ...previous, look, bodyScore: bodySimilarity(look), retained: true };
+      }
+      return fresh;
+    })
+    .filter(isUsable)
     .sort((a, b) => (b.bodyScore + b.match.score) - (a.bodyScore + a.match.score));
 }
 
@@ -1073,7 +1145,7 @@ async function persistGarment(item) {
     await window.WearwellDB.putGarment({
       id: item.id, image: item.userAdded ? item.image : undefined, userAdded: Boolean(item.userAdded),
       gender: item.gender, category: item.category, name: item.name, color: item.color,
-      analysis: item.analysis, updatedAt: new Date().toISOString()
+      analysis: item.analysis, referenceLookIds: item.referenceLookIds || [], updatedAt: new Date().toISOString()
     });
   } catch (error) {
     console.warn("옷 분석 저장 실패", error);
@@ -1085,9 +1157,18 @@ async function analyzeGarment(item, reopen = false) {
   if (button) { button.disabled = true; button.textContent = "스타일 분석 준비 중…"; }
   try {
     item.analysis = await window.WearwellVLM.analyzeImage(item.image, item);
+    const detectedCategory = String(item.analysis?.category || "").trim();
+    if (["상의", "하의", "아우터", "원피스", "신발", "가방", "액세서리"].includes(detectedCategory)) item.category = detectedCategory;
+    const detectedColor = String(item.analysis?.primaryColor || "").trim();
+    if (detectedColor && !detectedColor.includes("확인 어려움")) item.color = detectedColor;
+    try {
+      item.analysis.visualEmbedding = await window.WearwellVLM.embedImage(item.image);
+      item.analysis.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
+    } catch (error) { console.warn("옷 SigLIP 임베딩 실패", error); }
     await persistGarment(item);
     if (reopen) renderItemMatches();
-    renderWardrobe(); renderDiscover();
+    looks = buildPersonalizedLooks(); currentLook = 0;
+    renderWardrobe(); renderDiscover(); renderCurrentLook(); renderRotation();
     showToast("주름·핏·마감·소재 분석을 저장했어요");
   } catch (error) {
     showToast(error.message || "Qwen 분석을 시작하지 못했어요");
@@ -1108,6 +1189,13 @@ function applyLookAnalysis(look, result) {
     colors: arrayValue(piece.colors || piece.color),
     materials: arrayValue(piece.materials || piece.material),
     fits: arrayValue(piece.fits || piece.fit),
+    sleeveLength: String(piece.sleeveLength || "확인 어려움"),
+    length: String(piece.length || "확인 어려움"),
+    subcategory: String(piece.subcategory || piece.label || "확인 어려움"),
+    pattern: String(piece.pattern || "확인 어려움"),
+    neckline: String(piece.neckline || "확인 어려움"),
+    visualEmbedding: Array.isArray(piece.visualEmbedding) ? piece.visualEmbedding : null,
+    visualEmbeddingEngine: String(piece.visualEmbeddingEngine || ""),
     details: arrayValue(piece.details),
     confidence: Math.max(0, Math.min(1, Number(piece.confidence ?? .8)))
   })).filter(piece => validCategories.has(piece.category) && piece.colors.length && piece.confidence >= .5);
@@ -1137,9 +1225,12 @@ async function analyzeLookbooks(lookbooks) {
       let result = stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION ? stored.analysis : null;
       if (!result) result = await window.WearwellVLM.analyzeLookImage(look.image, look);
       applyLookAnalysis(look, result);
+      await enrichLookEmbeddings(look);
       await window.WearwellDB.putLook({
         id: look.id, creator: look.creator, sourceUrl: look.sourceUrl, image: look.image,
         summary: look.summary, pieces: look.pieces, styles: look.styles, weather: look.weather,
+        userAdded: Boolean(look.userAdded || stored?.userAdded || String(look.id || "").startsWith("user-look-")),
+        gender: look.gender, publicSpec: look.publicSpec,
         analysis: result, analysisEngine: VLM_ANALYSIS_ENGINE, analysisVersion: LOOK_ANALYSIS_VERSION, updatedAt: new Date().toISOString()
       });
       looks = buildPersonalizedLooks(); currentLook = 0;
@@ -1165,6 +1256,64 @@ function queueVisibleLookbookAnalysis(looksToAnalyze) {
   const start = () => analyzeLookbooks(pending);
   if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 1200 });
   else setTimeout(start, 150);
+}
+
+function renderLookbookUploadPreview() {
+  $("#lookbookPreview").innerHTML = lookbookUploadFiles.map((file, index) => `
+    <div><img src="${escapeHtml(file.preview)}" alt="${escapeHtml(file.name)}" /><button type="button" data-remove-lookbook-upload="${index}" aria-label="삭제">×</button><span>${escapeHtml(file.name)}</span></div>`).join("");
+  $("#addLookbooks").disabled = lookbookUploadFiles.length === 0;
+  $$('[data-remove-lookbook-upload]').forEach(button => button.addEventListener("click", () => {
+    lookbookUploadFiles.splice(Number(button.dataset.removeLookbookUpload), 1);
+    renderLookbookUploadPreview();
+  }));
+}
+
+async function handleLookbookUploads(files) {
+  const selected = [...files].filter(file => /^image\/(jpeg|png|webp)$/.test(file.type)).slice(0, 4 - lookbookUploadFiles.length);
+  for (const file of selected) lookbookUploadFiles.push({ name: file.name, preview: await resizeBodyPhoto(file) });
+  renderLookbookUploadPreview();
+  if ([...files].length > selected.length) showToast("룩북 사진은 한 번에 최대 4장까지 추가할 수 있어요");
+}
+
+function createUploadedLook(id, image) {
+  return {
+    id, image, userAdded: true, creator: "내가 추가한 룩북", mood: "저장한 스타일",
+    sourceTitle: "내가 업로드한 참고 착장", sourceUrl: "#", credit: "내 업로드",
+    publicSpec: "업로드한 참고 착장 사진", gender: selectedGender || "women", styles: ["참고 룩북"], weather: [],
+    heightRange: [130, 210], bmiRange: [14, 40],
+    bodyShapes: ["보통", "마른 체형", "탄탄한 체형", "상체가 발달한 체형", "하체가 발달한 체형", "통통한 체형"],
+    summary: "업로드한 룩북을 분석하고 있어요.", pieces: [], analysisReady: false, analysisState: "pending", vlmAnalysis: null
+  };
+}
+
+async function addUploadedLookbooks() {
+  if (!lookbookUploadFiles.length) return;
+  const files = [...lookbookUploadFiles];
+  $("#addLookbooks").disabled = true;
+  for (let index = 0; index < files.length; index++) {
+    const file = files[index];
+    $("#lookbookPreview").innerHTML = `<div class="generation-loader"><span></span><strong>${index + 1}/${files.length}장 룩북 분석 중</strong><small>상의·하의·아우터를 구분하고 있어요</small></div>`;
+    const look = createUploadedLook(`user-look-${Date.now()}-${index}`, file.preview);
+    try {
+      const analysis = await window.WearwellVLM.analyzeLookImage(look.image, look);
+      applyLookAnalysis(look, analysis);
+      await enrichLookEmbeddings(look);
+      influencerLooks.push(look);
+      selectedInfluencerLookIds.add(look.id);
+      await window.WearwellDB.putLook({
+        ...look, analysis: { ...analysis, pieces: look.pieces }, analysisEngine: VLM_ANALYSIS_ENGINE,
+        analysisVersion: LOOK_ANALYSIS_VERSION, updatedAt: new Date().toISOString()
+      });
+    } catch (error) { showToast(`${file.name}: ${error.message || "룩북 분석 실패"}`); }
+  }
+  lookbookUploadFiles = [];
+  $("#lookbookFileInput").value = ""; $("#lookbookPreview").innerHTML = "";
+  selectedStyles = new Set(influencerLooks.filter(look => selectedInfluencerLookIds.has(look.id)).flatMap(look => look.styles));
+  const profile = JSON.parse(localStorage.getItem("오늘옷-profile") || localStorage.getItem("morrow-profile") || "{}");
+  profile.influencerLooks = [...selectedInfluencerLookIds];
+  localStorage.setItem("오늘옷-profile", JSON.stringify(profile));
+  looks = buildPersonalizedLooks(); closeDialogs(); renderPreferenceChoices(); renderDiscover(); updatePreferenceCount();
+  showToast("업로드한 룩북을 선택 목록과 추천에 추가했어요");
 }
 
 function openItemMatches(itemId) {
@@ -1296,14 +1445,25 @@ function renderGenderChoices() {
 }
 
 function renderPreferenceChoices() {
-  const readyOptions = availableInfluencerMatches().slice(0, 6);
+  const selectedUploads = influencerLooks
+    .filter(look => look.userAdded && look.gender === (selectedGender || "women"))
+    .map(look => ({ look, match: look.analysisReady ? buildInfluencerMatch(look) : null, bodyScore: bodySimilarity(look) }));
+  const readyOptions = availableInfluencerMatches()
+    .filter(result => !selectedUploads.some(upload => upload.look.id === result.look.id))
+    .slice(0, Math.max(0, 18 - selectedUploads.length));
   const bodyCandidates = influencerLooks
     .filter(look => look.gender === (selectedGender || "women"))
     .sort((left, right) => bodySimilarity(right) - bodySimilarity(left));
   const pendingLooks = bodyCandidates
     .filter(look => !look.analysisReady && look.analysisState !== "failed")
-    .slice(0, Math.max(0, 6 - readyOptions.length));
-  const options = [...readyOptions, ...pendingLooks.map(look => ({ look, match: null, bodyScore: bodySimilarity(look) }))];
+    .slice(0, Math.max(0, 18 - selectedUploads.length - readyOptions.length));
+  const options = [...selectedUploads, ...readyOptions, ...pendingLooks
+    .filter(look => !selectedUploads.some(upload => upload.look.id === look.id))
+    .map(look => ({ look, match: null, bodyScore: bodySimilarity(look) }))].slice(0, 18);
+  if (lookDatabaseRestored) {
+    const validIds = new Set(influencerLooks.map(look => look.id));
+    selectedInfluencerLookIds = new Set([...selectedInfluencerLookIds].filter(id => validIds.has(id)));
+  }
   $("#styleChoices").innerHTML = options.length ? options.map(({ look, match, bodyScore }) => `
     <button class="influencer-choice ${selectedInfluencerLookIds.has(look.id) ? "selected" : ""} ${match ? "" : "analyzing"}" data-influencer-look="${escapeHtml(look.id)}">
       <span class="influencer-image"><img src="${escapeHtml(look.image)}" alt="${escapeHtml(look.sourceTitle)}" /><i>✓</i></span>
@@ -1400,7 +1560,7 @@ async function addUploadsToWardrobe() {
     else if (/dress|원피스/.test(lower)) category = "원피스";
     else if (/shoe|boot|sneaker|loafer|신발/.test(lower)) category = "신발";
     else if (/bag|tote|가방/.test(lower)) category = "가방";
-    const item = { id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true };
+    const item = { id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true, referenceLookIds: [] };
     item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
     wardrobe.unshift(item);
     added.push(item);
@@ -1535,6 +1695,7 @@ async function commitSegmentedGarments() {
         color: "색상 미분류",
         worn: 0,
         userAdded: true,
+        referenceLookIds: [],
         segmentation: { label: detected.label, confidence: detected.confidence, refined: Boolean(refined?.stages?.closet), sourceCategory: detected.sourceCategory }
       };
       item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
@@ -1559,33 +1720,116 @@ async function addSegmentPhotosToWardrobe() {
   return segmentBatches.length ? commitSegmentedGarments() : findSegmentedGarments();
 }
 
+async function runLimited(values, limit, worker) {
+  const queue = [...values];
+  await Promise.all(Array.from({ length: Math.min(limit, queue.length) }, async () => {
+    while (queue.length) await worker(queue.shift());
+  }));
+}
+
+async function relinkLegacyUploadedCrops() {
+  const selectedLooks = influencerLooks.filter(look => selectedInfluencerLookIds.has(look.id) && look.analysisReady);
+  let changed = false;
+  for (const item of wardrobe.filter(candidate => candidate.userAdded && !(candidate.referenceLookIds || []).length)) {
+    const vector = item.analysis?.visualEmbedding;
+    const engine = item.analysis?.visualEmbeddingEngine;
+    if (!Array.isArray(vector) || !vector.length) continue;
+    const matches = [];
+    for (const look of selectedLooks) {
+      for (const requirement of look.pieces || []) {
+        if (!comparableEmbedding(engine, requirement.visualEmbeddingEngine)) continue;
+        const cosine = cosineSimilarity(vector, requirement.visualEmbedding);
+        if (cosine !== null) matches.push({ look, requirement, visual: Math.max(0, Math.min(1, (cosine + 1) / 2)) });
+      }
+    }
+    matches.sort((left, right) => right.visual - left.visual);
+    const [best, second] = matches;
+    // 한 룩북과 거의 동일하고 차선 후보와도 충분히 차이 날 때만 출처를 복구한다.
+    if (!best || best.visual < .94 || (second && best.visual - second.visual < .03)) continue;
+    item.referenceLookIds = [best.look.id];
+    if (best.visual >= .97 && best.requirement.category) item.category = best.requirement.category;
+    await persistGarment(item); changed = true;
+  }
+  return changed;
+}
+
+async function refreshStoredEmbeddings() {
+  const garments = wardrobe.filter(item => item.userAdded && !String(item.analysis?.visualEmbeddingEngine || "").startsWith("siglip:"));
+  await runLimited(garments, 2, async item => {
+    try {
+      item.analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item);
+      item.analysis.visualEmbedding = await window.WearwellVLM.embedImage(item.image);
+      item.analysis.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
+      await persistGarment(item);
+    } catch (error) { console.warn("업로드 옷 이미지 임베딩 실패", item.id, error); }
+  });
+  const targetLooks = influencerLooks.filter(look => look.userAdded || selectedInfluencerLookIds.has(look.id));
+  await runLimited(targetLooks, 2, async look => {
+    try {
+      await enrichLookEmbeddings(look);
+      const stored = await window.WearwellDB.getLook(look.id);
+      if (stored) await window.WearwellDB.putLook({
+        ...stored, pieces: look.pieces, analysis: { ...(stored.analysis || {}), pieces: look.pieces }, updatedAt: new Date().toISOString()
+      });
+    } catch (error) { console.warn("룩북 이미지 임베딩 실패", look.id, error); }
+  });
+  await relinkLegacyUploadedCrops();
+  looks = buildPersonalizedLooks(); renderPreferenceChoices(); renderDiscover();
+}
+
 async function restoreWardrobeDatabase() {
   try {
     const records = await window.WearwellDB.getAllGarments();
     records.forEach(record => {
       if (record.userAdded && record.image && !deletedGarmentIds.has(record.id)) {
         const existing = wardrobe.find(item => item.id === record.id);
-        if (existing) existing.analysis = record.analysis || existing.analysis;
+        if (existing) {
+          existing.analysis = record.analysis || existing.analysis;
+          existing.referenceLookIds = record.referenceLookIds || existing.referenceLookIds || [];
+          if (record.analysis?.category) existing.category = record.analysis.category;
+          if (record.analysis?.primaryColor) existing.color = record.analysis.primaryColor;
+        }
         else wardrobe.unshift({ ...record, worn: 0 });
       }
     });
     renderWardrobe(); renderDiscover();
+    const storedLooks = await window.WearwellDB.getAllLooks();
+    storedLooks.filter(record =>
+      (record.userAdded || String(record.id || "").startsWith("user-look-")) && record.image &&
+      !influencerLooks.some(look => look.id === record.id)
+    ).forEach(record => {
+      const look = createUploadedLook(record.id, record.image);
+      Object.assign(look, {
+        creator: record.creator || look.creator, styles: record.styles || look.styles,
+        gender: record.gender || look.gender, publicSpec: record.publicSpec || look.publicSpec,
+        summary: record.summary || look.summary
+      });
+      if (record.analysis) applyLookAnalysis(look, record.analysis);
+      influencerLooks.push(look);
+    });
     for (const look of influencerLooks) {
       if (look.analysisSource === "repository") continue;
       const stored = await window.WearwellDB.getLook(look.id);
-      if (stored?.analysisEngine === VLM_ANALYSIS_ENGINE && stored?.analysisVersion === LOOK_ANALYSIS_VERSION && stored.analysis) {
+      if ((look.userAdded || stored?.userAdded || String(look.id || "").startsWith("user-look-")) && stored?.analysis) {
         applyLookAnalysis(look, stored.analysis);
         continue;
       }
       await window.WearwellDB.putLook({
         id: look.id, creator: look.creator, sourceUrl: look.sourceUrl, image: look.image,
         summary: look.summary, pieces: look.pieces, styles: look.styles, weather: look.weather,
+        userAdded: Boolean(look.userAdded || String(look.id || "").startsWith("user-look-")), gender: look.gender,
         analysisEngine: "curated-qwen-schema", updatedAt: new Date().toISOString()
       });
     }
+    const validIds = new Set(influencerLooks.map(look => look.id));
+    selectedInfluencerLookIds = new Set([...selectedInfluencerLookIds].filter(id => validIds.has(id)));
+    lookDatabaseRestored = true;
     looks = buildPersonalizedLooks();
     renderPreferenceChoices(); renderDiscover();
     queueVisibleLookbookAnalysis(influencerLooks.filter(look => selectedInfluencerLookIds.has(look.id) && !look.analysisReady));
+    const startEmbeddingRefresh = () => refreshStoredEmbeddings();
+    if ("requestIdleCallback" in window) requestIdleCallback(startEmbeddingRefresh, { timeout: 2000 });
+    else setTimeout(startEmbeddingRefresh, 250);
   } catch (error) {
     console.warn("옷장 데이터베이스 복원 실패", error);
   }
@@ -1671,9 +1915,12 @@ function initEvents() {
   $("#backPreferences").addEventListener("click", () => showPreferenceStep(3));
   $("#finishPreferences").addEventListener("click", savePreferences);
   $("#uploadButton").addEventListener("click", () => openDialog($("#uploadDialog")));
+  $("#uploadLookbookButton").addEventListener("click", () => openDialog($("#lookbookUploadDialog")));
   $("#segmentButton").addEventListener("click", () => openDialog($("#segmentDialog")));
   $("#fileInput").addEventListener("change", event => handleUploads(event.target.files));
   $("#addUploads").addEventListener("click", addUploadsToWardrobe);
+  $("#lookbookFileInput").addEventListener("change", event => handleLookbookUploads(event.target.files));
+  $("#addLookbooks").addEventListener("click", addUploadedLookbooks);
   $("#segmentFileInput").addEventListener("change", event => handleSegmentUploads(event.target.files));
   $("#addSegmentPhotos").addEventListener("click", addSegmentPhotosToWardrobe);
   $("#analyzeVisibleWardrobe").addEventListener("click", analyzeVisibleWardrobe);
@@ -1687,6 +1934,10 @@ function initEvents() {
   ["dragenter", "dragover"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add("drag"); }));
   ["dragleave", "drop"].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove("drag"); }));
   dropZone.addEventListener("drop", event => handleUploads(event.dataTransfer.files));
+  const lookbookDropZone = $("#lookbookDropZone");
+  ["dragenter", "dragover"].forEach(type => lookbookDropZone.addEventListener(type, event => { event.preventDefault(); lookbookDropZone.classList.add("drag"); }));
+  ["dragleave", "drop"].forEach(type => lookbookDropZone.addEventListener(type, event => { event.preventDefault(); lookbookDropZone.classList.remove("drag"); }));
+  lookbookDropZone.addEventListener("drop", event => handleLookbookUploads(event.dataTransfer.files));
   const segmentDropZone = $("#segmentDropZone");
   ["dragenter", "dragover"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.add("drag"); }));
   ["dragleave", "drop"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.remove("drag"); }));
@@ -1706,7 +1957,7 @@ function init() {
   restoreWardrobeDatabase();
   window.addEventListener("wearwell:vlm-status", event => {
     const { state, detail } = event.detail;
-    $("#analysisTitle").textContent = state === "loading" ? "Qwen3-VL을 준비하고 있어요" : state === "analyzing" ? "옷 사진을 정밀 분석 중이에요" : state === "error" ? "기본 분석으로 계속 추천할게요" : "Qwen3-VL 옷 분석 준비 완료";
+    $("#analysisTitle").textContent = state === "loading" ? "Qwen3-VL·SigLIP을 준비하고 있어요" : state === "analyzing" ? "유형·색상·핏과 시각 유사도를 분석 중이에요" : state === "error" ? "기본 분석으로 계속 추천할게요" : "Qwen3-VL + SigLIP 유사도 준비 완료";
     $("#analysisStatus").textContent = detail;
   });
 }

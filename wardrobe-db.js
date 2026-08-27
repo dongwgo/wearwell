@@ -37,7 +37,9 @@
     getAllGarments() { return withStore("garments", "readonly", store => store.getAll()); },
     deleteGarment(id) { return withStore("garments", "readwrite", store => store.delete(id)); },
     putLook(record) { return withStore("looks", "readwrite", store => store.put(record)); },
-    getLook(id) { return withStore("looks", "readonly", store => store.get(id)); }
+    getLook(id) { return withStore("looks", "readonly", store => store.get(id)); },
+    getAllLooks() { return withStore("looks", "readonly", store => store.getAll()); },
+    deleteLook(id) { return withStore("looks", "readwrite", store => store.delete(id)); }
   };
 
   window.WearwellDB = api;
