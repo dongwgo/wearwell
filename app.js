@@ -18,7 +18,7 @@ const priorityOptions = [
   ["↗", "새로운 조합 시도", "평소보다 한 걸음 새로운 코디"]
 ];
 const rankingWardrobe = Array.isArray(window.MUSINSA_RANKING) ? window.MUSINSA_RANKING : [];
-if (rankingWardrobe.length !== 200) throw new Error(`무신사 랭킹 데이터가 200개 필요합니다. 현재 ${rankingWardrobe.length}개입니다.`);
+if (!rankingWardrobe.length) throw new Error("옷장 데이터가 비어 있습니다.");
 // 룩북의 의류 분석은 assets/influencer-data.js에 공용 데이터로 함께 배포한다.
 // 각 사용자의 브라우저에서 같은 사진을 다시 VLM으로 분석하지 않는다.
 const influencerLooks = (Array.isArray(window.WEARWELL_INFLUENCER_LOOKS) ? window.WEARWELL_INFLUENCER_LOOKS : []).map(look => {
@@ -128,29 +128,44 @@ function showToast(message) {
 
 function createClipboardImageManager() {
   const targets = [];
+  let lastHandledPaste = 0;
+
+  const mimeByExtension = {
+    avif: "image/avif", bmp: "image/bmp", gif: "image/gif", heic: "image/heic", heif: "image/heif",
+    jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp",
+  };
+  const normalizeImageFile = file => {
+    if (!file) return null;
+    if (String(file.type || "").startsWith("image/")) return file;
+    const extension = String(file.name || "").match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
+    const type = mimeByExtension[extension];
+    if (!type) return null;
+    // Windows에서 파일을 복사하면 이름은 있지만 MIME이 빈 경우가 있다. 기존 업로드
+    // 함수들도 image/*를 검사하므로 여기서 타입을 복원하지 않으면 다시 탈락한다.
+    return new File([file], file.name, { type, lastModified: file.lastModified });
+  };
 
   const clipboardImages = event => {
     const items = [...(event.clipboardData?.items || [])]
-      .filter(item => item.kind === "file" && item.type.startsWith("image/"))
+      .filter(item => item.kind === "file")
       .map(item => item.getAsFile())
+      .map(normalizeImageFile)
       .filter(Boolean);
     if (items.length) return items;
-    return [...(event.clipboardData?.files || [])].filter(file => file.type.startsWith("image/"));
+    return [...(event.clipboardData?.files || [])].map(normalizeImageFile).filter(Boolean);
   };
 
-  document.addEventListener("paste", async event => {
-    const files = clipboardImages(event);
-    if (!files.length) return;
+  const activeTarget = eventTarget => {
     const active = target => target.element?.isConnected && target.isActive();
     const openModal = document.querySelector("dialog[open]");
     // 모달이 떠 있으면 배경 화면의 Lab으로 이미지가 들어가지 않게 모달 내부만 본다.
     const candidates = openModal ? targets.filter(target => openModal.contains(target.element)) : targets;
-    const directTarget = candidates.find(target => active(target) && target.element.contains(event.target));
-    const target = directTarget || candidates.find(active);
-    if (!target) return;
+    return candidates.find(target => active(target) && target.element.contains(eventTarget)) || candidates.find(active);
+  };
 
-    event.preventDefault();
+  const deliver = async (target, files) => {
     const selected = target.multiple ? files : files.slice(0, 1);
+    if (!selected.length) return;
     try {
       await target.onFiles(selected);
       target.element.classList.add("drag");
@@ -160,11 +175,79 @@ function createClipboardImageManager() {
       console.error("Clipboard image upload failed", error);
       showToast("클립보드 이미지를 읽지 못했어요");
     }
-  });
+  };
+
+  const dataUrlFile = value => {
+    const match = String(value || "").match(/^data:(image\/[\w.+-]+);base64,(.+)$/i);
+    if (!match) return null;
+    const bytes = Uint8Array.from(atob(match[2]), character => character.charCodeAt(0));
+    const extension = match[1].split("/")[1].replace("jpeg", "jpg").replace(/[^a-z0-9]/gi, "") || "png";
+    return new File([bytes], `clipboard-${Date.now()}.${extension}`, { type: match[1] });
+  };
+
+  const embeddedClipboardImage = event => {
+    const plain = event.clipboardData?.getData("text/plain") || "";
+    const direct = dataUrlFile(plain);
+    if (direct) return direct;
+    const html = event.clipboardData?.getData("text/html") || "";
+    if (!html) return null;
+    const source = new DOMParser().parseFromString(html, "text/html").querySelector("img")?.getAttribute("src");
+    return dataUrlFile(source);
+  };
+
+  const readClipboardApiImages = async () => {
+    if (!navigator.clipboard?.read) return [];
+    try {
+      const clipboardItems = await navigator.clipboard.read();
+      const files = [];
+      for (const item of clipboardItems) {
+        for (const type of item.types.filter(value => value.startsWith("image/"))) {
+          const blob = await item.getType(type);
+          const extension = type.split("/")[1].replace("jpeg", "jpg").replace(/[^a-z0-9]/gi, "") || "png";
+          files.push(new File([blob], `clipboard-${Date.now()}.${extension}`, { type }));
+        }
+      }
+      return files;
+    } catch (error) {
+      // 권한이 없거나 HTTP 환경이면 일반 paste 이벤트 경로만 사용한다.
+      console.debug("Clipboard API image read unavailable", error);
+      return [];
+    }
+  };
+
+  document.addEventListener("paste", event => {
+    const files = clipboardImages(event);
+    const embedded = files.length ? null : embeddedClipboardImage(event);
+    if (!files.length && !embedded) return;
+    const target = activeTarget(event.target);
+    if (!target) return;
+
+    event.preventDefault();
+    lastHandledPaste = performance.now();
+    void deliver(target, files.length ? files : [embedded]);
+  }, true);
+
+  // 실제 Ctrl/Cmd+V인데 paste 이벤트에 파일이 실리지 않는 Chrome/Windows 조합의 폴백.
+  document.addEventListener("keydown", event => {
+    if (!(event.ctrlKey || event.metaKey) || event.altKey || event.key.toLowerCase() !== "v") return;
+    const target = activeTarget(event.target);
+    if (!target) return;
+    const started = performance.now();
+    setTimeout(async () => {
+      if (lastHandledPaste >= started) return;
+      const files = await readClipboardApiImages();
+      if (files.length) {
+        lastHandledPaste = performance.now();
+        await deliver(target, files);
+      }
+    }, 100);
+  }, true);
 
   return {
     register({ element, isActive, multiple = false, onFiles }) {
       if (element && typeof isActive === "function" && typeof onFiles === "function") {
+        if (!element.hasAttribute("tabindex")) element.tabIndex = 0;
+        element.title = `${element.title ? `${element.title} · ` : ""}이미지를 복사한 뒤 Ctrl+V로 붙여넣을 수 있어요`;
         targets.push({ element, isActive, multiple, onFiles });
       }
     },
@@ -569,6 +652,25 @@ function orderGarmentsForTryon(items) {
   return kept;
 }
 
+// 직접 고른 옷과 룩북 추천 옷 모두 실제 사진 분석값을 같은 형식으로 모델에 전달한다.
+// 백엔드 GarmentInput.name의 100자 제한보다 짧게 유지한다.
+const TRYON_PROMPT_VERSION = "garment-spec-v2";
+function tryonGarmentDescriptor(item) {
+  const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item) || {};
+  const details = [
+    item.name,
+    item.color || analysis.primaryColor,
+    analysis.subcategory,
+    analysis.pattern,
+    analysis.sleeveLength,
+    analysis.length,
+    analysis.fit,
+    analysis.silhouette,
+    analysis.neckline,
+  ].filter(Boolean).map(value => String(value).replace(/[|]/g, " ").trim());
+  return [...new Set(details)].join(" | ").slice(0, 96) || String(item.name || "garment").slice(0, 96);
+}
+
 // 측면·후면을 나중에 만들 때 필요한 요청 정보. 착장이 성공해야 채워진다.
 let tryonContext = null;
 let photoAvatarImage = null;
@@ -734,7 +836,7 @@ async function runTryOnItems(items, comparison = null) {
   const isStale = () => requestId !== tryonRequestId;
 
   const avatarKey = avatarMeasurements ? JSON.stringify(avatarMeasurements) : avatarImage.slice(-64);
-  const cacheKey = `${items.map(item => item.id).join("-")}-${avatarKey}`;
+  const cacheKey = `${TRYON_PROMPT_VERSION}-${items.map(item => `${item.id}:${tryonGarmentDescriptor(item)}`).join("-")}-${avatarKey}`;
   $("#tryonGarments").innerHTML = items.map(item => `<div><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" /><span>${escapeHtml(item.name)}</span></div>`).join("");
   renderTryonStage(comparison, null, true);
   $("#tryonStatusText").textContent = "선택한 옷의 색과 형태를 살려 조합하고 있어요.";
@@ -751,7 +853,7 @@ async function runTryOnItems(items, comparison = null) {
     // 옷 사진 하나를 못 읽었다고 착장 전체를 포기하지 않는다. 읽힌 것만 입힌다.
     const loaded = await Promise.all(wearableItems.map(async item => {
       try {
-        return { image: await imageToDataUrl(item.image), category: garmentType(item.category), name: item.name };
+        return { image: await imageToDataUrl(item.image), category: garmentType(item.category), name: tryonGarmentDescriptor(item) };
       } catch {
         return null;
       }

@@ -1,0 +1,3429 @@
+{
+  "model": "black-forest-labs/FLUX.2-klein-4B",
+  "startedAt": "2026-08-27T06:34:06.877Z",
+  "completed": {
+    "pinterest-26669822788864441-상의": {
+      "filename": "look-002.jpg",
+      "sourceFile": "closet-070.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 88864441,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-26669822788864441-하의": {
+      "filename": "look-164.jpg",
+      "sourceFile": "closet-070.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 88864441,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-26669822788864441-가방": {
+      "filename": "look-216.jpg",
+      "sourceFile": "closet-070.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 88864441,
+        "steps": 4,
+        "seconds": 2.29
+      }
+    },
+    "pinterest-9359111722094239-상의": {
+      "filename": "look-001.jpg",
+      "sourceFile": "closet-011.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22094239,
+        "steps": 4,
+        "seconds": 2.28
+      }
+    },
+    "pinterest-9359111722094239-하의": {
+      "filename": "look-200.jpg",
+      "sourceFile": "closet-011.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22094239,
+        "steps": 4,
+        "seconds": 2.28
+      }
+    },
+    "pinterest-154952043426687644-상의": {
+      "filename": "look-003.jpg",
+      "sourceFile": "closet-052.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26687644,
+        "steps": 4,
+        "seconds": 1.95
+      }
+    },
+    "pinterest-154952043426687644-하의": {
+      "filename": "look-119.jpg",
+      "sourceFile": "closet-052.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26687644,
+        "steps": 4,
+        "seconds": 1.98
+      }
+    },
+    "pinterest-154952043426687644-가방": {
+      "filename": "look-231.jpg",
+      "sourceFile": "closet-052.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26687644,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-211174979274410-상의": {
+      "filename": "look-004.jpg",
+      "sourceFile": "closet-079.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 79274410,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-211174979274410-신발": {
+      "filename": "look-203.jpg",
+      "sourceFile": "closet-079.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 79274410,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-211174979274410-가방": {
+      "filename": "look-207.jpg",
+      "sourceFile": "closet-079.png",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 79274410,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-13933080093356845-상의": {
+      "filename": "look-005.jpg",
+      "sourceFile": "closet-062.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 93356845,
+        "steps": 4,
+        "seconds": 1.63
+      }
+    },
+    "pinterest-13933080093356845-하의": {
+      "filename": "look-186.jpg",
+      "sourceFile": "closet-062.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 93356845,
+        "steps": 4,
+        "seconds": 1.66
+      }
+    },
+    "pinterest-12666442697761854-상의": {
+      "filename": "look-006.jpg",
+      "sourceFile": "closet-047.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 97761854,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-12666442697761854-하의": {
+      "filename": "look-110.jpg",
+      "sourceFile": "closet-047.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 97761854,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-11047961583241447-상의": {
+      "filename": "look-008.jpg",
+      "sourceFile": "closet-002.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83241447,
+        "steps": 4,
+        "seconds": 2.2
+      }
+    },
+    "pinterest-11047961583241447-하의": {
+      "filename": "look-105.jpg",
+      "sourceFile": "closet-002.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83241447,
+        "steps": 4,
+        "seconds": 2.22
+      }
+    },
+    "pinterest-1688918607002083-상의": {
+      "filename": "look-007.jpg",
+      "sourceFile": "closet-033.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 7002083,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-1688918607002083-하의": {
+      "filename": "look-048.jpg",
+      "sourceFile": "closet-033.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 7002083,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-1688918607002083-가방": {
+      "filename": "look-222.jpg",
+      "sourceFile": "closet-033.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 7002083,
+        "steps": 4,
+        "seconds": 1.19
+      }
+    },
+    "pinterest-1688918607002083-신발": {
+      "filename": "look-290.jpg",
+      "sourceFile": "closet-033.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 7002083,
+        "steps": 4,
+        "seconds": 1.48
+      }
+    },
+    "pinterest-596867756911162509-상의": {
+      "filename": "look-010.jpg",
+      "sourceFile": "closet-093.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 11162509,
+        "steps": 4,
+        "seconds": 0.73
+      }
+    },
+    "pinterest-21181060744392248-하의": {
+      "filename": "look-009.jpg",
+      "sourceFile": "closet-032.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 44392248,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-21181060744392248-상의": {
+      "filename": "look-033.jpg",
+      "sourceFile": "closet-032.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 44392248,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-21181060744392248-가방": {
+      "filename": "look-212.jpg",
+      "sourceFile": "closet-032.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 44392248,
+        "steps": 4,
+        "seconds": 1.19
+      }
+    },
+    "pinterest-21181060744392248-신발": {
+      "filename": "look-229.jpg",
+      "sourceFile": "closet-032.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 44392248,
+        "steps": 4,
+        "seconds": 1.48
+      }
+    },
+    "pinterest-844493676541393-상의": {
+      "filename": "look-012.jpg",
+      "sourceFile": "closet-092.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 76541393,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-844493676541393-하의": {
+      "filename": "look-124.jpg",
+      "sourceFile": "closet-092.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 76541393,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-103160647710369248-하의": {
+      "filename": "look-011.jpg",
+      "sourceFile": "closet-055.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10369248,
+        "steps": 4,
+        "seconds": 2.57
+      }
+    },
+    "pinterest-103160647710369248-상의": {
+      "filename": "look-057.jpg",
+      "sourceFile": "closet-055.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10369248,
+        "steps": 4,
+        "seconds": 2.54
+      }
+    },
+    "pinterest-103160647710369248-액세서리": {
+      "filename": "look-243.jpg",
+      "sourceFile": "closet-055.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10369248,
+        "steps": 4,
+        "seconds": 0.76
+      }
+    },
+    "pinterest-985231164891452-상의": {
+      "filename": "look-013.jpg",
+      "sourceFile": "closet-042.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 64891452,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-985231164891452-하의": {
+      "filename": "look-043.jpg",
+      "sourceFile": "closet-042.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 64891452,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-69665125483137340-상의": {
+      "filename": "look-014.jpg",
+      "sourceFile": "closet-026.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83137340,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-69665125483137340-하의": {
+      "filename": "look-125.jpg",
+      "sourceFile": "closet-026.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83137340,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-8514686791065983-상의": {
+      "filename": "look-015.jpg",
+      "sourceFile": "closet-066.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91065983,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-8514686791065983-하의": {
+      "filename": "look-077.jpg",
+      "sourceFile": "closet-066.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91065983,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-1477812372623439-상의": {
+      "filename": "look-016.jpg",
+      "sourceFile": "closet-100.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72623439,
+        "steps": 4,
+        "seconds": 3.04
+      }
+    },
+    "pinterest-1477812372623439-하의": {
+      "filename": "look-129.jpg",
+      "sourceFile": "closet-100.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72623439,
+        "steps": 4,
+        "seconds": 3.03
+      }
+    },
+    "pinterest-1477812372623439-신발": {
+      "filename": "look-220.jpg",
+      "sourceFile": "closet-100.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72623439,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-9922061675644654-상의": {
+      "filename": "look-018.jpg",
+      "sourceFile": "closet-015.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75644654,
+        "steps": 4,
+        "seconds": 2.79
+      }
+    },
+    "pinterest-9922061675644654-하의": {
+      "filename": "look-182.jpg",
+      "sourceFile": "closet-015.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75644654,
+        "steps": 4,
+        "seconds": 2.8
+      }
+    },
+    "pinterest-9922061675644654-신발": {
+      "filename": "look-240.jpg",
+      "sourceFile": "closet-015.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75644654,
+        "steps": 4,
+        "seconds": 1.16
+      }
+    },
+    "pinterest-305681893480048223-상의": {
+      "filename": "look-017.jpg",
+      "sourceFile": "closet-086.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 80048223,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-305681893480048223-하의": {
+      "filename": "look-041.jpg",
+      "sourceFile": "closet-086.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 80048223,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-305681893480048223-신발": {
+      "filename": "look-233.jpg",
+      "sourceFile": "closet-086.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 80048223,
+        "steps": 4,
+        "seconds": 3.09
+      }
+    },
+    "pinterest-117797346501299889-상의": {
+      "filename": "look-020.jpg",
+      "sourceFile": "closet-044.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1299889,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-117797346501299889-하의": {
+      "filename": "look-169.jpg",
+      "sourceFile": "closet-044.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1299889,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-117797346501299889-액세서리": {
+      "filename": "look-305.jpg",
+      "sourceFile": "closet-044.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1299889,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-34973334602076552-하의": {
+      "filename": "look-019.jpg",
+      "sourceFile": "closet-078.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2076552,
+        "steps": 4,
+        "seconds": 1.68
+      }
+    },
+    "pinterest-34973334602076552-상의": {
+      "filename": "look-036.jpg",
+      "sourceFile": "closet-078.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2076552,
+        "steps": 4,
+        "seconds": 1.7
+      }
+    },
+    "pinterest-34973334602076552-신발": {
+      "filename": "look-224.jpg",
+      "sourceFile": "closet-078.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2076552,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-170785010870351775-상의": {
+      "filename": "look-021.jpg",
+      "sourceFile": "closet-050.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 70351775,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-170785010870351775-하의": {
+      "filename": "look-069.jpg",
+      "sourceFile": "closet-050.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 70351775,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-170785010870351775-가방": {
+      "filename": "look-218.jpg",
+      "sourceFile": "closet-050.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 70351775,
+        "steps": 4,
+        "seconds": 2.69
+      }
+    },
+    "pinterest-9148005522063241-상의": {
+      "filename": "look-022.jpg",
+      "sourceFile": "closet-003.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22063241,
+        "steps": 4,
+        "seconds": 2.35
+      }
+    },
+    "pinterest-9148005522063241-하의": {
+      "filename": "look-071.jpg",
+      "sourceFile": "closet-003.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22063241,
+        "steps": 4,
+        "seconds": 2.33
+      }
+    },
+    "pinterest-9148005522063241-가방": {
+      "filename": "look-226.jpg",
+      "sourceFile": "closet-003.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22063241,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-17592254790269236-상의": {
+      "filename": "look-023.jpg",
+      "sourceFile": "closet-099.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 90269236,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-17592254790269236-하의": {
+      "filename": "look-131.jpg",
+      "sourceFile": "closet-099.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 90269236,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-17592254790269236-액세서리": {
+      "filename": "look-295.jpg",
+      "sourceFile": "closet-099.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 90269236,
+        "steps": 4,
+        "seconds": 2.72
+      }
+    },
+    "pinterest-9922061673795156-상의": {
+      "filename": "look-024.jpg",
+      "sourceFile": "closet-065.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 73795156,
+        "steps": 4,
+        "seconds": 2.12
+      }
+    },
+    "pinterest-9922061673795156-하의": {
+      "filename": "look-120.jpg",
+      "sourceFile": "closet-065.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 73795156,
+        "steps": 4,
+        "seconds": 2.14
+      }
+    },
+    "pinterest-9922061673795156-신발": {
+      "filename": "look-253.jpg",
+      "sourceFile": "closet-065.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 73795156,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-11399805459203127-하의": {
+      "filename": "look-025.jpg",
+      "sourceFile": "closet-045.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 59203127,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-11399805459203127-상의": {
+      "filename": "look-026.jpg",
+      "sourceFile": "closet-045.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 59203127,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-11399805459203127-신발": {
+      "filename": "look-245.jpg",
+      "sourceFile": "closet-045.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 59203127,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-11540542795244992-하의": {
+      "filename": "look-027.jpg",
+      "sourceFile": "closet-037.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95244992,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-11540542795244992-상의": {
+      "filename": "look-114.jpg",
+      "sourceFile": "closet-037.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95244992,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-11540542795244992-액세서리": {
+      "filename": "look-293.jpg",
+      "sourceFile": "closet-037.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95244992,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-473863192067605822-하의": {
+      "filename": "look-029.jpg",
+      "sourceFile": "closet-043.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67605822,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-473863192067605822-상의": {
+      "filename": "look-066.jpg",
+      "sourceFile": "closet-043.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67605822,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-473863192067605822-가방": {
+      "filename": "look-301.jpg",
+      "sourceFile": "closet-043.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67605822,
+        "steps": 4,
+        "seconds": 3.1
+      }
+    },
+    "pinterest-24347654232484871-하의": {
+      "filename": "look-028.jpg",
+      "sourceFile": "closet-017.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 32484871,
+        "steps": 4,
+        "seconds": 2.67
+      }
+    },
+    "pinterest-24347654232484871-상의": {
+      "filename": "look-067.jpg",
+      "sourceFile": "closet-017.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 32484871,
+        "steps": 4,
+        "seconds": 2.68
+      }
+    },
+    "pinterest-24347654232484871-가방": {
+      "filename": "look-206.jpg",
+      "sourceFile": "closet-017.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 32484871,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-422281212664117-상의": {
+      "filename": "look-030.jpg",
+      "sourceFile": "closet-007.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 12664117,
+        "steps": 4,
+        "seconds": 2.36
+      }
+    },
+    "pinterest-422281212664117-하의": {
+      "filename": "look-032.jpg",
+      "sourceFile": "closet-007.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 12664117,
+        "steps": 4,
+        "seconds": 2.37
+      }
+    },
+    "pinterest-42221315254632722-하의": {
+      "filename": "look-031.jpg",
+      "sourceFile": "closet-094.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 54632722,
+        "steps": 4,
+        "seconds": 1.66
+      }
+    },
+    "pinterest-42221315254632722-상의": {
+      "filename": "look-088.jpg",
+      "sourceFile": "closet-094.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 54632722,
+        "steps": 4,
+        "seconds": 1.63
+      }
+    },
+    "pinterest-42221315254632722-신발": {
+      "filename": "look-238.jpg",
+      "sourceFile": "closet-094.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 54632722,
+        "steps": 4,
+        "seconds": 2.29
+      }
+    },
+    "pinterest-6403624465917617-하의": {
+      "filename": "look-035.jpg",
+      "sourceFile": "closet-069.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 65917617,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-6403624465917617-상의": {
+      "filename": "look-150.jpg",
+      "sourceFile": "closet-069.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 65917617,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-6403624465917617-신발": {
+      "filename": "look-251.jpg",
+      "sourceFile": "closet-069.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 65917617,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-6403624465917617-액세서리": {
+      "filename": "look-266.jpg",
+      "sourceFile": "closet-069.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 65917617,
+        "steps": 4,
+        "seconds": 3.01
+      }
+    },
+    "pinterest-6262886978408635-하의": {
+      "filename": "look-034.jpg",
+      "sourceFile": "closet-001.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78408635,
+        "steps": 4,
+        "seconds": 2.61
+      }
+    },
+    "pinterest-6262886978408635-상의": {
+      "filename": "look-059.jpg",
+      "sourceFile": "closet-001.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78408635,
+        "steps": 4,
+        "seconds": 2.59
+      }
+    },
+    "pinterest-6262886978408635-신발": {
+      "filename": "look-311.jpg",
+      "sourceFile": "closet-001.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78408635,
+        "steps": 4,
+        "seconds": 2.23
+      }
+    },
+    "pinterest-11470174047169267-상의": {
+      "filename": "look-037.jpg",
+      "sourceFile": "closet-024.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47169267,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-11470174047169267-하의": {
+      "filename": "look-134.jpg",
+      "sourceFile": "closet-024.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47169267,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-11470174047169267-가방": {
+      "filename": "look-213.jpg",
+      "sourceFile": "closet-024.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47169267,
+        "steps": 4,
+        "seconds": 2.71
+      }
+    },
+    "pinterest-1759287348764920-상의": {
+      "filename": "look-038.jpg",
+      "sourceFile": "closet-020.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48764920,
+        "steps": 4,
+        "seconds": 1.94
+      }
+    },
+    "pinterest-1759287348764920-하의": {
+      "filename": "look-152.jpg",
+      "sourceFile": "closet-020.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48764920,
+        "steps": 4,
+        "seconds": 1.93
+      }
+    },
+    "pinterest-1759287348764920-가방": {
+      "filename": "look-188.jpg",
+      "sourceFile": "closet-020.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48764920,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-1759287348764920-신발": {
+      "filename": "look-227.jpg",
+      "sourceFile": "closet-020.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48764920,
+        "steps": 4,
+        "seconds": 2.22
+      }
+    },
+    "pinterest-66920744458441940-액세서리": {
+      "filename": "look-278.jpg",
+      "sourceFile": "closet-068.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 58441940,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-66920744458441940-하의": {
+      "filename": "look-039.jpg",
+      "sourceFile": "closet-068.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 58441940,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-66920744458441940-상의": {
+      "filename": "look-155.jpg",
+      "sourceFile": "closet-068.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 58441940,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-66920744458441940-가방": {
+      "filename": "look-214.jpg",
+      "sourceFile": "closet-068.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 58441940,
+        "steps": 4,
+        "seconds": 1.22
+      }
+    },
+    "pinterest-66920744458441940-신발": {
+      "filename": "look-268.jpg",
+      "sourceFile": "closet-068.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 58441940,
+        "steps": 4,
+        "seconds": 1.49
+      }
+    },
+    "pinterest-1407443629629932-상의": {
+      "filename": "look-042.jpg",
+      "sourceFile": "closet-095.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 29629932,
+        "steps": 4,
+        "seconds": 2.75
+      }
+    },
+    "pinterest-1407443629629932-하의": {
+      "filename": "look-064.jpg",
+      "sourceFile": "closet-095.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 29629932,
+        "steps": 4,
+        "seconds": 2.71
+      }
+    },
+    "pinterest-1407443629629932-가방": {
+      "filename": "look-230.jpg",
+      "sourceFile": "closet-095.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 29629932,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-1407443629629932-신발": {
+      "filename": "look-275.jpg",
+      "sourceFile": "closet-095.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 29629932,
+        "steps": 4,
+        "seconds": 2.23
+      }
+    },
+    "pinterest-1125968743087853-상의": {
+      "filename": "look-040.jpg",
+      "sourceFile": "closet-096.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43087853,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-1125968743087853-하의": {
+      "filename": "look-172.jpg",
+      "sourceFile": "closet-096.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43087853,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-1125968743087853-신발": {
+      "filename": "look-225.jpg",
+      "sourceFile": "closet-096.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43087853,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-68749195316-하의": {
+      "filename": "look-045.jpg",
+      "sourceFile": "closet-040.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 49195316,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-68749195316-상의": {
+      "filename": "look-079.jpg",
+      "sourceFile": "closet-040.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 49195316,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-68749195316-신발": {
+      "filename": "look-257.jpg",
+      "sourceFile": "closet-040.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 49195316,
+        "steps": 4,
+        "seconds": 2.71
+      }
+    },
+    "pinterest-195906652535833671-하의": {
+      "filename": "look-044.jpg",
+      "sourceFile": "closet-030.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 35833671,
+        "steps": 4,
+        "seconds": 2.48
+      }
+    },
+    "pinterest-195906652535833671-상의": {
+      "filename": "look-168.jpg",
+      "sourceFile": "closet-030.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 35833671,
+        "steps": 4,
+        "seconds": 2.53
+      }
+    },
+    "pinterest-195906652535833671-신발": {
+      "filename": "look-262.jpg",
+      "sourceFile": "closet-030.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 35833671,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-22940279347926737-상의": {
+      "filename": "look-047.jpg",
+      "sourceFile": "closet-019.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47926737,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-22940279347926737-하의": {
+      "filename": "look-126.jpg",
+      "sourceFile": "closet-019.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47926737,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-22940279347908114-상의": {
+      "filename": "look-046.jpg",
+      "sourceFile": "closet-076.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47908114,
+        "steps": 4,
+        "seconds": 3.06
+      }
+    },
+    "pinterest-22940279347908114-하의": {
+      "filename": "look-143.jpg",
+      "sourceFile": "closet-076.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 47908114,
+        "steps": 4,
+        "seconds": 3.05
+      }
+    },
+    "pinterest-3307399722257681-하의": {
+      "filename": "look-049.jpg",
+      "sourceFile": "closet-029.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22257681,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-3307399722257681-상의": {
+      "filename": "look-175.jpg",
+      "sourceFile": "closet-029.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22257681,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-3307399722257681-신발": {
+      "filename": "look-260.jpg",
+      "sourceFile": "closet-029.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22257681,
+        "steps": 4,
+        "seconds": 2.69
+      }
+    },
+    "pinterest-1050042469403179653-상의": {
+      "filename": "look-050.jpg",
+      "sourceFile": "closet-077.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 3179653,
+        "steps": 4,
+        "seconds": 1.92
+      }
+    },
+    "pinterest-1050042469403179653-하의": {
+      "filename": "look-095.jpg",
+      "sourceFile": "closet-077.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 3179653,
+        "steps": 4,
+        "seconds": 1.95
+      }
+    },
+    "pinterest-1050042469403179653-가방": {
+      "filename": "look-195.jpg",
+      "sourceFile": "closet-077.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 3179653,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-1050042469403179653-신발": {
+      "filename": "look-274.jpg",
+      "sourceFile": "closet-077.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 3179653,
+        "steps": 4,
+        "seconds": 2.21
+      }
+    },
+    "pinterest-34832597116289554-상의": {
+      "filename": "look-052.jpg",
+      "sourceFile": "closet-009.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 16289554,
+        "steps": 4,
+        "seconds": 2.62
+      }
+    },
+    "pinterest-7529524372765361-하의": {
+      "filename": "look-051.jpg",
+      "sourceFile": "closet-082.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72765361,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-34832597116289554-하의": {
+      "filename": "look-116.jpg",
+      "sourceFile": "closet-009.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 16289554,
+        "steps": 4,
+        "seconds": 2.58
+      }
+    },
+    "pinterest-7529524372765361-상의": {
+      "filename": "look-130.jpg",
+      "sourceFile": "closet-082.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72765361,
+        "steps": 4,
+        "seconds": 1.49
+      }
+    },
+    "pinterest-34832597116289554-신발": {
+      "filename": "look-252.jpg",
+      "sourceFile": "closet-009.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 16289554,
+        "steps": 4,
+        "seconds": 2.24
+      }
+    },
+    "pinterest-7529524372765361-가방": {
+      "filename": "look-202.jpg",
+      "sourceFile": "closet-082.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72765361,
+        "steps": 4,
+        "seconds": 2.72
+      }
+    },
+    "pinterest-7529524372765361-신발": {
+      "filename": "look-307.jpg",
+      "sourceFile": "closet-082.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 72765361,
+        "steps": 4,
+        "seconds": 2.99
+      }
+    },
+    "pinterest-626915210674253166-상의": {
+      "filename": "look-054.jpg",
+      "sourceFile": "closet-018.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 74253166,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-626915210674253166-하의": {
+      "filename": "look-117.jpg",
+      "sourceFile": "closet-018.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 74253166,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-626915210674253166-가방": {
+      "filename": "look-276.jpg",
+      "sourceFile": "closet-018.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 74253166,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-211174978881579-하의": {
+      "filename": "look-053.jpg",
+      "sourceFile": "closet-080.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78881579,
+        "steps": 4,
+        "seconds": 2.6
+      }
+    },
+    "pinterest-211174978881579-상의": {
+      "filename": "look-103.jpg",
+      "sourceFile": "closet-080.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78881579,
+        "steps": 4,
+        "seconds": 2.58
+      }
+    },
+    "pinterest-211174978881579-신발": {
+      "filename": "look-286.jpg",
+      "sourceFile": "closet-080.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78881579,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-1407443628010075-상의": {
+      "filename": "look-056.jpg",
+      "sourceFile": "closet-036.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 28010075,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-1407443628010075-하의": {
+      "filename": "look-137.jpg",
+      "sourceFile": "closet-036.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 28010075,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-1407443628010075-신발": {
+      "filename": "look-256.jpg",
+      "sourceFile": "closet-036.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 28010075,
+        "steps": 4,
+        "seconds": 2.71
+      }
+    },
+    "pinterest-1407443628010075-가방": {
+      "filename": "look-267.jpg",
+      "sourceFile": "closet-036.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 28010075,
+        "steps": 4,
+        "seconds": 3.01
+      }
+    },
+    "pinterest-5418462046393223-상의": {
+      "filename": "look-055.jpg",
+      "sourceFile": "closet-091.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 46393223,
+        "steps": 4,
+        "seconds": 2.61
+      }
+    },
+    "pinterest-5418462046393223-하의": {
+      "filename": "look-062.jpg",
+      "sourceFile": "closet-091.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 46393223,
+        "steps": 4,
+        "seconds": 2.57
+      }
+    },
+    "pinterest-5418462046393223-신발": {
+      "filename": "look-236.jpg",
+      "sourceFile": "closet-091.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 46393223,
+        "steps": 4,
+        "seconds": 2.25
+      }
+    },
+    "pinterest-4644405861552394-하의": {
+      "filename": "look-060.jpg",
+      "sourceFile": "closet-072.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 61552394,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-4644405861552394-상의": {
+      "filename": "look-072.jpg",
+      "sourceFile": "closet-072.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 61552394,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-4644405861552394-신발": {
+      "filename": "look-263.jpg",
+      "sourceFile": "closet-072.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 61552394,
+        "steps": 4,
+        "seconds": 2.71
+      }
+    },
+    "pinterest-11188699075721463-상의": {
+      "filename": "look-058.jpg",
+      "sourceFile": "closet-073.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75721463,
+        "steps": 4,
+        "seconds": 2.13
+      }
+    },
+    "pinterest-11188699075721463-하의": {
+      "filename": "look-061.jpg",
+      "sourceFile": "closet-073.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75721463,
+        "steps": 4,
+        "seconds": 2.11
+      }
+    },
+    "pinterest-11188699075721463-신발": {
+      "filename": "look-234.jpg",
+      "sourceFile": "closet-073.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75721463,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-11188699075721463-액세서리": {
+      "filename": "look-247.jpg",
+      "sourceFile": "closet-073.png",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75721463,
+        "steps": 4,
+        "seconds": 2.21
+      }
+    },
+    "pinterest-13721973862170706-상의": {
+      "filename": "look-063.jpg",
+      "sourceFile": "closet-089.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62170706,
+        "steps": 4,
+        "seconds": 1.67
+      }
+    },
+    "pinterest-13721973862170706-하의": {
+      "filename": "look-138.jpg",
+      "sourceFile": "closet-089.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62170706,
+        "steps": 4,
+        "seconds": 1.64
+      }
+    },
+    "pinterest-13721973862170706-신발": {
+      "filename": "look-292.jpg",
+      "sourceFile": "closet-089.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62170706,
+        "steps": 4,
+        "seconds": 2.69
+      }
+    },
+    "pinterest-12596073953957939-하의": {
+      "filename": "look-065.jpg",
+      "sourceFile": "closet-098.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53957939,
+        "steps": 4,
+        "seconds": 2.54
+      }
+    },
+    "pinterest-12596073953957939-상의": {
+      "filename": "look-073.jpg",
+      "sourceFile": "closet-098.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53957939,
+        "steps": 4,
+        "seconds": 2.55
+      }
+    },
+    "pinterest-12596073953957939-신발": {
+      "filename": "look-209.jpg",
+      "sourceFile": "closet-098.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53957939,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-291467407245410151-상의": {
+      "filename": "look-068.jpg",
+      "sourceFile": "closet-006.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 45410151,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-291467407245410151-하의": {
+      "filename": "look-094.jpg",
+      "sourceFile": "closet-006.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 45410151,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-291467407245410151-가방": {
+      "filename": "look-228.jpg",
+      "sourceFile": "closet-006.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 45410151,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-4503668371891889-상의": {
+      "filename": "look-070.jpg",
+      "sourceFile": "closet-067.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 71891889,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-4503668371891889-하의": {
+      "filename": "look-161.jpg",
+      "sourceFile": "closet-067.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 71891889,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-3659243441559094-하의": {
+      "filename": "look-074.jpg",
+      "sourceFile": "closet-028.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 41559094,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-3659243441559094-상의": {
+      "filename": "look-089.jpg",
+      "sourceFile": "closet-028.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 41559094,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-3659243441559094-신발": {
+      "filename": "look-241.jpg",
+      "sourceFile": "closet-028.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 41559094,
+        "steps": 4,
+        "seconds": 3.14
+      }
+    },
+    "pinterest-3659243441559094-액세서리": {
+      "filename": "look-259.jpg",
+      "sourceFile": "closet-028.png",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 41559094,
+        "steps": 4,
+        "seconds": 2.96
+      }
+    },
+    "pinterest-642396334394626855-하의": {
+      "filename": "look-076.jpg",
+      "sourceFile": "closet-005.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 94626855,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-642396334394626855-상의": {
+      "filename": "look-151.jpg",
+      "sourceFile": "closet-005.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 94626855,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-642396334394626855-신발": {
+      "filename": "look-244.jpg",
+      "sourceFile": "closet-005.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 94626855,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-2955556001885993-상의": {
+      "filename": "look-075.jpg",
+      "sourceFile": "closet-053.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1885993,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-2955556001885993-하의": {
+      "filename": "look-163.jpg",
+      "sourceFile": "closet-053.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1885993,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-2955556001885993-신발": {
+      "filename": "look-306.jpg",
+      "sourceFile": "closet-053.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 1885993,
+        "steps": 4,
+        "seconds": 0.77
+      }
+    },
+    "pinterest-597501075610689457-하의": {
+      "filename": "look-078.jpg",
+      "sourceFile": "closet-075.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10689457,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-597501075610689457-상의": {
+      "filename": "look-093.jpg",
+      "sourceFile": "closet-075.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10689457,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-597501075610689457-가방": {
+      "filename": "look-201.jpg",
+      "sourceFile": "closet-075.png",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10689457,
+        "steps": 4,
+        "seconds": 0.75
+      }
+    },
+    "pinterest-5981412002719776-하의": {
+      "filename": "look-080.jpg",
+      "sourceFile": "closet-016.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2719776,
+        "steps": 4,
+        "seconds": 2.13
+      }
+    },
+    "pinterest-5981412002719776-상의": {
+      "filename": "look-187.jpg",
+      "sourceFile": "closet-016.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2719776,
+        "steps": 4,
+        "seconds": 2.15
+      }
+    },
+    "pinterest-5981412002719776-신발": {
+      "filename": "look-285.jpg",
+      "sourceFile": "closet-016.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2719776,
+        "steps": 4,
+        "seconds": 1.18
+      }
+    },
+    "pinterest-5981412002719776-액세서리": {
+      "filename": "look-287.jpg",
+      "sourceFile": "closet-016.png",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 2719776,
+        "steps": 4,
+        "seconds": 1.48
+      }
+    },
+    "pinterest-6473993212623582-상의": {
+      "filename": "look-082.jpg",
+      "sourceFile": "closet-025.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 12623582,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-6473993212623582-하의": {
+      "filename": "look-115.jpg",
+      "sourceFile": "closet-025.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 12623582,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-6473993212623582-신발": {
+      "filename": "look-289.jpg",
+      "sourceFile": "closet-025.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 12623582,
+        "steps": 4,
+        "seconds": 0.73
+      }
+    },
+    "pinterest-69594756739081569-하의": {
+      "filename": "look-081.jpg",
+      "sourceFile": "closet-035.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 39081569,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-69594756739081569-상의": {
+      "filename": "look-123.jpg",
+      "sourceFile": "closet-035.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 39081569,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-26177241581084774-상의": {
+      "filename": "look-084.jpg",
+      "sourceFile": "closet-064.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81084774,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-26177241581084774-하의": {
+      "filename": "look-111.jpg",
+      "sourceFile": "closet-064.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81084774,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-26177241581084774-신발": {
+      "filename": "look-242.jpg",
+      "sourceFile": "closet-064.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81084774,
+        "steps": 4,
+        "seconds": 2.69
+      }
+    },
+    "pinterest-67905906875255756-상의": {
+      "filename": "look-083.jpg",
+      "sourceFile": "closet-059.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75255756,
+        "steps": 4,
+        "seconds": 2.67
+      }
+    },
+    "pinterest-67905906875255756-하의": {
+      "filename": "look-113.jpg",
+      "sourceFile": "closet-059.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75255756,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-67905906875255756-신발": {
+      "filename": "look-270.jpg",
+      "sourceFile": "closet-059.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 75255756,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-1548181186965124-상의": {
+      "filename": "look-085.jpg",
+      "sourceFile": "closet-038.webp",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 86965124,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-1548181186965124-하의": {
+      "filename": "look-136.jpg",
+      "sourceFile": "closet-038.webp",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 86965124,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-1548181186965124-신발": {
+      "filename": "look-237.jpg",
+      "sourceFile": "closet-038.webp",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 86965124,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-60939401205429514-하의": {
+      "filename": "look-086.jpg",
+      "sourceFile": "closet-071.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5429514,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-60939401205429514-상의": {
+      "filename": "look-184.jpg",
+      "sourceFile": "closet-071.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5429514,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-60939401205429514-신발": {
+      "filename": "look-281.jpg",
+      "sourceFile": "closet-071.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5429514,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-60939401205429514-액세서리": {
+      "filename": "look-308.jpg",
+      "sourceFile": "closet-071.png",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5429514,
+        "steps": 4,
+        "seconds": 2.21
+      }
+    },
+    "pinterest-71213237853664156-상의": {
+      "filename": "look-087.jpg",
+      "sourceFile": "closet-061.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53664156,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-71213237853664156-하의": {
+      "filename": "look-148.jpg",
+      "sourceFile": "closet-061.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53664156,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-71213237853664156-신발": {
+      "filename": "look-249.jpg",
+      "sourceFile": "closet-061.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53664156,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-71213237853664156-가방": {
+      "filename": "look-264.jpg",
+      "sourceFile": "closet-061.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53664156,
+        "steps": 4,
+        "seconds": 3.01
+      }
+    },
+    "pinterest-9499849210945112-상의": {
+      "filename": "look-090.jpg",
+      "sourceFile": "closet-057.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10945112,
+        "steps": 4,
+        "seconds": 2.27
+      }
+    },
+    "pinterest-9499849210945112-하의": {
+      "filename": "look-100.jpg",
+      "sourceFile": "closet-057.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10945112,
+        "steps": 4,
+        "seconds": 2.3
+      }
+    },
+    "pinterest-9499849210945112-가방": {
+      "filename": "look-205.jpg",
+      "sourceFile": "closet-057.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10945112,
+        "steps": 4,
+        "seconds": 2.67
+      }
+    },
+    "pinterest-9499849210945112-액세서리": {
+      "filename": "look-303.jpg",
+      "sourceFile": "closet-057.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 10945112,
+        "steps": 4,
+        "seconds": 2.97
+      }
+    },
+    "pinterest-6262886978047287-하의": {
+      "filename": "look-092.jpg",
+      "sourceFile": "closet-039.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78047287,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-6262886978047287-상의": {
+      "filename": "look-108.jpg",
+      "sourceFile": "closet-039.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78047287,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-6262886978047287-신발": {
+      "filename": "look-255.jpg",
+      "sourceFile": "closet-039.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 78047287,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-16044142419590279-하의": {
+      "filename": "look-091.jpg",
+      "sourceFile": "closet-014.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 19590279,
+        "steps": 4,
+        "seconds": 3.1
+      }
+    },
+    "pinterest-16044142419590279-상의": {
+      "filename": "look-149.jpg",
+      "sourceFile": "closet-014.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 19590279,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-16044142419590279-신발": {
+      "filename": "look-273.jpg",
+      "sourceFile": "closet-014.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 19590279,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-16044142419590279-액세서리": {
+      "filename": "look-288.jpg",
+      "sourceFile": "closet-014.png",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 19590279,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-28640147626144776-하의": {
+      "filename": "look-096.jpg",
+      "sourceFile": "closet-004.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26144776,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-28640147626144776-상의": {
+      "filename": "look-170.jpg",
+      "sourceFile": "closet-004.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26144776,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-28640147626144776-신발": {
+      "filename": "look-294.jpg",
+      "sourceFile": "closet-004.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 26144776,
+        "steps": 4,
+        "seconds": 2.69
+      }
+    },
+    "pinterest-66217057018529942-상의": {
+      "filename": "look-097.jpg",
+      "sourceFile": "closet-041.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18529942,
+        "steps": 4,
+        "seconds": 2.58
+      }
+    },
+    "pinterest-66217057018529942-하의": {
+      "filename": "look-139.jpg",
+      "sourceFile": "closet-041.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18529942,
+        "steps": 4,
+        "seconds": 2.61
+      }
+    },
+    "pinterest-66217057018529942-신발": {
+      "filename": "look-223.jpg",
+      "sourceFile": "closet-041.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18529942,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-4433299630886419-상의": {
+      "filename": "look-098.jpg",
+      "sourceFile": "closet-090.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 30886419,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-4433299630886419-하의": {
+      "filename": "look-176.jpg",
+      "sourceFile": "closet-090.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 30886419,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-4433299630886419-가방": {
+      "filename": "look-215.jpg",
+      "sourceFile": "closet-090.png",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 30886419,
+        "steps": 4,
+        "seconds": 3.02
+      }
+    },
+    "pinterest-4433299630886419-신발": {
+      "filename": "look-219.jpg",
+      "sourceFile": "closet-090.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 30886419,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-404127766583293922-상의": {
+      "filename": "look-099.jpg",
+      "sourceFile": "closet-027.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83293922,
+        "steps": 4,
+        "seconds": 1.65
+      }
+    },
+    "pinterest-404127766583293922-하의": {
+      "filename": "look-142.jpg",
+      "sourceFile": "closet-027.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83293922,
+        "steps": 4,
+        "seconds": 1.61
+      }
+    },
+    "pinterest-404127766583293922-신발": {
+      "filename": "look-299.jpg",
+      "sourceFile": "closet-027.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83293922,
+        "steps": 4,
+        "seconds": 2.26
+      }
+    },
+    "pinterest-7740630604945030-하의": {
+      "filename": "look-102.jpg",
+      "sourceFile": "closet-054.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4945030,
+        "steps": 4,
+        "seconds": 4.17
+      }
+    },
+    "pinterest-7740630604945030-상의": {
+      "filename": "look-147.jpg",
+      "sourceFile": "closet-054.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4945030,
+        "steps": 4,
+        "seconds": 4.74
+      }
+    },
+    "pinterest-7740630604945030-신발": {
+      "filename": "look-282.jpg",
+      "sourceFile": "closet-054.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4945030,
+        "steps": 4,
+        "seconds": 1.24
+      }
+    },
+    "pinterest-3307399722398606-하의": {
+      "filename": "look-101.jpg",
+      "sourceFile": "closet-021.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22398606,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-3307399722398606-상의": {
+      "filename": "look-166.jpg",
+      "sourceFile": "closet-021.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22398606,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-3307399722398606-가방": {
+      "filename": "look-204.jpg",
+      "sourceFile": "closet-021.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22398606,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-3307399722398606-신발": {
+      "filename": "look-271.jpg",
+      "sourceFile": "closet-021.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22398606,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-3307399720744737-상의": {
+      "filename": "look-104.jpg",
+      "sourceFile": "closet-013.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 20744737,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-3307399720744737-하의": {
+      "filename": "look-185.jpg",
+      "sourceFile": "closet-013.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 20744737,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-3307399720744737-신발": {
+      "filename": "look-280.jpg",
+      "sourceFile": "closet-013.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 20744737,
+        "steps": 4,
+        "seconds": 2.7
+      }
+    },
+    "pinterest-11822017767924793-상의": {
+      "filename": "look-106.jpg",
+      "sourceFile": "closet-056.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67924793,
+        "steps": 4,
+        "seconds": 2.93
+      }
+    },
+    "pinterest-11822017767924793-하의": {
+      "filename": "look-157.jpg",
+      "sourceFile": "closet-056.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67924793,
+        "steps": 4,
+        "seconds": 2.95
+      }
+    },
+    "pinterest-11822017767924793-신발": {
+      "filename": "look-283.jpg",
+      "sourceFile": "closet-056.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 67924793,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-985231160627142-상의": {
+      "filename": "look-109.jpg",
+      "sourceFile": "closet-084.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60627142,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-985231160627142-하의": {
+      "filename": "look-193.jpg",
+      "sourceFile": "closet-084.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60627142,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-985231160627142-신발": {
+      "filename": "look-269.jpg",
+      "sourceFile": "closet-084.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60627142,
+        "steps": 4,
+        "seconds": 0.81
+      }
+    },
+    "pinterest-2462974793508850-하의": {
+      "filename": "look-107.jpg",
+      "sourceFile": "closet-034.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 93508850,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-2462974793508850-상의": {
+      "filename": "look-144.jpg",
+      "sourceFile": "closet-034.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 93508850,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-22940279348446523-상의": {
+      "filename": "look-118.jpg",
+      "sourceFile": "closet-023.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48446523,
+        "steps": 4,
+        "seconds": 2.3
+      }
+    },
+    "pinterest-22940279348446523-하의": {
+      "filename": "look-162.jpg",
+      "sourceFile": "closet-023.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48446523,
+        "steps": 4,
+        "seconds": 2.27
+      }
+    },
+    "pinterest-22940279348446523-신발": {
+      "filename": "look-304.jpg",
+      "sourceFile": "closet-023.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 48446523,
+        "steps": 4,
+        "seconds": 0.8
+      }
+    },
+    "pinterest-1829656095092541-하의": {
+      "filename": "look-112.jpg",
+      "sourceFile": "closet-010.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95092541,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-1829656095092541-상의": {
+      "filename": "look-128.jpg",
+      "sourceFile": "closet-010.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95092541,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-1829656095092541-신발": {
+      "filename": "look-232.jpg",
+      "sourceFile": "closet-010.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 95092541,
+        "steps": 4,
+        "seconds": 0.77
+      }
+    },
+    "pinterest-5911043260086210-상의": {
+      "filename": "look-121.jpg",
+      "sourceFile": "closet-049.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60086210,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-5911043260086210-하의": {
+      "filename": "look-156.jpg",
+      "sourceFile": "closet-049.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60086210,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-5911043260086210-가방": {
+      "filename": "look-239.jpg",
+      "sourceFile": "closet-049.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60086210,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-5911043260086210-신발": {
+      "filename": "look-254.jpg",
+      "sourceFile": "closet-049.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 60086210,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-3307399722322011-하의": {
+      "filename": "look-122.jpg",
+      "sourceFile": "closet-048.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22322011,
+        "steps": 4,
+        "seconds": 1.6
+      }
+    },
+    "pinterest-3307399722322011-상의": {
+      "filename": "look-191.jpg",
+      "sourceFile": "closet-048.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22322011,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-3307399722322011-신발": {
+      "filename": "look-279.jpg",
+      "sourceFile": "closet-048.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 22322011,
+        "steps": 4,
+        "seconds": 0.82
+      }
+    },
+    "pinterest-11962755255100265-하의": {
+      "filename": "look-127.jpg",
+      "sourceFile": "closet-008.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 55100265,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-11962755255100265-상의": {
+      "filename": "look-133.jpg",
+      "sourceFile": "closet-008.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 55100265,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-11962755255100265-신발": {
+      "filename": "look-291.jpg",
+      "sourceFile": "closet-008.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 55100265,
+        "steps": 4,
+        "seconds": 0.81
+      }
+    },
+    "pinterest-14073817581501012-하의": {
+      "filename": "look-132.jpg",
+      "sourceFile": "closet-051.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81501012,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-14073817581501012-상의": {
+      "filename": "look-179.jpg",
+      "sourceFile": "closet-051.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81501012,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-14073817581501012-신발": {
+      "filename": "look-258.jpg",
+      "sourceFile": "closet-051.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 81501012,
+        "steps": 4,
+        "seconds": 0.77
+      }
+    },
+    "pinterest-25262447905479668-하의": {
+      "filename": "look-140.jpg",
+      "sourceFile": "closet-087.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5479668,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-25262447905479668-상의": {
+      "filename": "look-183.jpg",
+      "sourceFile": "closet-087.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5479668,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-25262447905479668-가방": {
+      "filename": "look-208.jpg",
+      "sourceFile": "closet-087.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5479668,
+        "steps": 4,
+        "seconds": 1.36
+      }
+    },
+    "pinterest-25262447905479668-신발": {
+      "filename": "look-261.jpg",
+      "sourceFile": "closet-087.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 5479668,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-13792342604859065-상의": {
+      "filename": "look-135.jpg",
+      "sourceFile": "closet-046.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4859065,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-13792342604859065-하의": {
+      "filename": "look-198.jpg",
+      "sourceFile": "closet-046.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4859065,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-13792342604859065-신발": {
+      "filename": "look-248.jpg",
+      "sourceFile": "closet-046.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 4859065,
+        "steps": 4,
+        "seconds": 0.83
+      }
+    },
+    "pinterest-1266706142092490-상의": {
+      "filename": "look-141.jpg",
+      "sourceFile": "closet-083.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 42092490,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-1266706142092490-하의": {
+      "filename": "look-210.jpg",
+      "sourceFile": "closet-083.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 42092490,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-1266706142092490-가방": {
+      "filename": "look-211.jpg",
+      "sourceFile": "closet-083.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 42092490,
+        "steps": 4,
+        "seconds": 1.39
+      }
+    },
+    "pinterest-1266706142092490-신발": {
+      "filename": "look-272.jpg",
+      "sourceFile": "closet-083.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 42092490,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-2885187257228302-상의": {
+      "filename": "look-145.jpg",
+      "sourceFile": "closet-097.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 57228302,
+        "steps": 4,
+        "seconds": 1.59
+      }
+    },
+    "pinterest-2885187257228302-하의": {
+      "filename": "look-221.jpg",
+      "sourceFile": "closet-097.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 57228302,
+        "steps": 4,
+        "seconds": 1.51
+      }
+    },
+    "pinterest-2885187257228302-신발": {
+      "filename": "look-298.jpg",
+      "sourceFile": "closet-097.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 57228302,
+        "steps": 4,
+        "seconds": 0.83
+      }
+    },
+    "pinterest-10977592837864873-상의": {
+      "filename": "look-153.jpg",
+      "sourceFile": "closet-022.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 37864873,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-10977592837864873-하의": {
+      "filename": "look-165.jpg",
+      "sourceFile": "closet-022.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 37864873,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-10977592837864873-신발": {
+      "filename": "look-300.jpg",
+      "sourceFile": "closet-022.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 37864873,
+        "steps": 4,
+        "seconds": 0.78
+      }
+    },
+    "pinterest-5911043262719393-하의": {
+      "filename": "look-146.jpg",
+      "sourceFile": "closet-088.png",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62719393,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-5911043262719393-상의": {
+      "filename": "look-167.jpg",
+      "sourceFile": "closet-088.png",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62719393,
+        "steps": 4,
+        "seconds": 1.49
+      }
+    },
+    "pinterest-5911043262719393-가방": {
+      "filename": "look-235.jpg",
+      "sourceFile": "closet-088.png",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62719393,
+        "steps": 4,
+        "seconds": 1.2
+      }
+    },
+    "pinterest-5911043262719393-신발": {
+      "filename": "look-265.jpg",
+      "sourceFile": "closet-088.png",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 62719393,
+        "steps": 4,
+        "seconds": 1.5
+      }
+    },
+    "pinterest-4996249583340606-하의": {
+      "filename": "look-154.jpg",
+      "sourceFile": "closet-081.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83340606,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-4996249583340606-상의": {
+      "filename": "look-158.jpg",
+      "sourceFile": "closet-081.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83340606,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-4996249583340606-신발": {
+      "filename": "look-250.jpg",
+      "sourceFile": "closet-081.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 83340606,
+        "steps": 4,
+        "seconds": 0.78
+      }
+    },
+    "pinterest-14425661318465192-상의": {
+      "filename": "look-159.jpg",
+      "sourceFile": "closet-063.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18465192,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-14425661318465192-하의": {
+      "filename": "look-174.jpg",
+      "sourceFile": "closet-063.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18465192,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-14425661318465192-신발": {
+      "filename": "look-310.jpg",
+      "sourceFile": "closet-063.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 18465192,
+        "steps": 4,
+        "seconds": 0.76
+      }
+    },
+    "pinterest-6544361953715788-하의": {
+      "filename": "look-160.jpg",
+      "sourceFile": "closet-060.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53715788,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-6544361953715788-상의": {
+      "filename": "look-180.jpg",
+      "sourceFile": "closet-060.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53715788,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-6544361953715788-액세서리": {
+      "filename": "look-309.jpg",
+      "sourceFile": "closet-060.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 53715788,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-65794844552728141-하의": {
+      "filename": "look-171.jpg",
+      "sourceFile": "closet-085.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 52728141,
+        "steps": 4,
+        "seconds": 1.65
+      }
+    },
+    "pinterest-65794844552728141-상의": {
+      "filename": "look-177.jpg",
+      "sourceFile": "closet-085.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 52728141,
+        "steps": 4,
+        "seconds": 1.67
+      }
+    },
+    "pinterest-65794844552728141-신발": {
+      "filename": "look-277.jpg",
+      "sourceFile": "closet-085.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 52728141,
+        "steps": 4,
+        "seconds": 1.31
+      }
+    },
+    "pinterest-65794844552728141-액세서리": {
+      "filename": "look-296.jpg",
+      "sourceFile": "closet-085.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 52728141,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-238127899043438120-액세서리": {
+      "filename": "look-297.jpg",
+      "sourceFile": "closet-074.jpg",
+      "category": "액세서리",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43438120,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-238127899043438120-하의": {
+      "filename": "look-173.jpg",
+      "sourceFile": "closet-074.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43438120,
+        "steps": 4,
+        "seconds": 1.54
+      }
+    },
+    "pinterest-238127899043438120-상의": {
+      "filename": "look-190.jpg",
+      "sourceFile": "closet-074.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43438120,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-238127899043438120-가방": {
+      "filename": "look-194.jpg",
+      "sourceFile": "closet-074.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43438120,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-238127899043438120-신발": {
+      "filename": "look-284.jpg",
+      "sourceFile": "closet-074.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 43438120,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-70437491356057-상의": {
+      "filename": "look-178.jpg",
+      "sourceFile": "closet-012.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91356057,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-70437491356057-하의": {
+      "filename": "look-197.jpg",
+      "sourceFile": "closet-012.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91356057,
+        "steps": 4,
+        "seconds": 1.58
+      }
+    },
+    "pinterest-70437491356057-가방": {
+      "filename": "look-217.jpg",
+      "sourceFile": "closet-012.jpg",
+      "category": "가방",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91356057,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-70437491356057-신발": {
+      "filename": "look-246.jpg",
+      "sourceFile": "closet-012.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 91356057,
+        "steps": 4,
+        "seconds": 1.57
+      }
+    },
+    "pinterest-1618549864910255-하의": {
+      "filename": "look-181.jpg",
+      "sourceFile": "closet-058.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 64910255,
+        "steps": 4,
+        "seconds": 1.52
+      }
+    },
+    "pinterest-1618549864910255-상의": {
+      "filename": "look-196.jpg",
+      "sourceFile": "closet-058.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 64910255,
+        "steps": 4,
+        "seconds": 1.53
+      }
+    },
+    "pinterest-1618549864910255-신발": {
+      "filename": "look-302.jpg",
+      "sourceFile": "closet-058.jpg",
+      "category": "신발",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 64910255,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    },
+    "pinterest-140806234964306-하의": {
+      "filename": "look-189.jpg",
+      "sourceFile": "closet-031.jpg",
+      "category": "하의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 34964306,
+        "steps": 4,
+        "seconds": 1.55
+      }
+    },
+    "pinterest-140806234964306-상의": {
+      "filename": "look-192.jpg",
+      "sourceFile": "closet-031.jpg",
+      "category": "상의",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 34964306,
+        "steps": 4,
+        "seconds": 1.56
+      }
+    },
+    "pinterest-140806234964306-원피스": {
+      "filename": "look-199.jpg",
+      "sourceFile": "closet-031.jpg",
+      "category": "원피스",
+      "generation": {
+        "engine": "flux2-klein-4b-cuda-bfloat16",
+        "seed": 34964306,
+        "steps": 4,
+        "seconds": 0.74
+      }
+    }
+  },
+  "updatedAt": "2026-08-27T07:18:28.256Z",
+  "completedAt": "2026-08-27T07:18:28.266Z"
+}

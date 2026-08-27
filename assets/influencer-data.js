@@ -1,24 +1,23 @@
 (function () {
   window.WEARWELL_INFLUENCER_LOOKS = [
   {
-    "id": "kr-look-001",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 셔츠와 데님",
-    "sourceUrl": "https://m.blog.naver.com/djatlsgh2/223493748080",
-    "image": "assets/influencers/look-001.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "id": "pinterest-trend-001",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/31032684929942063/",
+    "image": "assets/influencers/look-001.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -27,93 +26,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "화이트"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "화이트"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "블랙"
+          "화이트"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-002",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 뉴트럴 레이어드",
-    "sourceUrl": "https://m.blog.naver.com/sdbuyer/223102433321?isInf=true",
+    "id": "pinterest-trend-002",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/7599893114888415/",
     "image": "assets/influencers/look-002.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -122,96 +112,100 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Skirt",
         "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Skirt"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-003",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 모던 테일러링",
-    "sourceUrl": "https://m.blog.naver.com/aapron/222936071334",
-    "image": "assets/influencers/look-003.png",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "id": "pinterest-trend-003",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "All Black Minimal Outfit Men | Quiet Luxury Style",
+    "sourceUrl": "https://kr.pinterest.com/pin/252553491599632017/",
+    "image": "assets/influencers/look-003.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -220,97 +214,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "Refined silhouettes. Dark tones. Quiet presence. Minimal menswear styling inspired by timeless luxury and modern elegance.  WAKKILI",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-004",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 빈티지 포인트",
-    "sourceUrl": "https://m.blog.naver.com/sdbuyer/223294950695",
+    "id": "pinterest-trend-004",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "ig: siiiido",
+    "sourceUrl": "https://kr.pinterest.com/pin/985231164494432/",
     "image": "assets/influencers/look-004.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -319,95 +300,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": "ig: siiiido",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "패턴",
-          "프린트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Pants"
         ]
       },
       {
-        "category": "가방",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "브라운",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "가죽",
-          "캔버스"
+          "소재 미분류"
         ],
         "fits": [
-          "미디엄"
+          "핏 미분류"
         ],
         "details": [
-          "숄더백"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-005",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 편안한 원마일",
-    "sourceUrl": "https://m.blog.naver.com/sal_jjiny/223414548185",
+    "id": "pinterest-trend-005",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/1266706142211886/",
     "image": "assets/influencers/look-005.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -416,95 +386,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "나일론"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "밴딩"
+          "Bag"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "베이지"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-006",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 셔츠와 데님",
-    "sourceUrl": "https://m.blog.naver.com/my_happiness_727/222318359355",
-    "image": "assets/influencers/look-006.png",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "id": "pinterest-trend-006",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "SAVE = FOLLOW 🏵",
+    "sourceUrl": "https://kr.pinterest.com/pin/1548181171903534/",
+    "image": "assets/influencers/look-006.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -513,191 +472,186 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "카라",
-          "버튼"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
-        ],
-        "materials": [
-          "데님"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "청바지"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-007",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 뉴트럴 레이어드",
-    "sourceUrl": "https://m.blog.naver.com/gguu1029/223164864419",
-    "image": "assets/influencers/look-007.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      17,
-      24
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "뉴트럴 레이어드",
-    "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
-    ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-008",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 모던 테일러링",
-    "sourceUrl": "https://m.blog.naver.com/kjm5775/220635855178",
+    "id": "pinterest-trend-007",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "大人のお洒落コーデ集！男らしくも個性を発揮するミリタリージャケット！ | Fashion | Safari Online",
+    "sourceUrl": "https://kr.pinterest.com/pin/4222193396304057/",
+    "image": "assets/influencers/look-007.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "大人のお洒落コーデ集！男らしくも個性を発揮するミリタリージャケット！ | Fashion | Safari Online",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-008",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/14003448838442770/",
     "image": "assets/influencers/look-008.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -706,97 +660,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "블레이저",
-          "라펠"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-009",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · m.blog.naver.com",
-    "sourceTitle": "김나영 · 빈티지 포인트",
-    "sourceUrl": "https://m.blog.naver.com/gguu1029/223378437330?isInf=true",
+    "id": "pinterest-trend-009",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/49961877112474449/",
     "image": "assets/influencers/look-009.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -805,95 +746,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "패턴",
-          "프린트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Skirt+Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Skirt+Pants"
         ]
       },
       {
-        "category": "가방",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "브라운",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "가죽",
-          "캔버스"
+          "소재 미분류"
         ],
         "fits": [
-          "미디엄"
+          "핏 미분류"
         ],
         "details": [
-          "숄더백"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-010",
-    "gender": "women",
-    "creator": "김나영",
-    "creatorHandle": "@nayoungkeem",
-    "creatorUrl": "https://www.instagram.com/nayoungkeem/",
-    "credit": "김나영 공개 룩북 · view.mk.co.kr",
-    "sourceTitle": "김나영 · 편안한 원마일",
-    "sourceUrl": "https://view.mk.co.kr/life/article/157423/",
+    "id": "pinterest-trend-010",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Simple Fits, Big Style",
+    "sourceUrl": "https://kr.pinterest.com/pin/6825836929269745/",
     "image": "assets/influencers/look-010.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      24
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -902,95 +832,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "도시적인 캐주얼",
-      "빈티지 믹스",
-      "컬러 포인트"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": "#MensFashion #MenStyle #Menswear #MensOutfit #MenWithStyle #OOTDMen #MensClothing #StreetwearMen #MenStreetStyle #CasualMenswear",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "나일론"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "밴딩"
+          "Pants"
         ]
       },
       {
-        "category": "신발",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-011",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · ijbs.co.kr",
-    "sourceTitle": "차정원 · 셔츠와 데님",
-    "sourceUrl": "http://www.ijbs.co.kr/news/articleView.html?idxno=8488",
+    "id": "pinterest-trend-011",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/49187820926613130/",
     "image": "assets/influencers/look-011.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -999,191 +918,138 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Skirt+Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "라이트 그레이"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Skirt+Pants"
         ]
-      },
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-012",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/68961438051277152/",
+    "image": "assets/influencers/look-012.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
       {
-        "category": "신발",
+        "category": "하의",
+        "label": "Skirt+Pants",
         "colors": [
-          "화이트",
           "블랙"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-012",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · moment-k.co.kr",
-    "sourceTitle": "차정원 · 뉴트럴 레이어드",
-    "sourceUrl": "https://www.moment-k.co.kr/news/entertain/11953420",
-    "image": "assets/influencers/look-012.png",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "뉴트럴 레이어드",
-    "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
-    ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
+          "Skirt+Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
+          "블랙"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "브라운",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
+          "Upper-clothes"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-013",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · moment-k.co.kr",
-    "sourceTitle": "차정원 · 모던 테일러링",
-    "sourceUrl": "https://www.moment-k.co.kr/news/entertain/11953420",
+    "id": "pinterest-trend-013",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "10 Stylish White Shorts Outfit Men Ideas That Instantly Elevate Your Summer Style 5",
+    "sourceUrl": "https://kr.pinterest.com/pin/11329436559786734/",
     "image": "assets/influencers/look-013.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1192,97 +1058,100 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "10 Stylish White Shorts Outfit Men Ideas That Instantly Elevate Your Summer Style 5",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "브라운"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "블레이저",
-          "라펠"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
+          "브라운"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "브라운"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-014",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · fnnews.com",
-    "sourceTitle": "차정원 · 빈티지 포인트",
-    "sourceUrl": "https://www.fnnews.com/news/202602050932156296",
+    "id": "pinterest-trend-014",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/14847873767849038/",
     "image": "assets/influencers/look-014.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1291,192 +1160,202 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "상의",
-        "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "패턴",
-          "프린트"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
           "베이지"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Pants"
         ]
       },
-      {
-        "category": "가방",
-        "colors": [
-          "브라운",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "캔버스"
-        ],
-        "fits": [
-          "미디엄"
-        ],
-        "details": [
-          "숄더백"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-015",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · news1.kr",
-    "sourceTitle": "차정원 · 편안한 원마일",
-    "sourceUrl": "https://www.news1.kr/entertain/celebrity-topic/6062429",
-    "image": "assets/influencers/look-015.avif",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "편안한 원마일",
-    "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
-    ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
-    "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "나일론"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "밴딩"
+          "Upper-clothes"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "베이지"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-016",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · spotvnews.co.kr",
-    "sourceTitle": "차정원 · 셔츠와 데님",
-    "sourceUrl": "https://www.spotvnews.co.kr/news/articleView.html?idxno=796981",
+    "id": "pinterest-trend-015",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "The Best Street Style Photos From the Spring 2024 Menswear Shows in Milan",
+    "sourceUrl": "https://kr.pinterest.com/pin/26317979066347944/",
+    "image": "assets/influencers/look-015.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-016",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/37295503160967000/",
     "image": "assets/influencers/look-016.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1485,93 +1364,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "그레이"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Left-shoe",
         "colors": [
-          "화이트",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
+          "Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-017",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · hankooki.com",
-    "sourceTitle": "차정원 · 뉴트럴 레이어드",
-    "sourceUrl": "https://www.hankooki.com/news/articleView.html?idxno=53486",
-    "image": "assets/influencers/look-017.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "id": "pinterest-trend-017",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Korean streetwear fit",
+    "sourceUrl": "https://kr.pinterest.com/pin/1548181186841693/",
+    "image": "assets/influencers/look-017.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1580,96 +1450,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "재킷",
-          "코트"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-018",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · mksports.co.kr",
-    "sourceTitle": "차정원 · 모던 테일러링",
-    "sourceUrl": "https://mksports.co.kr/news/entertain/11953330",
+    "id": "pinterest-trend-018",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Monochrome Streetwear: Bold, Classy, Night Ready",
+    "sourceUrl": "https://kr.pinterest.com/pin/15410823722826367/",
     "image": "assets/influencers/look-018.png",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1678,97 +1536,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "Elevate your boy’s night with sleek black streetwear. Monochrome vibes, clean lines, old-money elegance—perfect for a timeless fashion statement on Pinterest",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "화이트"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "블레이저",
-          "라펠"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
+          "화이트"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "화이트"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-019",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · sports.hankooki.com",
-    "sourceTitle": "차정원 · 빈티지 포인트",
-    "sourceUrl": "https://sports.hankooki.com/news/articleView.html?idxno=6820308",
+    "id": "pinterest-trend-019",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/281543725808589/",
     "image": "assets/influencers/look-019.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -1777,193 +1622,171 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "패턴",
-          "프린트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
-        ]
-      },
-      {
-        "category": "가방",
-        "colors": [
-          "브라운",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "캔버스"
-        ],
-        "fits": [
-          "미디엄"
-        ],
-        "details": [
-          "숄더백"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-020",
-    "gender": "women",
-    "creator": "차정원",
-    "creatorHandle": "@ch_amii",
-    "creatorUrl": "https://www.instagram.com/ch_amii/",
-    "credit": "차정원 공개 룩북 · mk.co.kr",
-    "sourceTitle": "차정원 · 편안한 원마일",
-    "sourceUrl": "https://www.mk.co.kr/news/photos/11211184",
-    "image": "assets/influencers/look-020.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "편안한 원마일",
-    "styles": [
-      "미니멀",
-      "프렌치 캐주얼",
-      "뉴트럴 톤"
-    ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "스웨트",
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "나일론"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "밴딩"
+          "Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-021",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · topstarnews.net",
-    "sourceTitle": "기은세 · 셔츠와 데님",
-    "sourceUrl": "https://www.topstarnews.net/news/articleView.html?idxno=16172222",
+    "id": "pinterest-trend-020",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/3518505955794216/",
+    "image": "assets/influencers/look-020.webp",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-021",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "大人のお洒落コーデ集！冬まで使える“シャツジャケ”コーデ！ | Fashion | Safari Online",
+    "sourceUrl": "https://kr.pinterest.com/pin/1266706138849322/",
     "image": "assets/influencers/look-021.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -1971,94 +1794,85 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "화이트"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "화이트"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Left-shoe",
         "colors": [
-          "화이트",
-          "블랙"
+          "화이트"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
+          "Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-022",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · topstarnews.net",
-    "sourceTitle": "기은세 · 뉴트럴 레이어드",
-    "sourceUrl": "https://www.topstarnews.net/news/articleView.html?idxno=16172222",
-    "image": "assets/influencers/look-022.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "id": "pinterest-trend-022",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Striped Cardigan - Korean Fashion Men",
+    "sourceUrl": "https://kr.pinterest.com/pin/918382549012017052/",
+    "image": "assets/influencers/look-022.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2066,97 +1880,69 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": "Elevate your wardrobe with our items, the epitome of modern elegance and versatility of Korean Men’s Fashion.",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "브라운",
-          "그레이"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-023",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · topstarnews.net",
-    "sourceTitle": "기은세 · 모던 테일러링",
-    "sourceUrl": "https://www.topstarnews.net/news/articleView.html?idxno=16172222",
+    "id": "pinterest-trend-023",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "𝙻𝚊𝚍𝚢 𝙲𝚎𝚕𝚎𝚜𝚝𝚒𝚊 | 𝙼𝚒𝚛𝚊𝚌𝚞𝚕𝚘𝚞𝚜 𝚃𝚊𝚕𝚎𝚜 𝚂𝟸☆",
+    "sourceUrl": "https://kr.pinterest.com/pin/448952656642203520/",
     "image": "assets/influencers/look-023.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2164,98 +1950,101 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "𝘈𝘬𝘪𝘳𝘢 𝘛𝘢𝘬𝘢𝘩𝘢𝘴𝘩𝘪'𝘴 𝘩𝘦𝘳𝘰 𝘫𝘰𝘶𝘳𝘯𝘦𝘺 𝘵𝘢𝘬𝘦𝘴 ?… #fanfiction #Fanfiction #amreading #books #wattpad",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
+          "블랙"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "블랙"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "블랙"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "블랙"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-024",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · m.fashionn.com",
-    "sourceTitle": "기은세 · 빈티지 포인트",
-    "sourceUrl": "https://m.fashionn.com/board/read.php?number=24676",
+    "id": "pinterest-trend-024",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "[鈴鹿 央士] 鈴鹿央士はビッグサイズを掛け合わせ、シルエットで遊ぶ！",
+    "sourceUrl": "https://kr.pinterest.com/pin/59532026398224843/",
     "image": "assets/influencers/look-024.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2263,96 +2052,85 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": "寒かった！ 雪の金沢ロケ［鈴鹿央士ブログ］ MEN'S NON-NO WEB",
     "pieces": [
       {
-        "category": "상의",
-        "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "패턴",
-          "프린트"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Pants"
         ]
       },
       {
-        "category": "가방",
+        "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "브라운",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "가죽",
-          "캔버스"
+          "소재 미분류"
         ],
         "fits": [
-          "미디엄"
+          "핏 미분류"
         ],
         "details": [
-          "숄더백"
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-025",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · topstarnews.net",
-    "sourceTitle": "기은세 · 편안한 원마일",
-    "sourceUrl": "https://www.topstarnews.net/news/articleView.html?idxno=16169817",
+    "id": "pinterest-trend-025",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Arzhel",
+    "sourceUrl": "https://kr.pinterest.com/pin/20125529581066816/",
     "image": "assets/influencers/look-025.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2360,289 +2138,273 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "상의",
-        "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "스웨트",
-          "티셔츠"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "나일론"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "실버",
-          "블랙"
-        ],
-        "materials": [
-          "메시",
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-026",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · xportsnews.com",
-    "sourceTitle": "기은세 · 셔츠와 데님",
-    "sourceUrl": "https://www.xportsnews.com/article/2183250",
-    "image": "assets/influencers/look-026.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "셔츠와 데님",
-    "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
-    ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "카라",
-          "버튼"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비"
-        ],
-        "materials": [
-          "데님"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "청바지"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-027",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · v.daum.net",
-    "sourceTitle": "기은세 · 뉴트럴 레이어드",
-    "sourceUrl": "https://v.daum.net/v/20260821150437943",
-    "image": "assets/influencers/look-027.png",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "뉴트럴 레이어드",
-    "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
-    ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-028",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · v.daum.net",
-    "sourceTitle": "기은세 · 모던 테일러링",
-    "sourceUrl": "https://v.daum.net/v/20110830150346548",
+    "id": "pinterest-trend-026",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/7318418141930428/",
+    "image": "assets/influencers/look-026.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-027",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/3448137210662334/",
+    "image": "assets/influencers/look-027.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-028",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "シンプルなのに好印象。\n白シャツにニットを重ねた清潔感あるレイヤードで、\n大人の余裕を感じさせる韓国秋コーデ。\n\nアイテムはプロフのリンク。\n@orun_.official \n\n#韓国メンズファッション #韓国コーデ #秋コーデ #ニットコーデ #韓国ファッション #韓国ストリート #大人カジュアル #大人コーデ #秋服コーデ #秋メンズコーデ #メンズカジュアル #メンズファッション #きれいめカジュアル #シンプルコーデ #レイヤードコーデ #ニットスタイル #ベージュコーデ #ブラウンコーデ #韓国好きな人と繋がりたい  #お洒落さんと繋がりたい #カジュアルコーデ #秋冬コーデ #韓国男子 #メンズニット #OOTDメンズ #ストリートコーデ #大人男子コーデ #シティボーイスタイル #秋冬メンズファッション",
+    "sourceUrl": "https://kr.pinterest.com/pin/23292123068427135/",
     "image": "assets/influencers/look-028.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2650,98 +2412,101 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "シンプルなのに好印象。\n白シャツにニットを重ねた清潔感あるレイヤードで、\n大人の余裕を感じさせる韓国秋コーデ。\n\nアイテムはプロフのリンク。\n@orun_.official \n\n#韓国メンズファッション #韓国コーデ #秋コーデ #ニットコーデ #韓国ファッション #韓国ストリート #大人カジュアル #大人コーデ #秋服コーデ #秋メンズコーデ #メンズカジュアル #メンズファッション #きれいめカジュアル #シンプルコーデ #レイヤードコーデ #ニットスタイル #ベージュコーデ #ブラウンコーデ #韓国好きな人と繋がりたい  #お洒落さんと繋がりたい #カジュアルコーデ #秋冬コーデ #韓国男子 #メンズニット #OOTDメンズ #ストリートコーデ #大人男子コーデ #シティボーイスタイル #秋冬メンズファッション",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "브라운"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "블레이저",
-          "라펠"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
+          "브라운"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "브라운"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Bag"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Left-shoe",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-029",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · topstarnews.net",
-    "sourceTitle": "기은세 · 빈티지 포인트",
-    "sourceUrl": "https://www.topstarnews.net/news/articleView.html?idxno=16170889",
+    "id": "pinterest-trend-029",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "EMMA CLOTHES　/　【RUUBON】rustic heavy weight cardigan / ラスティック ヘビーウエイト カーディガン　MEN　トップス　>　カーディガン/ボレロ",
+    "sourceUrl": "https://kr.pinterest.com/pin/555983516521026248/",
     "image": "assets/influencers/look-029.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2749,96 +2514,85 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": "《 デザイン 》肉感のある特殊なダブルジャガードで編み立てており、ふっくらしながらも目の詰まった生地感でゆったりとしたルーズカーディガン。袖部分は絶妙なたまりができるように設計されており、より柔らかい雰囲気を演出します。身長問わずオーバーサイズで着用しやすいシルエットになっています。《 素材 》柔らかく弾性回復力に長けた上質なアクリル原料を使用し、暖かく優しい肌触りと膨らみを実現しました。防寒性に優れており、シワになりにくく虫食いにも強いのが特徴。ご自宅でのお洗濯も可能でお手入れしやすく、デイリーユースに重宝する1着です。ライトベージュ、ベージュ、チョコ、チャコールグレーのカラーは抗ピル加工が施されており、毛玉ができにくくなっております。《 スタイリング 》インナーにTシャツやカットソーを合わせればカジュアルに、シャツアイテムに羽織ってきれいめにと、テイストを選ばずに着まわせる1着。着丈はわずかに短めな設計により、さりげないレイヤードスタイルも簡単。ルーム、ワンマイルウェアとしてはもちろん、真冬はジャケットやコートのインナーにもお使い頂けます。【 RUUBON/ルーボン 】素朴で飽きの",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "패턴",
-          "프린트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "라이트 그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Pants"
         ]
       },
       {
-        "category": "가방",
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "브라운",
-          "블랙"
+          "라이트 그레이"
         ],
         "materials": [
-          "가죽",
-          "캔버스"
+          "소재 미분류"
         ],
         "fits": [
-          "미디엄"
+          "핏 미분류"
         ],
         "details": [
-          "숄더백"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-030",
-    "gender": "women",
-    "creator": "기은세",
-    "creatorHandle": "@kieunse",
-    "creatorUrl": "https://www.instagram.com/kieunse/",
-    "credit": "기은세 공개 룩북 · sports.donga.com",
-    "sourceTitle": "기은세 · 편안한 원마일",
-    "sourceUrl": "https://sports.donga.com/ent/article/all/20230905/121029241/1",
+    "id": "pinterest-trend-030",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Old Money Men's Aesthetic | Beige Sweater Vest & Light Blue Shirt | Preppy Style Inspo 2026 🥂",
+    "sourceUrl": "https://kr.pinterest.com/pin/144959681751234692/",
     "image": "assets/influencers/look-030.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      18,
-      25
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "하체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -2846,95 +2600,68 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "페미닌",
-      "테일러드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": "Achieve that classic, refined look with this perfect preppy ensemble. 🏛️ Featuring a neutral beige knit sweater vest layered over a crisp light blue button-down and striped tie, this outfit radiates \"Quiet Luxury.\" Paired with tailored cream chinos, it’s the ultimate uniform for a sophisticated afternoon or a study session in style. Check out the original creator linked below for more timeless fashion inspiration! 📚✨ #OldMoney #PreppyStyle #MensTailoring #QuietLuxury #ClassicMenswear",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "나일론"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "실버",
-          "블랙"
-        ],
-        "materials": [
-          "메시",
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-031",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · instagram.com",
-    "sourceTitle": "정려원 · 셔츠와 데님",
-    "sourceUrl": "https://www.instagram.com/p/DGuDq61spBL/",
+    "id": "pinterest-trend-031",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Ryo Takashima on Instagram: “ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ @etautz 定番のRALPH JACKET。 4つのビッグポケットがアクセントのサファリジャケットです！ 比翼仕立てのミニマルなデザインに、付属のベルトでタイドアップしてもスッキリ着れます。…”",
+    "sourceUrl": "https://kr.pinterest.com/pin/2392606048237858/",
     "image": "assets/influencers/look-031.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -2943,93 +2670,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": "Ryo Takashima on Instagram: “ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ @etautz 定番のRALPH JACKET。 4つのビッグポケットがアクセントのサファリジャケットです！ 比翼仕立てのミニマルなデザインに、付属のベルトでタイドアップしてもスッキリ着れます。…”",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "베이지"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "베이지"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Pants"
         ]
       },
       {
-        "category": "신발",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "화이트",
-          "블랙"
+          "베이지"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-032",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · xportsnews.com",
-    "sourceTitle": "정려원 · 뉴트럴 레이어드",
-    "sourceUrl": "https://www.xportsnews.com/article/1668157",
+    "id": "pinterest-trend-032",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/38773246789810744/",
     "image": "assets/influencers/look-032.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3038,96 +2756,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "브라운",
-          "그레이"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-033",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · news.nate.com",
-    "sourceTitle": "정려원 · 모던 테일러링",
-    "sourceUrl": "https://news.nate.com/view/20240509n23115",
-    "image": "assets/influencers/look-033.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "id": "pinterest-trend-033",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Men’s Relaxed Fit Beige Casual Shirt with White T-Shirt & Cargo Pants",
+    "sourceUrl": "https://kr.pinterest.com/pin/26529085300756079/",
+    "image": "assets/influencers/look-033.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3136,97 +2842,68 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "Upgrade your everyday style with this relaxed beige casual shirt outfit. Designed for a modern minimal look, the lightweight shirt pairs perfectly with a classic white T-shirt and dark cargo pants. The breathable fabric and loose fit make it ideal for daily wear, casual outings, and café meetups. Complete the look with sneakers and a tote bag for a trendy street-style vibe.",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-034",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · xportsnews.com",
-    "sourceTitle": "정려원 · 빈티지 포인트",
-    "sourceUrl": "https://www.xportsnews.com/article/1637115",
+    "id": "pinterest-trend-034",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/23432860625629005/",
     "image": "assets/influencers/look-034.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3235,95 +2912,68 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": " ",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "패턴",
-          "프린트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
-        ]
-      },
-      {
-        "category": "가방",
-        "colors": [
-          "브라운",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "캔버스"
-        ],
-        "fits": [
-          "미디엄"
-        ],
-        "details": [
-          "숄더백"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-035",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "정려원 · 편안한 원마일",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010307731",
+    "id": "pinterest-trend-035",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "aesthetic outfit's",
+    "sourceUrl": "https://kr.pinterest.com/pin/8373949303605044/",
     "image": "assets/influencers/look-035.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3332,95 +2982,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": "cool korean aesthetic apparel",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "나일론"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "밴딩"
+          "Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "라이트 그레이"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-036",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · news.nate.com",
-    "sourceTitle": "정려원 · 셔츠와 데님",
-    "sourceUrl": "https://news.nate.com/view/20220921n16826",
+    "id": "pinterest-trend-036",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "𝒫ℴ𝓈ℯ",
+    "sourceUrl": "https://kr.pinterest.com/pin/20055160840666353/",
     "image": "assets/influencers/look-036.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3429,93 +3068,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": "#𝒶ℯ𝓈𝓉𝒽ℯ𝓉𝒾𝒸  #ℬℴ𝓎ℴ𝓊𝓉𝒻𝒾𝓉𝓈  #𝒟ℴ𝓊𝓎𝒾𝓃𝒷𝒻  #ℬ𝒻  #𝒫ℴ𝓈ℯ",
     "pieces": [
       {
-        "category": "상의",
+        "category": "하의",
+        "label": "Pants",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "그레이"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Pants"
         ]
       },
       {
-        "category": "하의",
+        "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "블루",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
+          "Upper-clothes"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "가죽",
-          "메시"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈",
-          "로퍼"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-037",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · news.nate.com",
-    "sourceTitle": "정려원 · 뉴트럴 레이어드",
-    "sourceUrl": "https://news.nate.com/view/20230429n12826?mid=n1101",
+    "id": "pinterest-trend-037",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/1196337405836538/",
     "image": "assets/influencers/look-037.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3524,96 +3154,68 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-038",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · mimint.co.kr",
-    "sourceTitle": "정려원 · 모던 테일러링",
-    "sourceUrl": "https://www.mimint.co.kr/bbs/view/tvnews/photo/314436",
+    "id": "pinterest-trend-038",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "秋服コーデ",
+    "sourceUrl": "https://kr.pinterest.com/pin/5418462047141312/",
     "image": "assets/influencers/look-038.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3622,97 +3224,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "모던 테일러링",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
+    "summary": "今年の秋トレンドファッション早速公開！\n\n#メンズファッション #秋ファッション",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
+          "브라운"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
+          "브라운"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-039",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · xportsnews.com",
-    "sourceTitle": "정려원 · 빈티지 포인트",
-    "sourceUrl": "https://www.xportsnews.com/article/1718383",
+    "id": "pinterest-trend-039",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Calça social fogada old money",
+    "sourceUrl": "https://kr.pinterest.com/pin/18718154696250540/",
     "image": "assets/influencers/look-039.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3721,95 +3310,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 포인트",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
+    "summary": "Não perca esta oferta grande na SHEIN! Economize muito agora!​ 💰Preço[R$155,99]  🛒Manfinity Homme Calça casual e versátil para homens, de perna larga e cor sólida, para o outono  🎁Cupom 50% OFF para todo Novo Usuário! https://onelink.shein.com/31/5i7u6oa3c8cv",
     "pieces": [
       {
-        "category": "상의",
-        "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "패턴",
-          "프린트"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "브라운",
           "베이지"
         ],
         "materials": [
-          "데님",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "빈티지 워싱"
+          "Pants"
         ]
       },
       {
-        "category": "가방",
+        "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "브라운",
-          "블랙"
+          "베이지"
         ],
         "materials": [
-          "가죽",
-          "캔버스"
+          "소재 미분류"
         ],
         "fits": [
-          "미디엄"
+          "핏 미분류"
         ],
         "details": [
-          "숄더백"
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-040",
-    "gender": "women",
-    "creator": "정려원",
-    "creatorHandle": "@yoanaloves",
-    "creatorUrl": "https://www.instagram.com/yoanaloves/",
-    "credit": "정려원 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "정려원 · 편안한 원마일",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2025121061844",
+    "id": "pinterest-trend-040",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Double-breasted long coat OR4814 - ブラウン / M",
+    "sourceUrl": "https://kr.pinterest.com/pin/4597893819264490752/",
     "image": "assets/influencers/look-040.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른 체형",
-    "bodyLabel": "마른 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
       16,
-      22
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3818,95 +3396,100 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "편안한 원마일",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "빈티지",
-      "보헤미안",
-      "레이어드"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
+    "summary": "Model information 身長: 178 CM 体重: 70 KG 着用サイズ: L 素材：ナイロン100％ 肩幅 胸囲 袖丈 着丈 M / 112 61 118 L / 116 62 120 XL / 120 63 122 XXL / 124 64 124 注意事項 サイズは平置きで測定しております、商品・測定方法によって多少の誤差(1-3cm)が生じることがあります。あらかじめご了承ください. 単位: cm",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "스웨트",
-          "티셔츠"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Skirt+Pants",
         "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "나일론"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "밴딩"
+          "Skirt+Pants"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-041",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · stardailynews.co.kr",
-    "sourceTitle": "강민경 · 셔츠와 데님",
-    "sourceUrl": "https://www.stardailynews.co.kr/news/articleView.html?idxno=405663",
+    "id": "pinterest-trend-041",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "🎧 | Instagram",
+    "sourceUrl": "https://kr.pinterest.com/pin/409123947422764473/",
     "image": "assets/influencers/look-041.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -3915,93 +3498,68 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": "🎧 | Instagram",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
-          "블루"
+          "레드"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
-        "category": "하의",
+        "category": "가방",
+        "label": "Bag",
         "colors": [
-          "블루",
-          "네이비"
+          "레드"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
+          "Bag"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-042",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · news.tf.co.kr",
-    "sourceTitle": "강민경 · 뉴트럴 레이어드",
-    "sourceUrl": "https://news.tf.co.kr/read/entertain/1984969.htm",
+    "id": "pinterest-trend-042",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "ID：FlyingJ",
+    "sourceUrl": "https://kr.pinterest.com/pin/53691420554977266/",
     "image": "assets/influencers/look-042.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -4010,389 +3568,84 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "브라운",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-043",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · pann.nate.com",
-    "sourceTitle": "강민경 · 모던 테일러링",
-    "sourceUrl": "https://pann.nate.com/talk/368095771",
-    "image": "assets/influencers/look-043.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "모던 테일러링",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
+          "Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
           "그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "슬림",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "블라우스"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-044",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · xportsnews.com",
-    "sourceTitle": "강민경 · 빈티지 포인트",
-    "sourceUrl": "https://www.xportsnews.com/article/1670700",
-    "image": "assets/influencers/look-044.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 포인트",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "패턴",
-          "프린트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "브라운",
-          "베이지"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "빈티지 워싱"
-        ]
-      },
-      {
-        "category": "가방",
-        "colors": [
-          "브라운",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "캔버스"
-        ],
-        "fits": [
-          "미디엄"
-        ],
-        "details": [
-          "숄더백"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-045",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · stardailynews.co.kr",
-    "sourceTitle": "강민경 · 편안한 원마일",
-    "sourceUrl": "https://www.stardailynews.co.kr/news/articleView.html?idxno=405661",
-    "image": "assets/influencers/look-045.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "편안한 원마일",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "스웨트",
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "나일론"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "밴딩"
+          "Upper-clothes"
         ]
       },
       {
         "category": "신발",
+        "label": "Right-shoe+Left-shoe",
         "colors": [
-          "화이트",
-          "실버",
-          "블랙"
+          "그레이"
         ],
         "materials": [
-          "메시",
-          "가죽"
+          "소재 미분류"
         ],
         "fits": [
-          "로우"
+          "핏 미분류"
         ],
         "details": [
-          "스니커즈"
+          "Right-shoe+Left-shoe"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-046",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · xportsnews.com",
-    "sourceTitle": "강민경 · 셔츠와 데님",
-    "sourceUrl": "https://www.xportsnews.com/article/1670744",
-    "image": "assets/influencers/look-046.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
+    "id": "pinterest-trend-043",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/7951736838702077/",
+    "image": "assets/influencers/look-043.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -4401,93 +3654,4412 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "셔츠와 데님",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
+      "남성패션",
+      "스트리트",
+      "캐주얼"
     ],
-    "summary": "여유 있는 셔츠를 데님과 단정하게 연결한 데일리 룩",
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-044",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Korean Streetwear",
+    "sourceUrl": "https://kr.pinterest.com/pin/91197961197001978/",
+    "image": "assets/influencers/look-044.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Panda White dunk lows",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "아이보리",
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-045",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/579134833360016678/",
+    "image": "assets/influencers/look-045.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "원피스",
+        "label": "Dress",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Dress"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-046",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "◼@woozaet",
+    "sourceUrl": "https://kr.pinterest.com/pin/15410823720500526/",
+    "image": "assets/influencers/look-046.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-047",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "ig: cosyharu.co.kr",
+    "sourceUrl": "https://kr.pinterest.com/pin/10766486606322287/",
+    "image": "assets/influencers/look-047.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "ig: cosyharu.co.kr",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-048",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Details subtle, impact undeniable. 👌 . . . #MensStyleInspo #StreetStyleMen #KoreanMenswear #OOTDInspo #EffortlessStyle",
+    "sourceUrl": "https://kr.pinterest.com/pin/314055774037793014/",
+    "image": "assets/influencers/look-048.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Details subtle, impact undeniable. 👌 . . . #MensStyleInspo #StreetStyleMen #KoreanMenswear #OOTDInspo #EffortlessStyle",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-049",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "宣 ⚡PSUKHE_灵魂共振 弯刀裤 - 小红书",
+    "sourceUrl": "https://kr.pinterest.com/pin/96194142039034022/",
+    "image": "assets/influencers/look-049.webp",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "宣 ⚡PSUKHE_灵魂共振 弯刀裤 - 小红书",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-050",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/2533343538505818/",
+    "image": "assets/influencers/look-050.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-051",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "大人のお洒落コーデ集！今からでも使えるTシャツコーデ！ | Fashion | Safari Online",
+    "sourceUrl": "https://kr.pinterest.com/pin/47569339811569474/",
+    "image": "assets/influencers/look-051.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "大人のお洒落コーデ集！今からでも使えるTシャツコーデ！ | Fashion | Safari Online",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-052",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/587016132724755775/",
+    "image": "assets/influencers/look-052.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-053",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Nanostudio -Korean men's fashion site-",
+    "sourceUrl": "https://kr.pinterest.com/pin/99712579247642716/",
+    "image": "assets/influencers/look-053.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-054",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/10414642881907750/",
+    "image": "assets/influencers/look-054.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-055",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Шопинг по-минимому: хватит покупать много одежды",
+    "sourceUrl": "https://kr.pinterest.com/pin/33495590971127331/",
+    "image": "assets/influencers/look-055.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "네이비"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "네이비"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "네이비"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-056",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "#FashionFriends #StyleInspo  #StreetStyle #outfits #fashion",
+    "sourceUrl": "https://kr.pinterest.com/pin/14284923812871826/",
+    "image": "assets/influencers/look-056.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "#FashionFriends #StyleInspo  #StreetStyle #outfits #fashion",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-057",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Sometimes simple colors speak the loudest. 🤎 . . . #MensStyle #MutedTones #TimelessLook #AutumnFit #ClassicMenswear #StreetStyleMen #DailyOutfit",
+    "sourceUrl": "https://kr.pinterest.com/pin/68961438051277157/",
+    "image": "assets/influencers/look-057.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Sometimes simple colors speak the loudest. 🤎 . . . #MensStyle #MutedTones #TimelessLook #AutumnFit #ClassicMenswear #StreetStyleMen #DailyOutfit",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Skirt",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Skirt"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-058",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "ANYTHING FOR YOU",
+    "sourceUrl": "https://kr.pinterest.com/pin/404338872821912794/",
+    "image": "assets/influencers/look-058.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "It's a bl,so please read if you are comfortable with it.  I'm not gon… #romance #Romance #amreading #books #wattpad",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-059",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "😘😍",
+    "sourceUrl": "https://kr.pinterest.com/pin/13299761397019592/",
+    "image": "assets/influencers/look-059.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "fashion ideas ✨✨✨",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-060",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "153 Summer Classic 4/5 - men's FUDGE",
+    "sourceUrl": "https://kr.pinterest.com/pin/563018697509035/",
+    "image": "assets/influencers/look-060.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-061",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Korean Men Summer Fashion Outfits: 10 Trend-Forward Looks for Effortless Heat-Wave Style",
+    "sourceUrl": "https://kr.pinterest.com/pin/559361216246631752/",
+    "image": "assets/influencers/look-061.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Korean Men Summer Fashion Outfits: 10 Trend-Forward Looks for Effortle – iwalletsmen",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Skirt+Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Skirt+Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-062",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "22 Men’s Long Hairstyles That Look Incredible in Every Setting",
+    "sourceUrl": "https://kr.pinterest.com/pin/4222193396315405/",
+    "image": "assets/influencers/look-062.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Whether you're at work, traveling, or attending a special event, the right hairstyle can elevate your appearance. These 22 Men’s Long Hairstyles are versatile enough to fit every lifestyle while maintaining a fashionable edge. Picture effortless layers, textured waves, and polished finishes that always look camera-ready. These styles are built for modern men. #MensLongHairstyles #StylishHair #MensStyleGuide #HairIdeas #FashionForward",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "브라운"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-063",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Y2K Tracksuit Blokecore Outfit for Men | Wide Leg Side Stripe Track Pants Inspo",
+    "sourceUrl": "https://kr.pinterest.com/pin/152137293659720738/",
+    "image": "assets/influencers/look-063.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Master the vintage sporty aesthetic with this all-black blokecore streetwear outfit for boys. This casual look pairs a relaxed black zip-up windbreaker parachute jacket with matching oversized, wide-leg training track pants featuring a clean white side stripe. Complete the athleisure fit with classic black running sneakers and a matching nylon duffle bag. Perfect for an effortless, ultra-comfortable streetwear style.",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-064",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/80009330877511921/",
+    "image": "assets/influencers/look-064.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-065",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "90년대 서울의 크리스마스, 어떤 모습이었을까요? * ⋆\n\n내일 예고된 서울의 첫눈❄️\n그 시절의 화이트 크리스마스를 떠올리며\n설레는 마음으로 기다려봅니다.\n\n가끔 그 시절로 순간 이동하고 싶은 마음\n키뮤어 제품과 함께, 그리운 90년대의 무드를 \n간접적으로나마 느껴보세요. ☃",
+    "sourceUrl": "https://kr.pinterest.com/pin/141722719519763533/",
+    "image": "assets/influencers/look-065.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "90년대 서울의 크리스마스, 어떤 모습이었을까요? * ⋆\n\n내일 예고된 서울의 첫눈❄️\n그 시절의 화이트 크리스마스를 떠올리며\n설레는 마음으로 기다려봅니다.\n\n가끔 그 시절로 순간 이동하고 싶은 마음\n키뮤어 제품과 함께, 그리운 90년대의 무드를 \n간접적으로나마 느껴보세요. ☃",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-066",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Day 6 🇯🇵\nCome spend a day with me in Osaka 🏯",
+    "sourceUrl": "https://kr.pinterest.com/pin/107664247339257607/",
+    "image": "assets/influencers/look-066.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Day 6 🇯🇵\nCome spend a day with me in Osaka 🏯",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-067",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/329114685297006845/",
+    "image": "assets/influencers/look-067.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-068",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "already doing the most 🖤",
+    "sourceUrl": "https://kr.pinterest.com/pin/177470041561438741/",
+    "image": "assets/influencers/look-068.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "already doing the most 🖤",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-069",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Oversized, effortless, and quietly cool —\nthe kind of jacket you never want to give back.🔥\n🔍Retro Glossy Leather Bomber Jacket\n.\n.\n.\n#BoyfriendStyle #BoyfriendJacket #OversizedFit #EffortlessCool #StreetCasual #UnisexStyle #DailyOutfit #RelaxedVibes #CasualWear #OOTD #MinimalStreet",
+    "sourceUrl": "https://kr.pinterest.com/pin/354095589474621255/",
+    "image": "assets/influencers/look-069.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Oversized, effortless, and quietly cool —\nthe kind of jacket you never want to give back.🔥\n🔍Retro Glossy Leather Bomber Jacket\n.\n.\n.\n#BoyfriendStyle #BoyfriendJacket #OversizedFit #EffortlessCool #StreetCasual #UnisexStyle #DailyOutfit #RelaxedVibes #CasualWear #OOTD #MinimalStreet",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-070",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/34269647163053984/",
+    "image": "assets/influencers/look-070.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-071",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Men’s Winter Style ☀️",
+    "sourceUrl": "https://kr.pinterest.com/pin/2181499817045246/",
+    "image": "assets/influencers/look-071.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Scarf+Belt",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Scarf+Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-072",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "\"Men's Casual Wear & Stylish Everyday Outfits\"",
+    "sourceUrl": "https://kr.pinterest.com/pin/485474034852683560/",
+    "image": "assets/influencers/look-072.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Discover casual wear for men that's both stylish and comfortable.",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-073",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "BOYS OOTD FOR SUMMER EVENINGS",
+    "sourceUrl": "https://kr.pinterest.com/pin/16325617396987681/",
+    "image": "assets/influencers/look-073.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "레드"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "레드"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "레드"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-074",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Clean lines, calm vibes. This is how autumn should feel. 🍂 . . . Hashtags #MensOOTD #KoreanMensFashion #EffortlessStyle #MinimalMenswear #StreetStyleMen",
+    "sourceUrl": "https://kr.pinterest.com/pin/19492210990026323/",
+    "image": "assets/influencers/look-074.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Clean lines, calm vibes. This is how autumn should feel. 🍂 . . . Hashtags #MensOOTD #KoreanMensFashion #EffortlessStyle #MinimalMenswear #StreetStyleMen",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-075",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Recent ivystyle👔💫     #海外ファッション #ストリートシック #streetchic #ivystyle #fyp #fypシ #outfits #streetwear",
+    "sourceUrl": "https://kr.pinterest.com/pin/88805423898180343/",
+    "image": "assets/influencers/look-075.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Recent ivystyle👔💫     #海外ファッション #ストリートシック #streetchic #ivystyle #fyp #fypシ #outfits #streetwear",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Skirt+Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Skirt+Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-076",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Instagram photo by 정동수•𝐷𝐷𝐶𝑂 • Apr 7, 2023 at 6:37 AM",
+    "sourceUrl": "https://kr.pinterest.com/pin/139119075986008773/",
+    "image": "assets/influencers/look-076.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Instagram photo by 정동수•𝐷𝐷𝐶𝑂 • Apr 7, 2023 at 6:37 AM",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-077",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Men's Style Men Fashion #fashion #mensfashion",
+    "sourceUrl": "https://kr.pinterest.com/pin/6544361953956567/",
+    "image": "assets/influencers/look-077.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Men's Style Men Fashion #fashion #mensfashion",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-078",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Soft tones, structured fits.\nThis is quiet confidence, worn daily 🖤🤍\nWhich look’s your fav from this edit?\n.\n.\n.\n#koreanfashionmen #neutralcore #quietluxurystyle #softtonelook #cleanfitdaily #fwstyleedit #gentlemasculine",
+    "sourceUrl": "https://kr.pinterest.com/pin/50876670786074185/",
+    "image": "assets/influencers/look-078.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Soft tones, structured fits.\nThis is quiet confidence, worn daily 🖤🤍\nWhich look’s your fav from this edit?\n.\n.\n.\n#koreanfashionmen #neutralcore #quietluxurystyle #softtonelook #cleanfitdaily #fwstyleedit #gentlemasculine",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-079",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "10 Essential Korean Men's Spring Fashion Outfits for 2026",
+    "sourceUrl": "https://kr.pinterest.com/pin/730216527126060420/",
+    "image": "assets/influencers/look-079.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Discover 10 essential Korean men's spring outfits for 2026. This style guide covers a range of Korean men's fashion, from dark cool-girl aesthetics and retro casual to relaxed streetwear and minimalist refinement. Learn how to style key pieces like velvet jackets, chunky knits, bomber jackets, and distressed jeans with signature accessories. Get inspired to master the latest looks in Korean street fashion for men and Korean spring fashion with these korean fashion men outfit ideas.",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-080",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Anglan 5th Summer",
+    "sourceUrl": "https://kr.pinterest.com/pin/139611657203260699/",
+    "image": "assets/influencers/look-080.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Logo Pigment Half Tee",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-081",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "We listed out every single piece from KITH's Spring 2022 collection, modeled by Steve Buscemi and packed with Clarks, Yankees caps, and more.",
+    "sourceUrl": "https://kr.pinterest.com/pin/12807180189246801/",
+    "image": "assets/influencers/look-081.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "We listed out every single piece from KITH's Spring 2022 collection, modeled by Steve Buscemi and packed with Clarks, Yankees caps, and more.",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-082",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Men's Navy Pinstripe Three Piece Suit | Custom Tailored Vintage Formal Wear - Etsy",
+    "sourceUrl": "https://kr.pinterest.com/pin/1138707087058153572/",
+    "image": "assets/influencers/look-082.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Men's Navy Pinstripe Three Piece Suit | Custom Tailored Vintage Formal Wear",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "블랙"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "블랙"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-083",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/65935582039833169/",
+    "image": "assets/influencers/look-083.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-084",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Nanostudio -Korean men's fashion site-",
+    "sourceUrl": "https://kr.pinterest.com/pin/1050464681826252183/",
+    "image": "assets/influencers/look-084.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "[ONELYC1NS] Korean loose shirt na1003 – Nanostudio",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-085",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Instagram",
+    "sourceUrl": "https://kr.pinterest.com/pin/24418022976995711/",
+    "image": "assets/influencers/look-085.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Instagram",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-086",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/28991991346696728/",
+    "image": "assets/influencers/look-086.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-087",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Best Looks Pitti Uomo 108 Day 2 - Gentstyle",
+    "sourceUrl": "https://kr.pinterest.com/pin/35958497020597651/",
+    "image": "assets/influencers/look-087.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Best Looks Pitti Uomo 108 Day 2 - Gentstyle",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-088",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Outfit idea",
+    "sourceUrl": "https://kr.pinterest.com/pin/35747390788501456/",
+    "image": "assets/influencers/look-088.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "#clothes #outfit #looks outfit men",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-089",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "photos from xhs id: 113857235",
+    "sourceUrl": "https://kr.pinterest.com/pin/12173861488707007/",
+    "image": "assets/influencers/look-089.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "photos from xhs id: 113857235",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Skirt+Pants",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Skirt+Pants"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "라이트 그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-090",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Loose Korean Soft Boy Jacket - Beige / XL",
+    "sourceUrl": "https://kr.pinterest.com/pin/1021613496731898252/",
+    "image": "assets/influencers/look-090.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "DetailsMaterial: PolyesterPattern: SolidCollar: Turn-down CollarThickness: Standard Size Bust (cm) Length (cm) Shoulder (cm) Sleeve (cm) M 128 70 46 58 L 132 72 48 59 XL 136 74 50 60 XXL 140 76 52 61 3XL 144 78 54 62 4XL 148 80 56 63",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Skirt+Pants",
+        "colors": [
+          "베이지"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Skirt+Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-091",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Effen heren kimono-shirt met wijde pijpen en afhangende schoudermouwen, casual en los, herfst",
+    "sourceUrl": "https://kr.pinterest.com/pin/728316571033235447/",
+    "image": "assets/influencers/look-091.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": " ",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "네이비"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "네이비"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-092",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "매우 고난했던 한주 주말엔 건전하고 화려하게 알코올과 도파민을 쌓아야지",
+    "sourceUrl": "https://kr.pinterest.com/pin/72761350249655676/",
+    "image": "assets/influencers/look-092.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "매우 고난했던 한주 주말엔 건전하고 화려하게 알코올과 도파민을 쌓아야지",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      },
+      {
+        "category": "액세서리",
+        "label": "Belt",
+        "colors": [
+          "그레이"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Belt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-093",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "大人のお洒落コーデ集！爽やか見せには“ブルー×白”が正解！ | Fashion | Safari Online",
+    "sourceUrl": "https://kr.pinterest.com/pin/59602395064045688/",
+    "image": "assets/influencers/look-093.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "大人のお洒落コーデ集！爽やか見せには“ブルー×白”が正解！ | Fashion | Safari Online",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "가방",
+        "label": "Bag",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Bag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-094",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Burgundy Cardigan with Beige Wide-Leg Pants | Old Money Korean Men's Outfit",
+    "sourceUrl": "https://kr.pinterest.com/pin/68117013110060736/",
+    "image": "assets/influencers/look-094.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Create a timeless smart-casual look with a burgundy knit cardigan layered over a white shirt, paired with beige wide-leg trousers and black leather shoes. This Old Money and Korean-inspired men's outfit combines premium layering, earthy tones, and a relaxed silhouette, making it perfect for college, coffee dates, casual office wear, autumn styling, and everyday minimalist fashion.   #MensFashion #OldMoneyStyle #KoreanFashion #MinimalStyle #SmartCasual #BurgundyCardigan",
+    "pieces": [
+      {
+        "category": "하의",
+        "label": "Pants",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Pants"
+        ]
+      },
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Upper-clothes"
+        ]
+      },
+      {
+        "category": "신발",
+        "label": "Right-shoe+Left-shoe",
+        "colors": [
+          "화이트"
+        ],
+        "materials": [
+          "소재 미분류"
+        ],
+        "fits": [
+          "핏 미분류"
+        ],
+        "details": [
+          "Right-shoe+Left-shoe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pinterest-trend-095",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Day 5 in Tokyo 🇯🇵\nHad so much fun today, even if it came with a bit of stress",
+    "sourceUrl": "https://kr.pinterest.com/pin/228628118580530469/",
+    "image": "assets/influencers/look-095.jpg",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
+    "bmiRange": [
+      16,
+      35
+    ],
+    "bodyShapes": [
+      "보통"
+    ],
+    "heightRange": [
+      150,
+      200
+    ],
+    "weather": [
+      "맑음",
+      "간절기"
+    ],
+    "mood": "남성 스트리트 패션",
+    "styles": [
+      "남성패션",
+      "스트리트",
+      "캐주얼"
+    ],
+    "summary": "Day 5 in Tokyo 🇯🇵\nHad so much fun today, even if it came with a bit of stress",
+    "pieces": [
+      {
+        "category": "상의",
+        "label": "Upper-clothes",
+        "colors": [
           "블루"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "카라",
-          "버튼"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블루",
-          "네이비"
+          "블루"
         ],
         "materials": [
-          "데님"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "청바지"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-047",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · xportsnews.com",
-    "sourceTitle": "강민경 · 뉴트럴 레이어드",
-    "sourceUrl": "https://www.xportsnews.com/article/1670786",
-    "image": "assets/influencers/look-047.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
+    "id": "pinterest-trend-096",
+    "gender": "men",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "BJD Head",
+    "sourceUrl": "https://kr.pinterest.com/pin/10625749120393641/",
+    "image": "assets/influencers/look-096.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      17,
-      23
+      16,
+      35
     ],
     "bodyShapes": [
-      "마른 체형",
       "보통"
     ],
     "heightRange": [
@@ -4496,4879 +8068,69 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "뉴트럴 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "베이지와 크림 계열을 겹쳐 입어 부드러운 깊이를 만든 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "베이지",
-          "브라운",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "재킷",
-          "코트"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "브라운",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-048",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · xportsnews.com",
-    "sourceTitle": "강민경 · 모던 테일러링",
-    "sourceUrl": "https://www.xportsnews.com/article/1670786",
-    "image": "assets/influencers/look-048.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "모던 테일러링",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "재킷과 곧은 실루엣의 하의로 비율을 정리한 도시적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "슬림",
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠",
-          "블라우스"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-049",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · news.nate.com",
-    "sourceTitle": "강민경 · 빈티지 포인트",
-    "sourceUrl": "https://news.nate.com/view/20221229n32105",
-    "image": "assets/influencers/look-049.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 포인트",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "패턴이나 컬러 한 가지를 중심으로 힘을 준 빈티지 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "레드",
-          "블루",
-          "브라운",
-          "멀티"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "패턴",
-          "프린트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "브라운",
-          "베이지"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "빈티지 워싱"
-        ]
-      },
-      {
-        "category": "가방",
-        "colors": [
-          "브라운",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "캔버스"
-        ],
-        "fits": [
-          "미디엄"
-        ],
-        "details": [
-          "숄더백"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-050",
-    "gender": "women",
-    "creator": "강민경",
-    "creatorHandle": "@iammingki",
-    "creatorUrl": "https://www.instagram.com/iammingki/",
-    "credit": "강민경 공개 룩북 · ytn.co.kr",
-    "sourceTitle": "강민경 · 편안한 원마일",
-    "sourceUrl": "https://www.ytn.co.kr/_ln/1406_202212292203014605",
-    "image": "assets/influencers/look-050.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·균형 체형",
-    "bodyLabel": "마른·균형 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "편안한 원마일",
-    "styles": [
-      "오피스 캐주얼",
-      "미니멀",
-      "톤온톤"
-    ],
-    "summary": "부드러운 상의와 여유 있는 하의에 운동화를 더한 편안한 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "그레이",
-          "화이트",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "스웨트",
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "그레이",
-          "블랙",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "나일론"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "실버",
-          "블랙"
-        ],
-        "materials": [
-          "메시",
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-051",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · news.nate.com",
-    "sourceTitle": "이동휘 · 시티보이 셔츠",
-    "sourceUrl": "https://news.nate.com/view/20230316n35486?mid=n0808",
-    "image": "assets/influencers/look-051.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-052",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "이동휘 · 빈티지 워크웨어",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010275775",
-    "image": "assets/influencers/look-052.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-053",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "이동휘 · 미니멀 테일러드",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010275775",
-    "image": "assets/influencers/look-053.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-054",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "이동휘 · 고프코어 믹스",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010307685",
-    "image": "assets/influencers/look-054.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-055",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · news.nate.com",
-    "sourceTitle": "이동휘 · 프레피 레이어드",
-    "sourceUrl": "https://news.nate.com/view/20240311n17273",
-    "image": "assets/influencers/look-055.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-056",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · star.fnnews.com",
-    "sourceTitle": "이동휘 · 시티보이 셔츠",
-    "sourceUrl": "https://star.fnnews.com/article/202307191750582598",
-    "image": "assets/influencers/look-056.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-057",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · newsen.com",
-    "sourceTitle": "이동휘 · 빈티지 워크웨어",
-    "sourceUrl": "https://www.newsen.com/news_view.php?uid=202507080903376310",
-    "image": "assets/influencers/look-057.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-058",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · news.nate.com",
-    "sourceTitle": "이동휘 · 미니멀 테일러드",
-    "sourceUrl": "https://news.nate.com/view/20230317n01458",
-    "image": "assets/influencers/look-058.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-059",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · newsfreezone.co.kr",
-    "sourceTitle": "이동휘 · 고프코어 믹스",
-    "sourceUrl": "https://www.newsfreezone.co.kr/news/articleView.html?idxno=443900",
-    "image": "assets/influencers/look-059.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-060",
-    "gender": "men",
-    "creator": "이동휘",
-    "creatorHandle": "@dlehdgnl",
-    "creatorUrl": "https://www.instagram.com/dlehdgnl/",
-    "credit": "이동휘 공개 룩북 · tvreport.co.kr",
-    "sourceTitle": "이동휘 · 프레피 레이어드",
-    "sourceUrl": "https://tvreport.co.kr/star/article/154358/",
-    "image": "assets/influencers/look-060.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "빈티지",
-      "아메카지",
-      "스트리트"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-061",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · newsen.com",
-    "sourceTitle": "주우재 · 시티보이 셔츠",
-    "sourceUrl": "https://www.newsen.com/news_view.php?uid=202309061650331510",
-    "image": "assets/influencers/look-061.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-062",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "주우재 · 빈티지 워크웨어",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2025072635184",
-    "image": "assets/influencers/look-062.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-063",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · news.nate.com",
-    "sourceTitle": "주우재 · 미니멀 테일러드",
-    "sourceUrl": "https://news.nate.com/view/20230403n18021",
-    "image": "assets/influencers/look-063.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-064",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "주우재 · 고프코어 믹스",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010290042",
-    "image": "assets/influencers/look-064.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-065",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · spotvnews.co.kr",
-    "sourceTitle": "주우재 · 프레피 레이어드",
-    "sourceUrl": "https://www.spotvnews.co.kr/news/articleView.html?idxno=632034",
-    "image": "assets/influencers/look-065.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-066",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "주우재 · 시티보이 셔츠",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2025092446074",
-    "image": "assets/influencers/look-066.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-067",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · news1.kr",
-    "sourceTitle": "주우재 · 빈티지 워크웨어",
-    "sourceUrl": "https://www.news1.kr/entertain/broadcast-tv/5084561",
-    "image": "assets/influencers/look-067.avif",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-068",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "주우재 · 미니멀 테일러드",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2025101229274",
-    "image": "assets/influencers/look-068.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-069",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · news.nate.com",
-    "sourceTitle": "주우재 · 고프코어 믹스",
-    "sourceUrl": "https://news.nate.com/view/20250512n35815",
-    "image": "assets/influencers/look-069.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-070",
-    "gender": "men",
-    "creator": "주우재",
-    "creatorHandle": "@ophen28",
-    "creatorUrl": "https://www.instagram.com/ophen28/",
-    "credit": "주우재 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "주우재 · 프레피 레이어드",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2023112753914",
-    "image": "assets/influencers/look-070.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·큰 키 체형",
-    "bodyLabel": "마른·큰 키 체형",
-    "bmiRange": [
-      17,
-      23
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "미니멀",
-      "와이드 실루엣",
-      "모델 오프듀티"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-071",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · ytn.co.kr",
-    "sourceTitle": "류준열 · 시티보이 셔츠",
-    "sourceUrl": "https://www.ytn.co.kr/_ln/0117_202210181122047873",
-    "image": "assets/influencers/look-071.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-072",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · xportsnews.com",
-    "sourceTitle": "류준열 · 빈티지 워크웨어",
-    "sourceUrl": "https://www.xportsnews.com/article/1655064",
-    "image": "assets/influencers/look-072.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-073",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "류준열 · 미니멀 테일러드",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010259444",
-    "image": "assets/influencers/look-073.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-074",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · pickcon.co.kr",
-    "sourceTitle": "류준열 · 고프코어 믹스",
-    "sourceUrl": "https://pickcon.co.kr/m/view.html?catid=3&contid=2019012580013",
-    "image": "assets/influencers/look-074.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-075",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · spotvnews.co.kr",
-    "sourceTitle": "류준열 · 프레피 레이어드",
-    "sourceUrl": "https://www.spotvnews.co.kr/news/articleView.html?idxno=556785",
-    "image": "assets/influencers/look-075.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-076",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · dailian.co.kr",
-    "sourceTitle": "류준열 · 시티보이 셔츠",
-    "sourceUrl": "https://www.dailian.co.kr/news/view/1163401",
-    "image": "assets/influencers/look-076.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-077",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "류준열 · 빈티지 워크웨어",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010259458",
-    "image": "assets/influencers/look-077.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-078",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · tenasia.co.kr",
-    "sourceTitle": "류준열 · 미니멀 테일러드",
-    "sourceUrl": "https://www.tenasia.co.kr/article/2024010555734",
-    "image": "assets/influencers/look-078.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-079",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · news.nate.com",
-    "sourceTitle": "류준열 · 고프코어 믹스",
-    "sourceUrl": "https://news.nate.com/view/20221110n29993",
-    "image": "assets/influencers/look-079.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-080",
-    "gender": "men",
-    "creator": "류준열",
-    "creatorHandle": "@ryusdb",
-    "creatorUrl": "https://www.instagram.com/ryusdb/",
-    "credit": "류준열 공개 룩북 · spotvnews.co.kr",
-    "sourceTitle": "류준열 · 프레피 레이어드",
-    "sourceUrl": "https://www.spotvnews.co.kr/news/articleView.html?idxno=556819",
-    "image": "assets/influencers/look-080.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      19,
-      26
-    ],
-    "bodyShapes": [
-      "보통",
-      "마른 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "고프코어",
-      "빈티지",
-      "스포츠 믹스"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-081",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "봉태규 · 시티보이 셔츠",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010062164",
-    "image": "assets/influencers/look-081.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-082",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "봉태규 · 빈티지 워크웨어",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10009585857",
-    "image": "assets/influencers/look-082.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-083",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · news.nate.com",
-    "sourceTitle": "봉태규 · 미니멀 테일러드",
-    "sourceUrl": "https://news.nate.com/view/20230307n22086?mid=e0401",
-    "image": "assets/influencers/look-083.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-084",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · fashionbiz.co.kr",
-    "sourceTitle": "봉태규 · 고프코어 믹스",
-    "sourceUrl": "https://www.fashionbiz.co.kr/article/194876",
-    "image": "assets/influencers/look-084.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-085",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · news.nate.com",
-    "sourceTitle": "봉태규 · 프레피 레이어드",
-    "sourceUrl": "https://news.nate.com/view/20230307n24324",
-    "image": "assets/influencers/look-085.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-086",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · news.nate.com",
-    "sourceTitle": "봉태규 · 시티보이 셔츠",
-    "sourceUrl": "https://news.nate.com/view/20230307n31407?mid=n0808",
-    "image": "assets/influencers/look-086.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-087",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · mk.co.kr",
-    "sourceTitle": "봉태규 · 빈티지 워크웨어",
-    "sourceUrl": "https://www.mk.co.kr/star/photos/view/2023/08/646055/",
-    "image": "assets/influencers/look-087.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "그레이"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "레귤러"
-        ],
-        "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-088",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · news.nate.com",
-    "sourceTitle": "봉태규 · 미니멀 테일러드",
-    "sourceUrl": "https://news.nate.com/view/20200630n31934",
-    "image": "assets/influencers/look-088.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-089",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · dispatch.co.kr",
-    "sourceTitle": "봉태규 · 고프코어 믹스",
-    "sourceUrl": "https://www.dispatch.co.kr/2241395",
-    "image": "assets/influencers/look-089.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-090",
-    "gender": "men",
-    "creator": "봉태규",
-    "creatorHandle": "@taegyu_bong",
-    "creatorUrl": "https://www.instagram.com/taegyu_bong/",
-    "credit": "봉태규 공개 룩북 · enter.etoday.co.kr",
-    "sourceTitle": "봉태규 · 프레피 레이어드",
-    "sourceUrl": "https://enter.etoday.co.kr/news/view/126278",
-    "image": "assets/influencers/look-090.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 마른·보통 체형",
-    "bodyLabel": "마른·보통 체형",
-    "bmiRange": [
-      18,
-      25
-    ],
-    "bodyShapes": [
-      "마른 체형",
-      "보통"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "젠더리스",
-      "클래식",
-      "빈티지"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-091",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "변요한 · 시티보이 셔츠",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010258900",
-    "image": "assets/influencers/look-091.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "클래식",
-      "워크웨어",
+      "남성패션",
+      "스트리트",
       "캐주얼"
     ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
+    "summary": "Light BJD 🔥Head Chen Xi for Special 1/4 & 75cm Ball-jointed doll ❤️Time Limited❤️ Event dates: April 10th to April 30th  #legenddoll #bjd #doll #balljointeddoll #resindoll #limiteddoll",
     "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
       {
         "category": "하의",
+        "label": "Skirt+Pants",
         "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
+          "그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-092",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "변요한 · 빈티지 워크웨어",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010286566",
-    "image": "assets/influencers/look-092.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "빈티지 워크웨어",
-    "styles": [
-      "클래식",
-      "워크웨어",
-      "캐주얼"
-    ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
+          "Skirt+Pants"
         ]
       },
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
           "그레이"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
+          "Upper-clothes"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-093",
+    "id": "pinterest-trend-097",
     "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · mt.co.kr",
-    "sourceTitle": "변요한 · 미니멀 테일러드",
-    "sourceUrl": "https://www.mt.co.kr/photo/202602121204196360",
-    "image": "assets/influencers/look-093.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "미니멀 테일러드",
-    "styles": [
-      "클래식",
-      "워크웨어",
-      "캐주얼"
-    ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "슬림"
-        ],
-        "details": [
-          "티셔츠",
-          "니트"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "그레이"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-094",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "변요한 · 고프코어 믹스",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010312704",
-    "image": "assets/influencers/look-094.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "고프코어 믹스",
-    "styles": [
-      "클래식",
-      "워크웨어",
-      "캐주얼"
-    ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
-    "pieces": [
-      {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "폴리에스터"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "바람막이",
-          "포켓"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블랙",
-          "카키",
-          "그레이"
-        ],
-        "materials": [
-          "나일론",
-          "코튼"
-        ],
-        "fits": [
-          "와이드",
-          "조거"
-        ],
-        "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-095",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · sports.donga.com",
-    "sourceTitle": "변요한 · 프레피 레이어드",
-    "sourceUrl": "https://sports.donga.com/ent/article/all/20251213/132958789/1",
-    "image": "assets/influencers/look-095.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "프레피 레이어드",
-    "styles": [
-      "클래식",
-      "워크웨어",
-      "캐주얼"
-    ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "니트"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "셔츠",
-          "니트",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-096",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · xportsnews.com",
-    "sourceTitle": "변요한 · 시티보이 셔츠",
-    "sourceUrl": "https://www.xportsnews.com/article/1638388",
-    "image": "assets/influencers/look-096.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
-    "bmiRange": [
-      20,
-      27
-    ],
-    "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
-    ],
-    "heightRange": [
-      150,
-      200
-    ],
-    "weather": [
-      "맑음",
-      "간절기",
-      "약한 비"
-    ],
-    "mood": "시티보이 셔츠",
-    "styles": [
-      "클래식",
-      "워크웨어",
-      "캐주얼"
-    ],
-    "summary": "넉넉한 셔츠와 와이드 팬츠로 실루엣을 만든 도심 캐주얼 룩",
-    "pieces": [
-      {
-        "category": "상의",
-        "colors": [
-          "화이트",
-          "블루",
-          "스트라이프"
-        ],
-        "materials": [
-          "코튼"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "셔츠",
-          "카라"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "네이비",
-          "그레이",
-          "베이지"
-        ],
-        "materials": [
-          "코튼",
-          "울"
-        ],
-        "fits": [
-          "와이드",
-          "스트레이트"
-        ],
-        "details": [
-          "슬랙스",
-          "치노"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "화이트",
-          "블랙"
-        ],
-        "materials": [
-          "가죽",
-          "메시"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "스니커즈",
-          "로퍼"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "kr-look-097",
-    "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · news.nate.com",
-    "sourceTitle": "변요한 · 빈티지 워크웨어",
-    "sourceUrl": "https://news.nate.com/view/20230217n27690",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Outfit Inspiration street style",
+    "sourceUrl": "https://kr.pinterest.com/pin/9007268001019549/",
     "image": "assets/influencers/look-097.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      20,
-      27
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -9376,95 +8138,53 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "빈티지 워크웨어",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "워크웨어",
+      "남성패션",
+      "스트리트",
       "캐주얼"
     ],
-    "summary": "워싱된 아우터와 데님을 질감 차이로 쌓은 빈티지 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "브라운",
-          "카키",
-          "네이비"
-        ],
-        "materials": [
-          "코튼",
-          "데님"
-        ],
-        "fits": [
-          "오버",
-          "레귤러"
-        ],
-        "details": [
-          "워크 재킷",
-          "워싱"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
           "그레이"
         ],
         "materials": [
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠"
-        ]
-      },
-      {
-        "category": "하의",
-        "colors": [
-          "블루",
-          "네이비",
-          "브라운"
-        ],
-        "materials": [
-          "데님",
-          "코튼"
-        ],
-        "fits": [
-          "스트레이트",
-          "와이드"
-        ],
-        "details": [
-          "워싱",
-          "카고"
+          "Upper-clothes"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-098",
+    "id": "pinterest-trend-098",
     "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · ent.sbs.co.kr",
-    "sourceTitle": "변요한 · 미니멀 테일러드",
-    "sourceUrl": "https://ent.sbs.co.kr/news/article.do?article_id=E10010261488",
-    "image": "assets/influencers/look-098.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "Fashion Stuff: Latest Trends & Outfit Ideas | TrendyEnthusiast",
+    "sourceUrl": "https://kr.pinterest.com/pin/423549539978742214/",
+    "image": "assets/influencers/look-098.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      20,
-      27
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -9472,97 +8192,69 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "미니멀 테일러드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "워크웨어",
+      "남성패션",
+      "스트리트",
       "캐주얼"
     ],
-    "summary": "절제된 색과 반듯한 재킷·슬랙스로 완성한 깔끔한 룩",
+    "summary": "Discover the latest in men's fashion with TrendyEnthusiast! Explore top-notch mans fashion inspo, man fashion style, and man fashion clothing for ultimate man fashion inspiration. Find trendy fashion outfits ideas for fashion addicts and stay stylish with fashion clothes outfit and fashionable wear. From spring outfits to fashion teenager trends, we've got you covered. Dive into fashion basics, fashion mode, and fashion obsessions. Follow us for fashion blogger outfits and what's fashion trending now. Your go-to for fashion aesthetic classy and fashion comfy looks!",
     "pieces": [
       {
-        "category": "아우터",
-        "colors": [
-          "블랙",
-          "그레이",
-          "네이비"
-        ],
-        "materials": [
-          "울",
-          "폴리에스터"
-        ],
-        "fits": [
-          "레귤러",
-          "오버"
-        ],
-        "details": [
-          "블레이저",
-          "라펠"
-        ]
-      },
-      {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "블랙",
-          "아이보리"
+          "베이지"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "슬림"
+          "핏 미분류"
         ],
         "details": [
-          "티셔츠",
-          "니트"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "그레이"
+          "베이지"
         ],
         "materials": [
-          "울",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "스트레이트"
+          "핏 미분류"
         ],
         "details": [
-          "슬랙스"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-099",
+    "id": "pinterest-trend-099",
     "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · asiae.co.kr",
-    "sourceTitle": "변요한 · 고프코어 믹스",
-    "sourceUrl": "https://www.asiae.co.kr/article/2024062612100052491",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": " ",
+    "sourceUrl": "https://kr.pinterest.com/pin/424534702397794470/",
     "image": "assets/influencers/look-099.jpg",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      20,
-      27
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -9570,97 +8262,69 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "고프코어 믹스",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "워크웨어",
+      "남성패션",
+      "스트리트",
       "캐주얼"
     ],
-    "summary": "기능성 아우터와 편한 팬츠에 러닝화를 더한 실용적인 룩",
+    "summary": " ",
     "pieces": [
       {
-        "category": "아우터",
+        "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "블랙",
-          "카키",
           "그레이"
         ],
         "materials": [
-          "나일론",
-          "폴리에스터"
+          "소재 미분류"
         ],
         "fits": [
-          "오버",
-          "레귤러"
+          "핏 미분류"
         ],
         "details": [
-          "바람막이",
-          "포켓"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "블랙",
-          "카키",
           "그레이"
         ],
         "materials": [
-          "나일론",
-          "코튼"
+          "소재 미분류"
         ],
         "fits": [
-          "와이드",
-          "조거"
+          "핏 미분류"
         ],
         "details": [
-          "카고",
-          "밴딩"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "그레이",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "메시",
-          "고무"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "러닝화"
+          "Pants"
         ]
       }
     ]
   },
   {
-    "id": "kr-look-100",
+    "id": "pinterest-trend-100",
     "gender": "men",
-    "creator": "변요한",
-    "creatorHandle": "@byunyohan_official",
-    "creatorUrl": "https://www.instagram.com/byunyohan_official/",
-    "credit": "변요한 공개 룩북 · xportsnews.com",
-    "sourceTitle": "변요한 · 프레피 레이어드",
-    "sourceUrl": "https://www.xportsnews.com/article/2129596",
-    "image": "assets/influencers/look-100.webp",
-    "published": "공개 사진 룩북",
-    "publicSpec": "사진 기반 · 보통·균형 체형",
-    "bodyLabel": "보통·균형 체형",
+    "creator": "Pinterest 남성패션",
+    "creatorHandle": "@pinterest",
+    "creatorUrl": "https://kr.pinterest.com/",
+    "credit": "Pinterest 공개 Pin",
+    "sourceTitle": "8 Summer Outfit Ideas for Men | Casual Linen Looks, Old Money Style & Minimalist Fashion",
+    "sourceUrl": "https://kr.pinterest.com/pin/4362930885074146/",
+    "image": "assets/influencers/look-100.png",
+    "published": "2026 남성패션 검색",
+    "publicSpec": "남성 패션 룩",
+    "bodyLabel": "남성",
     "bmiRange": [
-      20,
-      27
+      16,
+      35
     ],
     "bodyShapes": [
-      "보통",
-      "상체가 발달한 체형"
+      "보통"
     ],
     "heightRange": [
       150,
@@ -9668,74 +8332,46 @@
     ],
     "weather": [
       "맑음",
-      "간절기",
-      "약한 비"
+      "간절기"
     ],
-    "mood": "프레피 레이어드",
+    "mood": "남성 스트리트 패션",
     "styles": [
-      "클래식",
-      "워크웨어",
+      "남성패션",
+      "스트리트",
       "캐주얼"
     ],
-    "summary": "셔츠와 니트, 단정한 팬츠를 겹쳐 입은 친근한 프레피 룩",
+    "summary": "Refresh your warm-weather wardrobe with these 8 summer outfit ideas for men featuring linen shirts, polos, shorts, lightweight trousers, neutral colors, and smart casual style. Perfect for vacations, beach days, brunch, date nights, and everyday wear. Save this men's summer fashion guide for timeless outfit inspiration, old money aesthetics, and capsule wardrobe ideas.",
     "pieces": [
       {
         "category": "상의",
+        "label": "Upper-clothes",
         "colors": [
-          "화이트",
-          "네이비",
-          "그레이"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "니트"
+          "소재 미분류"
         ],
         "fits": [
-          "레귤러",
-          "오버"
+          "핏 미분류"
         ],
         "details": [
-          "셔츠",
-          "니트",
-          "카라"
+          "Upper-clothes"
         ]
       },
       {
         "category": "하의",
+        "label": "Pants",
         "colors": [
-          "베이지",
-          "네이비",
-          "그레이"
+          "라이트 그레이"
         ],
         "materials": [
-          "코튼",
-          "울"
+          "소재 미분류"
         ],
         "fits": [
-          "스트레이트",
-          "와이드"
+          "핏 미분류"
         ],
         "details": [
-          "치노",
-          "슬랙스"
-        ]
-      },
-      {
-        "category": "신발",
-        "colors": [
-          "브라운",
-          "블랙",
-          "화이트"
-        ],
-        "materials": [
-          "가죽"
-        ],
-        "fits": [
-          "로우"
-        ],
-        "details": [
-          "로퍼",
-          "스니커즈"
+          "Pants"
         ]
       }
     ]

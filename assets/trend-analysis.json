@@ -1,0 +1,5281 @@
+{
+  "model": "sayeed99/segformer_b3_clothes",
+  "reports": [
+    {
+      "sourceFile": "trend-001.png",
+      "pinId": "31032684929942063",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-002.jpg",
+      "pinId": "7599893114888415",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-003.jpg",
+      "pinId": "252553491599632017",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-004.jpg",
+      "pinId": "985231164494432",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-005.jpg",
+      "pinId": "1266706142211886",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-006.jpg",
+      "pinId": "1548181171903534",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-007.png",
+      "pinId": "4222193396304057",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-008.jpg",
+      "pinId": "14003448838442770",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-009.jpg",
+      "pinId": "49961877112474449",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-010.jpg",
+      "pinId": "6825836929269745",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-011.jpg",
+      "pinId": "49187820926613130",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-012.jpg",
+      "pinId": "68961438051277152",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-013.jpg",
+      "pinId": "11329436559786734",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-014.jpg",
+      "pinId": "14847873767849038",
+      "acceptedCount": 5,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-015.png",
+      "pinId": "26317979066347944",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-016.jpg",
+      "pinId": "37295503160967000",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-017.png",
+      "pinId": "1548181186841693",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-018.png",
+      "pinId": "15410823722826367",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-019.jpg",
+      "pinId": "281543725808589",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-020.webp",
+      "pinId": "3518505955794216",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-021.jpg",
+      "pinId": "1266706138849322",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-022.png",
+      "pinId": "918382549012017052",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-023.jpg",
+      "pinId": "448952656642203520",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-024.jpg",
+      "pinId": "59532026398224843",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-025.jpg",
+      "pinId": "20125529581066816",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-026.jpg",
+      "pinId": "7318418141930428",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-027.jpg",
+      "pinId": "3448137210662334",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-028.jpg",
+      "pinId": "23292123068427135",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-029.jpg",
+      "pinId": "555983516521026248",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-030.jpg",
+      "pinId": "144959681751234692",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-031.jpg",
+      "pinId": "2392606048237858",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-032.jpg",
+      "pinId": "38773246789810744",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-033.png",
+      "pinId": "26529085300756079",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-034.jpg",
+      "pinId": "23432860625629005",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-035.jpg",
+      "pinId": "8373949303605044",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-036.jpg",
+      "pinId": "20055160840666353",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-037.jpg",
+      "pinId": "1196337405836538",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-038.jpg",
+      "pinId": "5418462047141312",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-039.jpg",
+      "pinId": "18718154696250540",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-040.jpg",
+      "pinId": "4597893819264490752",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-041.jpg",
+      "pinId": "409123947422764473",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-042.jpg",
+      "pinId": "53691420554977266",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-043.jpg",
+      "pinId": "7951736838702077",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-044.jpg",
+      "pinId": "91197961197001978",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-045.jpg",
+      "pinId": "579134833360016678",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "원피스",
+          "label": "Dress",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Dress"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-046.jpg",
+      "pinId": "15410823720500526",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-047.jpg",
+      "pinId": "10766486606322287",
+      "acceptedCount": 1,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-048.jpg",
+      "pinId": "314055774037793014",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-049.webp",
+      "pinId": "96194142039034022",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-050.jpg",
+      "pinId": "2533343538505818",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-051.jpg",
+      "pinId": "47569339811569474",
+      "acceptedCount": 5,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-052.jpg",
+      "pinId": "587016132724755775",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-053.jpg",
+      "pinId": "99712579247642716",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-054.jpg",
+      "pinId": "10414642881907750",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-055.jpg",
+      "pinId": "33495590971127331",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-056.jpg",
+      "pinId": "14284923812871826",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-057.jpg",
+      "pinId": "68961438051277157",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Skirt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-058.jpg",
+      "pinId": "404338872821912794",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-059.jpg",
+      "pinId": "13299761397019592",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-060.jpg",
+      "pinId": "563018697509035",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-061.jpg",
+      "pinId": "559361216246631752",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-062.png",
+      "pinId": "4222193396315405",
+      "acceptedCount": 1,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-063.jpg",
+      "pinId": "152137293659720738",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-064.jpg",
+      "pinId": "80009330877511921",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-065.jpg",
+      "pinId": "141722719519763533",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-066.jpg",
+      "pinId": "107664247339257607",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-067.jpg",
+      "pinId": "329114685297006845",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-068.jpg",
+      "pinId": "177470041561438741",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-069.jpg",
+      "pinId": "354095589474621255",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-070.jpg",
+      "pinId": "34269647163053984",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-071.png",
+      "pinId": "2181499817045246",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Scarf+Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Scarf+Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-072.jpg",
+      "pinId": "485474034852683560",
+      "acceptedCount": 1,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-073.jpg",
+      "pinId": "16325617396987681",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-074.jpg",
+      "pinId": "19492210990026323",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-075.jpg",
+      "pinId": "88805423898180343",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-076.jpg",
+      "pinId": "139119075986008773",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-077.jpg",
+      "pinId": "6544361953956567",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-078.jpg",
+      "pinId": "50876670786074185",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-079.jpg",
+      "pinId": "730216527126060420",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-080.jpg",
+      "pinId": "139611657203260699",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-081.png",
+      "pinId": "12807180189246801",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-082.jpg",
+      "pinId": "1138707087058153572",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-083.jpg",
+      "pinId": "65935582039833169",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-084.png",
+      "pinId": "1050464681826252183",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-085.jpg",
+      "pinId": "24418022976995711",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-086.jpg",
+      "pinId": "28991991346696728",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-087.jpg",
+      "pinId": "35958497020597651",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-088.png",
+      "pinId": "35747390788501456",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-089.jpg",
+      "pinId": "12173861488707007",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-090.jpg",
+      "pinId": "1021613496731898252",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-091.jpg",
+      "pinId": "728316571033235447",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-092.jpg",
+      "pinId": "72761350249655676",
+      "acceptedCount": 4,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        },
+        {
+          "category": "액세서리",
+          "label": "Belt",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Belt"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-093.jpg",
+      "pinId": "59602395064045688",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "가방",
+          "label": "Bag",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Bag"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-094.png",
+      "pinId": "68117013110060736",
+      "acceptedCount": 3,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "신발",
+          "label": "Right-shoe+Left-shoe",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Right-shoe+Left-shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-095.jpg",
+      "pinId": "228628118580530469",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-096.png",
+      "pinId": "10625749120393641",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "하의",
+          "label": "Skirt+Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Skirt+Pants"
+          ]
+        },
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-097.jpg",
+      "pinId": "9007268001019549",
+      "acceptedCount": 1,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-098.png",
+      "pinId": "423549539978742214",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-099.jpg",
+      "pinId": "424534702397794470",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceFile": "trend-100.png",
+      "pinId": "4362930885074146",
+      "acceptedCount": 2,
+      "pieces": [
+        {
+          "category": "상의",
+          "label": "Upper-clothes",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Upper-clothes"
+          ]
+        },
+        {
+          "category": "하의",
+          "label": "Pants",
+          "colors": [
+            "색상 미분류"
+          ],
+          "materials": [
+            "소재 미분류"
+          ],
+          "fits": [
+            "핏 미분류"
+          ],
+          "details": [
+            "Pants"
+          ]
+        }
+      ]
+    }
+  ]
+}

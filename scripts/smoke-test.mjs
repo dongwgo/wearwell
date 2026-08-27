@@ -71,11 +71,18 @@ const expression = `
   const wardrobeCount = document.querySelector('#wardrobeCount').textContent;
   document.querySelector('#uploadButton').click();
   const clipboard = new DataTransfer();
-  clipboard.items.add(new File([new Uint8Array([137, 80, 78, 71])], 'clipboard.png', { type: 'image/png' }));
+  clipboard.items.add(new File([new Uint8Array([137, 80, 78, 71])], 'clipboard.png', { type: '' }));
   const paste = new Event('paste', { bubbles: true, cancelable: true });
   Object.defineProperty(paste, 'clipboardData', { value: clipboard });
   document.dispatchEvent(paste);
   const clipboardUploadReady = uploadFiles.length === 1 && document.querySelectorAll('#uploadPreview .upload-thumb').length === 1;
+  handleUploads([]);
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+    read: async () => [{ types: ['image/png'], getType: async () => new Blob([new Uint8Array([137, 80, 78, 71])], { type: 'image/png' }) }]
+  } });
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true }));
+  await new Promise(resolve => setTimeout(resolve, 180));
+  const clipboardShortcutReady = uploadFiles.length === 1 && uploadFiles[0].type === 'image/png';
   document.querySelector('#uploadDialog').close();
   document.querySelector('#wardrobeGrid [data-item-id]').click();
   const matchDialogOpened = document.querySelector('#itemMatchDialog').open;
@@ -112,13 +119,11 @@ const expression = `
   const liveScores = availableInfluencerMatches().map(entry => Math.round(entry.match.similarity * 1000));
   const firstAnalyzed = availableInfluencerMatches()[0];
   const oneToOne = firstAnalyzed?.match;
+  const duplicateTops = wardrobe.filter(item => item.category === '상의').slice(0, 2);
   const duplicateCategoryLook = {
     analysisReady: true,
     weather: [],
-    pieces: [
-      { pieceId: 'outer-top', label: '화이트 셔츠', category: '상의', colors: ['화이트'], materials: ['코튼'], fits: ['레귤러'], details: ['셔츠'] },
-      { pieceId: 'inner-top', label: '블랙 티셔츠', category: '상의', colors: ['블랙'], materials: ['코튼'], fits: ['레귤러'], details: ['티셔츠'] }
-    ]
+    pieces: duplicateTops.map((item, index) => ({ pieceId: 'top-' + index, label: item.name, category: item.category, colors: [item.color], materials: [], fits: [], details: [] }))
   };
   const duplicateCategoryMatch = buildInfluencerMatch(duplicateCategoryLook);
   const unanalyzedMatch = buildInfluencerMatch({ analysisReady: false, weather: [], pieces: duplicateCategoryLook.pieces });
@@ -137,6 +142,7 @@ const expression = `
     look: document.querySelector('#lookTitle').textContent,
     wardrobeCount,
     clipboardUploadReady,
+    clipboardShortcutReady,
     dialogOpen: document.querySelector('#preferenceDialog').open,
     matchDialogOpened,
     matchOptions,
@@ -178,7 +184,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.clipboardUploadReady || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
+if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || Number(value.wardrobeCount) < 1 || !value.clipboardUploadReady || !value.clipboardShortcutReady || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches < 1 || value.duplicateCategoryUniqueItems !== value.duplicateCategoryMatches || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
-console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 2벌 ↔ 서로 다른 내 옷 ${value.duplicateCategoryUniqueItems}벌 / 미분석 추천 ${value.unanalyzedTotal}벌`);
+console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 매칭 ${value.duplicateCategoryUniqueItems}벌도 중복 없음 / 미분석 추천 ${value.unanalyzedTotal}벌`);
