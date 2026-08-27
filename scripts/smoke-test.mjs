@@ -82,6 +82,9 @@ const expression = `
   const maliciousCard = document.querySelector('[data-item-id="xss-test"]');
   const safeNameRendered = maliciousCard?.textContent.includes(maliciousName);
   document.querySelector('[data-view="discover"]').click();
+  const feedbackButton = document.querySelector('[data-look-feedback="up"]');
+  feedbackButton?.click();
+  const feedbackStored = Object.values(JSON.parse(localStorage.getItem('오늘옷-look-feedback') || '{}')).includes('up');
   WearwellVLM.analyzeBodyImage = async () => ({ body_shape: '보통', proportion: '균형', shoulderLine: '보통', silhouette: '기본' });
   fullBodyPhoto = avatarImage; avatarImage = null; setBodyInputMethod('photo');
   await generateAvatar();
@@ -95,6 +98,9 @@ const expression = `
   const exactReference = garmentSimilarityDetail({ category: '상의', color: '레드', name: '직접 크롭', userAdded: true, referenceLookIds: ['look-safe'], analysis: { primaryColor: '레드', secondaryColors: [], material: '코튼', texture: '평직', fit: '레귤러', silhouette: '기본', subcategory: '셔츠', pattern: '무지', finish: '무광', construction: [], visualEmbedding: [0, 1], visualEmbeddingEngine: 'siglip:test' } }, referencedRequirement, 'look-safe');
   const wrongCategoryReference = garmentSimilarityDetail({ category: '하의', color: '화이트', name: '잘못 분류된 크롭', userAdded: true, referenceLookIds: ['look-safe'], analysis: { primaryColor: '화이트', secondaryColors: [], material: '코튼', texture: '평직', fit: '레귤러', silhouette: '기본', subcategory: '팬츠', pattern: '무지', finish: '무광', construction: [], visualEmbedding: [0, 1], visualEmbeddingEngine: 'siglip:test' } }, referencedRequirement, 'look-safe');
   const mixedEngine = garmentSimilarityDetail({ category: '상의', color: '화이트', name: '혼합 엔진', analysis: { primaryColor: '화이트', secondaryColors: [], material: '코튼', texture: '평직', fit: '레귤러', silhouette: '기본', subcategory: '셔츠', pattern: '무지', finish: '무광', construction: [], visualEmbedding: [1, 0], visualEmbeddingEngine: 'local-fingerprint-v1' } }, referencedRequirement);
+  const shortSleeveRequirement = { ...whiteRequirement, subcategory: '티셔츠', sleeveLength: '반팔', details: ['티셔츠'] };
+  const shortSleeveMatch = garmentSimilarityDetail({ category: '상의', color: '화이트', name: '화이트 반팔 티셔츠', analysis: { primaryColor: '화이트', secondaryColors: [], material: '코튼', texture: '평직', fit: '레귤러', silhouette: '기본', subcategory: '티셔츠', sleeveLength: '반팔', pattern: '무지', finish: '무광', construction: [] } }, shortSleeveRequirement);
+  const longSleeveConflict = garmentSimilarityDetail({ category: '상의', color: '화이트', name: '화이트 긴팔 티셔츠', analysis: { primaryColor: '화이트', secondaryColors: [], material: '코튼', texture: '평직', fit: '레귤러', silhouette: '기본', subcategory: '티셔츠', sleeveLength: '긴팔', pattern: '무지', finish: '무광', construction: [] } }, shortSleeveRequirement);
   const liveScores = availableInfluencerMatches().map(entry => Math.round(entry.match.similarity * 1000));
   const firstAnalyzed = availableInfluencerMatches()[0];
   const oneToOne = firstAnalyzed?.match;
@@ -136,6 +142,8 @@ const expression = `
     feedPhotos: window.WEARWELL_INFLUENCER_LOOKS.filter(look => look.image.startsWith('assets/influencers/')).length,
     similarityProbe: { exact: exactColor.total, wrong: wrongColor.total, unknown: unknownColor.total },
     referenceProbe: { exact: exactReference.total, wrongCategory: wrongCategoryReference.total, mixedVisual: mixedEngine.visual },
+    garmentFormProbe: { shortSleeve: shortSleeveMatch.total, longSleeve: longSleeveConflict.total },
+    feedbackStored,
     lookbookUploadReady: Boolean(document.querySelector('#lookbookUploadDialog') && WearwellDB.getAllLooks && WearwellVLM.embedImage),
     distinctSimilarityScores: new Set(liveScores).size,
     oneToOnePieces: oneToOne?.total || 0,
@@ -161,7 +169,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
+if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
 console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 2벌 ↔ 서로 다른 내 옷 ${value.duplicateCategoryUniqueItems}벌 / 미분석 추천 ${value.unanalyzedTotal}벌`);

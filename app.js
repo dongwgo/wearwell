@@ -89,6 +89,8 @@ let segmentFiles = [];
 let segmentBatches = [];
 let lookbookUploadFiles = [];
 let savedLooks = new Set(JSON.parse(localStorage.getItem("오늘옷-saved") || "[]"));
+// 룩북별 추천 품질 피드백. 이후 사용자별 추천 가중치 보정에 활용한다.
+let lookFeedback = JSON.parse(localStorage.getItem("오늘옷-look-feedback") || "{}");
 let selectedWardrobeItem = null;
 let matchVariation = 0;
 let avatarImage = localStorage.getItem("오늘옷-avatar") || null;
@@ -954,6 +956,16 @@ async function enrichLookEmbeddings(look) {
   if (look.vlmAnalysis) look.vlmAnalysis.pieces = look.pieces;
 }
 
+function canonicalGarmentForm(value, category = "") {
+  const text = `${value || ""} ${category || ""}`.toLowerCase();
+  if (/민소매|슬리브리스|나시/.test(text)) return "sleeveless";
+  if (/반팔|short sleeve|short-sleeve/.test(text)) return "short-sleeve";
+  if (/긴팔|long sleeve|long-sleeve/.test(text)) return "long-sleeve";
+  if (/반바지|쇼츠|shorts|버뮤다/.test(text)) return "short-bottom";
+  if (/긴바지|롱팬츠|long pants|long-pants|slacks|trousers|jeans|denim|데님 팬츠/.test(text)) return "long-bottom";
+  return "unknown";
+}
+
 function garmentSimilarityDetail(item, requirement, lookId = null) {
   const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item);
   const directReference = Boolean(lookId && Array.isArray(item.referenceLookIds) && item.referenceLookIds.includes(lookId));
@@ -963,6 +975,25 @@ function garmentSimilarityDetail(item, requirement, lookId = null) {
   const visual = cosine === null ? .5 : Math.max(0, Math.min(1, (cosine + 1) / 2));
   // 카테고리가 다르면 정확한 출처 연결 또는 매우 높은 SigLIP 일치가 없는 한 제외한다.
   if (categoryMismatch && !(comparable && visual >= .95)) {
+    return { total: 0, color: 0, material: 0, fit: 0, detail: 0, visual, compatible: false };
+  }
+  const actualSleeveForm = canonicalGarmentForm(analysis.sleeveLength, item.category);
+  const requiredSleeveForm = canonicalGarmentForm(requirement.sleeveLength, requirement.category);
+  const actualLengthForm = canonicalGarmentForm(analysis.length, item.category);
+  const requiredLengthForm = canonicalGarmentForm(requirement.length, requirement.category);
+  const sleeveOk = actualSleeveForm === "unknown" || requiredSleeveForm === "unknown" || actualSleeveForm === requiredSleeveForm;
+  const lengthOk = actualLengthForm === "unknown" || requiredLengthForm === "unknown" || actualLengthForm === requiredLengthForm;
+  const actualType = `${analysis.subcategory || ""} ${analysis.neckline || ""} ${(analysis.construction || []).join(" ")}`;
+  const requiredType = `${requirement.subcategory || ""} ${requirement.neckline || ""} ${(requirement.details || []).join(" ")}`;
+  const poloRequired = /폴로|카라|polo/i.test(requiredType);
+  const poloActual = /폴로|카라|polo/i.test(actualType);
+  const tshirtRequired = /티셔츠|tee|t-shirt/i.test(requiredType);
+  const tshirtActual = /티셔츠|tee|t-shirt/i.test(actualType);
+  const subtypeOk = !(poloRequired && !poloActual) && !(tshirtRequired && !tshirtActual);
+  const typeConflict = !sleeveOk || !lengthOk || !subtypeOk;
+  // 직접 잘라 등록한 같은 룩북의 옷은 VLM 세부 분류 오차를 허용한다. 그 외에는
+  // SigLIP이 거의 같은 사진으로 판단한 경우에만 유형 오판을 구제한다.
+  if (typeConflict && !directReference && !(comparable && visual >= .92)) {
     return { total: 0, color: 0, material: 0, fit: 0, detail: 0, visual, compatible: false };
   }
   const actualColors = knownColors(item.color, item.name, analysis.primaryColor, analysis.secondaryColors, analysis.dominantColors);
@@ -985,7 +1016,7 @@ function garmentSimilarityDetail(item, requirement, lookId = null) {
   let total = .03 + color * .49 + material * .11 + fit * .10 + detail * .07 + visual * .20;
   if (directReference && !categoryMismatch) total = Math.max(total, .985);
   else if (comparable && visual >= .92 && !categoryMismatch) total = Math.max(total, .92);
-  return { total: Math.min(1, total), color, material, fit, detail, visual, compatible: true, directReference };
+  return { total: Math.min(1, total), color, material, fit, detail, visual, compatible: true, directReference, typeConflict };
 }
 
 function garmentSimilarity(item, requirement, lookId = null) {
@@ -1009,10 +1040,13 @@ function buildInfluencerMatch(look, variation = 0) {
   })).map(entry => ({
     ...entry,
     candidates: entry.candidates.filter(candidate =>
-      (candidate.detail.color >= .56 && candidate.similarity >= .56) ||
-      candidate.detail.directReference ||
-      (candidate.detail.compatible && candidate.detail.visual >= .92)
-    ).slice(0, 5)
+      candidate.detail.compatible && (
+        candidate.detail.directReference ||
+        candidate.similarity >= .44 ||
+        candidate.detail.visual >= .62 ||
+        (candidate.item.userAdded && candidate.similarity >= .40)
+      )
+    ).slice(0, 8)
   }));
 
   // 같은 옷을 두 번 쓰지 않는 최대 가중치 1:1 배정. 후보가 적은 룩북 의류부터 탐색해 탐욕 매칭의 오판을 피한다.
@@ -1067,7 +1101,12 @@ function bodySimilarity(look, measurements = avatarMeasurements || readMeasureme
 }
 
 function availableInfluencerMatches({ selectedOnly = false } = {}) {
-  const isUsable = result => result.match.fulfilled === result.match.total && result.match.colorSimilarity >= .58 && result.match.similarity >= .58;
+  const isUsable = result => {
+    const apparelMatches = result.match.matches.filter(entry =>
+      entry && ["상의", "하의", "아우터", "원피스"].includes(entry.requirement.category) && entry.detail.compatible
+    );
+    return apparelMatches.some(entry => entry.similarity >= .44 || entry.detail.visual >= .62);
+  };
   return influencerLooks
     .filter(look => look.gender === (selectedGender || "women"))
     .filter(look => look.analysisReady)
@@ -1392,18 +1431,32 @@ function renderDiscover() {
       <p class="look-analysis-copy">${escapeHtml(look.summary)}</p>
       <div class="look-feature-chips">${look.styles.map(style => `<span>#${escapeHtml(style)}</span>`).join("")}</div>
       <div class="discover-closet-match">
-        <div class="discover-match-head"><strong>이 옷들을 입어서 비슷하게 연출해봐요</strong><span>색상 ${Math.round(match.colorSimilarity * 100)}% · 전체 ${Math.round(match.similarity * 100)}%</span></div>
-        <div class="matched-items">${match.matches.map(entry => `<button class="matched-thumb" data-match-item="${escapeHtml(entry.item.id)}" aria-label="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}와 내 옷 ${escapeHtml(entry.item.name)} 비교"><span class="match-pair-images"><span><img src="${escapeHtml(look.image)}" alt="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}" style="object-position:${pieceObjectPosition(entry.requirement)}" /><em>룩북</em></span><span><img src="${escapeHtml(entry.item.image)}" alt="내 옷 ${escapeHtml(entry.item.name)}" /><em>내 옷</em></span></span><small><b>${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>→ ${escapeHtml(entry.item.name)}</span></small><i>${Math.round(entry.similarity * 100)}%</i></button>`).join("")}</div>
-        <ol class="matched-instructions">${match.matches.map(entry => `<li><b>룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>${escapeHtml((entry.requirement.colors || []).join("·"))} → 내 옷 ${escapeHtml(entry.item.name)}</span></li>`).join("")}</ol>
+        <div class="discover-match-head"><strong>${match.fulfilled === match.total ? "이 옷들을 입어서 비슷하게 연출해봐요" : `부분 매칭 · ${match.fulfilled}/${match.total}개 아이템으로 연출해봐요`}</strong><span>색상 ${Math.round(match.colorSimilarity * 100)}% · 전체 ${Math.round(match.similarity * 100)}%</span></div>
+        <div class="matched-items">${match.matches.map((entry, index) => entry ? `<button class="matched-thumb" data-match-item="${escapeHtml(entry.item.id)}" aria-label="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}와 내 옷 ${escapeHtml(entry.item.name)} 비교"><span class="match-pair-images"><span><img src="${escapeHtml(look.image)}" alt="룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}" style="object-position:${pieceObjectPosition(entry.requirement)}" /><em>룩북</em></span><span><img src="${escapeHtml(entry.item.image)}" alt="내 옷 ${escapeHtml(entry.item.name)}" /><em>내 옷</em></span></span><small><b>${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>→ ${escapeHtml(entry.item.name)}</span></small><i>${Math.round(entry.similarity * 100)}%</i></button>` : `<div class="matched-thumb unmatched-thumb"><small><b>${escapeHtml(look.pieces[index]?.label || look.pieces[index]?.category || "룩북 아이템")}</b><span>유사 아이템 없음</span></small></div>`).join("")}</div>
+        <ol class="matched-instructions">${match.matches.map((entry, index) => entry ? `<li><b>룩북 ${escapeHtml(entry.requirement.label || entry.requirement.category)}</b><span>${escapeHtml((entry.requirement.colors || []).join("·"))} → 내 옷 ${escapeHtml(entry.item.name)}</span></li>` : `<li><b>룩북 ${escapeHtml(look.pieces[index]?.label || look.pieces[index]?.category || "아이템")}</b><span>→ 내 옷장에 유사 아이템 없음</span></li>`).join("")}</ol>
+        <div class="match-feedback" aria-label="이 추천의 유사도 평가">
+          <span>이 조합, 실제로 비슷한가요?</span>
+          <button class="${lookFeedback[look.id] === "up" ? "selected" : ""}" data-look-feedback="up" data-feedback-look="${escapeHtml(look.id)}">👍 비슷해요</button>
+          <button class="${lookFeedback[look.id] === "down" ? "selected" : ""}" data-look-feedback="down" data-feedback-look="${escapeHtml(look.id)}">👎 덜 비슷해요</button>
+        </div>
         <button class="trend-avatar-button" data-try-trend="${escapeHtml(look.id)}">룩북 원본과 내 아바타 비교하기 ✦</button>
       </div>
-    </article>`).join("") : '<div class="discover-empty"><strong>개별 옷이 모두 맞는 룩이 아직 없어요.</strong><p>Qwen 분석이 끝난 뒤, 룩북 속 각 옷에 대응하는 내 옷이 전부 있을 때만 추천해요.</p></div>';
+    </article>`).join("") : '<div class="discover-empty"><strong>비슷하게 연출할 룩이 아직 없어요.</strong><p>Qwen 분석이 끝나면 상의·하의·아우터·원피스 중 하나라도 유형이 맞는 룩부터 추천해요.</p></div>';
   $$('[data-save-discover]').forEach(button => button.addEventListener("click", () => {
     const id = `d-${selectedGender}-${button.dataset.saveDiscover}`;
     savedLooks.has(id) ? savedLooks.delete(id) : savedLooks.add(id);
     persistSaves(); renderDiscover();
   }));
   $$('[data-match-item]').forEach(button => button.addEventListener("click", () => openItemMatches(button.dataset.matchItem)));
+  $$('[data-look-feedback]').forEach(button => button.addEventListener("click", () => {
+    const lookId = button.dataset.feedbackLook;
+    const value = button.dataset.lookFeedback;
+    if (lookFeedback[lookId] === value) delete lookFeedback[lookId];
+    else lookFeedback[lookId] = value;
+    localStorage.setItem("오늘옷-look-feedback", JSON.stringify(lookFeedback));
+    showToast(value === "up" ? "좋아요. 비슷한 조합 기준으로 기록했어요." : "확인했어요. 이 룩의 유사도 기준을 낮게 기록했어요.");
+    renderDiscover();
+  }));
   $$('[data-try-trend]').forEach(button => button.addEventListener("click", () => {
     const result = cards.find(card => card.look.id === button.dataset.tryTrend);
     tryOnItems(result.match.pieces, { image: result.look.image, title: `${result.look.creator} · ${result.look.mood}` });

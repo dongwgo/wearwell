@@ -137,7 +137,7 @@ h1 em, h2 em { font-weight: 400; color: var(--clay); }
 .saved-count span { font-family: var(--serif); font-size: 35px; line-height: 1; }
 .saved-count small { font-size: 8px; letter-spacing: .12em; text-transform: uppercase; }
 .mood-strip { padding: 18px 0 25px; display: flex; gap: 4px; }
-.discover-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px 15px; }
+.discover-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
 .discover-card { position: relative; }
 .discover-image { height: 500px; background: #e1ddd4; overflow: hidden; }
 .discover-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
@@ -289,21 +289,23 @@ dialog { border-radius: 28px; }
 .wardrobe-item:hover { transform: translateY(-3px); }
 .wardrobe-item:hover .wardrobe-info strong { color: var(--clay); }
 .discover-card { background: white; border-radius: 20px; padding: 8px 8px 15px; box-shadow: 0 4px 18px rgba(28,31,35,.045); }
-.discover-card .discover-image { height: 470px; }
+.discover-card .discover-image { height: auto; aspect-ratio: 1 / 1; background: #f0f1f2; }
+.discover-card .discover-image img { object-fit: contain; }
 .discover-info { padding-inline: 5px; }
 .discover-closet-match { margin: 13px 5px 0; padding-top: 12px; border-top: 1px solid #eff0f1; }
 .discover-match-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .discover-match-head strong { font-size: 10px; font-weight: 700; }
 .discover-match-head span { font-size: 9px; color: var(--sage-dark); }
-.matched-items { display: flex; gap: 6px; }
-.matched-thumb { flex: 1; min-width: 0; height: 94px; border: 0; padding: 0; border-radius: 10px; overflow: hidden; background: #f1f2f3; position: relative; cursor: pointer; }
-.match-pair-images { display: grid; grid-template-columns: 1fr 1fr; height: 64px; gap: 1px; background: white; }
-.match-pair-images > span { position: relative; min-width: 0; overflow: hidden; }
+.matched-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.matched-thumb { min-width: 0; height: 218px; border: 0; padding: 0; border-radius: 12px; overflow: hidden; background: #f1f2f3; position: relative; cursor: pointer; }
+.unmatched-thumb { cursor: default; background: #e9ebed; }
+.match-pair-images { display: grid; grid-template-columns: 1fr 1fr; height: 177px; gap: 3px; background: white; }
+.match-pair-images > span { position: relative; min-width: 0; overflow: hidden; background: #eef0f1; }
 .match-pair-images img { width: 100%; height: 100%; object-fit: cover; }
 .match-pair-images em { position: absolute; left: 3px; top: 3px; padding: 2px 4px; border-radius: 4px; background: rgba(20,20,20,.72); color: white; font-size: 6px; font-style: normal; }
 .matched-thumb small { position: absolute; inset: auto 4px 4px; display: grid; max-width: calc(100% - 8px); overflow: hidden; padding: 3px 4px; border-radius: 5px; background: rgba(255,255,255,.94); font-size: 7px; }
 .matched-thumb small b, .matched-thumb small span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.matched-thumb i { position: absolute; right: 4px; top: 4px; padding: 3px 4px; border-radius: 5px; background: rgba(37,37,37,.8); color: white; font-size: 7px; font-style: normal; }
+.matched-thumb i { position: absolute; right: 5px; top: 5px; padding: 4px 5px; border-radius: 6px; background: rgba(37,37,37,.8); color: white; font-size: 9px; font-style: normal; }
 .matched-instructions { display: grid; gap: 3px; margin: 9px 0 0; padding: 0; list-style: none; }
 .matched-instructions li { display: grid; grid-template-columns: minmax(58px, auto) 1fr; gap: 6px; color: #686e74; font-size: 8px; }
 .matched-instructions li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -311,6 +313,10 @@ dialog { border-radius: 28px; }
 .discover-info a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
 .trend-reference-badge { position: absolute; left: 12px; top: 12px; padding: 7px 9px; border-radius: 9px; background: rgba(37,37,37,.86); color: white; font-size: 8px; font-weight: 700; }
 .trend-avatar-button { width: 100%; margin-top: 9px; padding: 10px; border: 0; border-radius: 10px; background: #fff0eb; color: #a94b3d; font-size: 9px; font-weight: 800; cursor: pointer; }
+.match-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 11px; padding: 9px; border-radius: 10px; background: #f6f7f8; }
+.match-feedback span { flex: 1 0 100%; color: #697078; font-size: 10px; font-weight: 700; }
+.match-feedback button { border: 1px solid #dfe2e4; border-radius: 8px; padding: 6px 9px; background: white; color: #51575d; font-size: 9px; font-weight: 800; cursor: pointer; }
+.match-feedback button:hover, .match-feedback button.selected { border-color: var(--clay); background: #fff0eb; color: #a94b3d; }
 .look-analysis-copy { margin: 10px 5px 8px; color: #62676d; font-size: 10px; line-height: 1.55; }
 .look-feature-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 5px; }
 .look-feature-chips span { padding: 5px 7px; border-radius: 99px; background: #f4f5f6; color: #696e74; font-size: 8px; }
