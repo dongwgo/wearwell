@@ -22,6 +22,7 @@
         <button class="nav-link nav-dev" data-view="seglab" id="segLabNavLink" hidden>Seg Lab</button>
         <button class="nav-link nav-dev" data-view="refinelab" id="refineLabNavLink" hidden>Refine Lab</button>
         <button class="nav-link nav-dev" data-view="qwenlab" id="qwenLabNavLink" hidden>Qwen Lab</button>
+        <button class="nav-link nav-dev" data-view="siglipLab" id="siglipLabNavLink" hidden>SigLIP Lab</button>
       </nav>
       <div class="top-actions">
         <button class="weather-pill" id="weatherButton" aria-label="Weather details">
@@ -281,6 +282,67 @@
         <div class="seg-lab-status" id="qwenLabStatus" hidden></div>
         <div class="qwen-runs" id="qwenLabRuns"></div>
       </section>
+
+      <!-- 개발용 SigLIP 탭. 옷 사진 한 장을 벡터로 만들어 내 옷장 전체와 코사인 유사도를 재고
+           높은 순으로 세운다. siglip-lab.js가 노출한다. -->
+      <section class="view seg-lab siglip-lab" id="siglipLabView">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">개발용 · SigLIP이 맡은 일</p>
+            <h1>사진 한 장을 숫자로 바꿔<br /><em>옷장을 닮은 순서로 세워요.</em></h1>
+            <p class="lede">Qwen이 사진을 말로 옮긴다면 SigLIP은 사진을 벡터 하나로 옮겨요. 이름도 카테고리도 보지 않고 픽셀만 봐요. 올린 옷과 옷장 옷들의 벡터가 얼마나 같은 방향을 보는지(코사인)로 줄을 세워요.</p>
+          </div>
+          <div class="seg-lab-health" id="siglipLabHealth"><span class="seg-dot"></span><small>백엔드 확인 중…</small></div>
+        </div>
+
+        <ol class="refine-flow">
+          <li><b>1</b><strong>올린 옷</strong><small id="siglipFlowQuery">사진 한 장</small></li>
+          <li><b>2</b><strong>SigLIP 인코딩</strong><small id="siglipFlowModel">이미지 → 벡터</small></li>
+          <li><b>3</b><strong>옷장 벡터</strong><small id="siglipFlowCloset">한 번 만들고 캐시</small></li>
+          <li><b>4</b><strong>코사인 유사도</strong><small id="siglipFlowCosine">정규화 벡터의 내적</small></li>
+          <li><b>5</b><strong>높은 순 정렬</strong><small id="siglipFlowRank">닮은 옷이 위로</small></li>
+        </ol>
+
+        <div class="seg-lab-controls siglip-controls">
+          <div class="seg-lab-field">
+            <span>백엔드</span>
+            <div class="refine-presets" id="siglipLabPresets"></div>
+            <input id="siglipLabEndpoint" type="url" spellcheck="false" placeholder="http://127.0.0.1:8787" />
+            <p class="qwen-note" id="siglipLabCacheNote">벡터 캐시 확인 중…</p>
+            <button type="button" class="quiet-button siglip-clear-cache" id="siglipLabClearCache">벡터 캐시 비우기</button>
+          </div>
+          <div class="seg-lab-field">
+            <span>비교할 옷장</span>
+            <div class="refine-categories" id="siglipLabCategories"></div>
+            <div class="refine-switches siglip-scope">
+              <label class="refine-switch"><input type="checkbox" id="siglipOnlyMine" /><span><b>내가 추가한 옷만</b><small>끄면 기본 옷장(무신사 랭킹 200벌)까지 포함한다</small></span></label>
+            </div>
+            <div class="refine-sliders">
+              <label>비교할 최대 벌수 <output id="siglipLimitValue">60벌</output><input type="range" id="siglipLimit" min="10" max="220" step="10" value="60" /></label>
+              <label>보여줄 상위 <output id="siglipTopValue">12벌</output><input type="range" id="siglipTop" min="4" max="40" step="4" value="12" /></label>
+            </div>
+            <p class="qwen-note" id="siglipLabScope">비교 대상을 세는 중…</p>
+          </div>
+          <div class="seg-lab-field">
+            <span>이 탭이 재는 것</span>
+            <p class="qwen-note">코사인은 −1~1이에요. 앱은 이걸 <code>(cos+1)/2</code>로 0~1에 옮겨 쓰고, 그 값이 <b>0.95</b>를 넘으면 카테고리가 달라도 같은 옷으로 봐요(<b>0.92</b>는 소매·기장 오판 구제선). 결과에 그 선을 함께 그려요.</p>
+            <p class="qwen-note">SigLIP은 배경도 같이 봐요. 사람이 입은 사진과 배경이 지워진 상품컷은 옷이 같아도 점수가 내려가요 — 앱이 옷장 사진을 분할·정규화해서 저장하는 이유예요.</p>
+          </div>
+        </div>
+
+        <label class="drop-zone seg-lab-drop" id="siglipLabDropZone">
+          <input id="siglipLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
+          <span class="upload-icon">↥</span><strong>내가 가진 옷 사진 한 장</strong><small>클릭 · 드래그 · Ctrl+V 붙여넣기</small>
+        </label>
+
+        <div class="seg-lab-run">
+          <figure class="seg-lab-source" id="siglipLabSource" hidden><img alt="비교할 옷 사진" /><figcaption></figcaption></figure>
+          <button class="primary-button" id="siglipLabRun" disabled>옷장에서 닮은 옷 찾기</button>
+        </div>
+
+        <div class="seg-lab-status" id="siglipLabStatus" hidden></div>
+        <div class="siglip-result" id="siglipLabResult"></div>
+      </section>
     </main>
 
     <dialog id="preferenceDialog" class="preference-dialog">
@@ -430,5 +492,6 @@
     <script src="seg-lab.js"></script>
     <script src="refine-lab.js"></script>
     <script src="qwen-lab.js"></script>
+    <script src="siglip-lab.js"></script>
   </body>
 </html>

@@ -156,6 +156,7 @@ window.WEARWELL_CONFIG = {
 - `POST /api/vlm/body`
 - `POST /api/vlm/tryon-judge`
 - `POST /api/embedding` — SigLIP 이미지 벡터 생성 (옷장·룩북 유사도 비교)
+- `POST /api/embeddings` — 여러 장을 한 요청으로 (옷장 전체 인코딩용, 아래 SigLIP Lab 참고)
 - `POST /api/warmup`
 - `GET /api/dev/segment/models`, `POST /api/dev/segment/compare` (아래 Seg Lab 참고)
 - `GET /api/closet/models`, `POST /api/closet/refine` (아래 Refine Lab 참고)
@@ -192,6 +193,7 @@ window.WEARWELL_CONFIG = {
 - `WEARWELL_DEV_TOOLS`: `1`이면 Seg Lab endpoint(`/api/dev/*`)와 Seg Lab·Refine Lab 탭을 노출. 공개 Colab에서는 기본 `0`
 - `REFINE_WIDTH`, `REFINE_HEIGHT`: 옷 상품컷 생성 해상도, 기본값 `768`, `768`(정사각)
 - `MAX_REFINE_ITEMS`: Refine Lab 요청 한 번에 재생성할 옷의 최대 개수, 기본값 `4`
+- `MAX_EMBEDDING_BATCH`: `/api/embeddings` 한 요청에 담을 수 있는 사진 수, 기본값 `32`
 
 ## Seg Lab — 옷 분리 모델 비교
 
@@ -333,6 +335,45 @@ Seg Lab이 "옷을 어디까지 잡았나", Refine Lab이 "그 조각을 어떻�
 이 탭에서 보는 JSON이 실제로 어디에 쓰이는지(필드별 소비처와 매칭 가중치):
 [`docs/vlm-json-usage.md`](docs/vlm-json-usage.md)
 
+## SigLIP Lab — 이 옷과 닮은 옷을 내 옷장에서 (개발용)
+
+Qwen Lab이 "사진을 무슨 **말**로 옮기나"를 본다면, SigLIP Lab은 앱에서 **말을 거치지
+않는** 한 칸을 봅니다: 사진을 벡터 하나로 옮겨 코사인 하나로 견주는 일.
+
+```
+올린 옷 → SigLIP 인코딩 → 옷장 벡터(캐시) → 코사인 유사도 → 높은 순 정렬
+```
+
+옷 사진 한 장을 올리면 내 옷장 전체와 견줘 **닮은 순으로 세웁니다.** 옷장은 저장소가
+함께 배포하는 기본 옷장(무신사 랭킹 200벌)과 사용자가 직접 올려 IndexedDB에 들어 있는
+옷을 합친 것이고, 카테고리·"내가 추가한 옷만"·비교할 최대 벌수로 범위를 좁힐 수 있습니다.
+
+- **점수 두 개를 나란히 보여줍니다.** 큰 숫자가 코사인(−1~1), 작은 숫자가 앱이 실제로
+  쓰는 `(cos+1)/2` 값입니다. 후자가 **0.95**를 넘으면 앱은 카테고리가 달라도 같은 옷으로
+  보고(**0.92**는 소매·기장 오판 구제선), 그 선을 넘은 줄을 결과에서 색으로 표시합니다.
+  `garmentSimilarityDetail()`([`app.js`](app.js))이 쓰는 기준과 같은 값입니다
+- **옷장 벡터는 한 번만 만듭니다.** 만든 벡터는 IndexedDB(`embeddings` 스토어)에 남아
+  새로고침 뒤에도 재사용되고, 옷장에 넣을 때 이미 SigLIP을 돌린 옷은 그 벡터를 그대로
+  씁니다. 모델이 바뀌거나 사진이 바뀌면 캐시를 버립니다
+- **옷장은 묶음으로 인코딩합니다**(`POST /api/embeddings`, 한 요청에 기본 32벌). 한 벌씩
+  부르면 200벌짜리 옷장은 분당 요청 제한(`RATE_LIMIT_PER_MINUTE`)에 먼저 걸립니다.
+  묶음 경로가 없는 예전 백엔드에 붙으면 한 벌씩 보내되 헬스 줄에 그렇게 적어 둡니다
+- SigLIP은 **배경도 같이 봅니다.** 사람이 입은 사진과 배경이 지워진 상품컷은 옷이 같아도
+  점수가 내려갑니다 — 앱이 옷장 사진을 분할·정규화해서 저장하는 이유입니다
+
+탭: [`siglip-lab.js`](siglip-lab.js), 엔진: `SigLIPEmbeddingEngine`([`backend/app.py`](backend/app.py))
+
+### 테스트
+
+```bash
+node scripts/siglip-lab-test.mjs
+```
+
+정적 서버를 직접 띄우고 **백엔드는 가짜로 세웁니다**(SigLIP 가중치 없이도 돌아야 하므로).
+검사하는 것은 벡터의 품질이 아니라 탭의 계약입니다 — 묶음으로 보내는지, 코사인 내림차순
+으로 세우는지, 옷장에 있는 사진과 같은 파일을 올리면 그게 1위(cos ≈ 1)인지, 두 번째
+실행에서 벡터를 다시 만들지 않는지.
+
 ## 개발 검증
 
 ```bash
@@ -340,6 +381,7 @@ python -m pytest backend/tests -q
 node scripts/config-test.mjs
 node scripts/smoke-test.mjs
 node scripts/avatar-view-test.mjs
+node scripts/siglip-lab-test.mjs
 python scripts/validate-notebook.py colab/wearwell_backend_l4.ipynb
 ```
 

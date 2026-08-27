@@ -672,6 +672,50 @@ dialog { border-radius: 28px; }
   .qwen-panes, .qwen-pieces { grid-template-columns: 1fr; }
 }
 
+/* ── 개발용 SigLIP 탭 (siglip-lab.js) ──────────────────────────────
+   보여줄 것이 순위 하나라 화면도 한 줄짜리 목록이다 — 사진, 점수, 그리고 그 점수가
+   앱의 어느 판정선을 넘었는지. */
+.siglip-controls { grid-template-columns: minmax(210px, 260px) minmax(280px, 1.1fr) minmax(240px, .9fr); }
+.siglip-controls code { font-family: var(--seg-mono); font-size: 10.5px; }
+.siglip-scope { margin-top: 11px; }
+.siglip-clear-cache { margin-top: 9px; padding: 7px 12px; font-size: 11.5px; }
+.siglip-clear-cache:disabled { opacity: .4; cursor: default; }
+
+.siglip-result:not(:empty) { display: grid; gap: 18px; }
+.siglip-summary:not(:empty) { display: grid; grid-template-columns: minmax(120px, 170px) 1fr; gap: 18px; align-items: start; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
+.siglip-query { margin: 0; }
+.siglip-query img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; border-radius: 11px; background: var(--paper-deep); }
+.siglip-query figcaption { margin-top: 7px; font-family: var(--seg-mono); font-size: 10.5px; color: var(--muted); overflow-wrap: anywhere; }
+.siglip-summary .refine-readout > div { font-size: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.siglip-summary .refine-readout > div:last-child { border-bottom: 0; }
+
+.siglip-ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.siglip-ranking li { display: grid; grid-template-columns: auto 54px 1fr auto; align-items: center; gap: 12px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--white); }
+.siglip-ranking li.close { border-color: #e0a33a; }
+.siglip-ranking li.same { border-color: var(--sage-dark); background: #f2f8f5; }
+.siglip-ranking b { width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--white); display: grid; place-items: center; font-size: 10.5px; font-weight: 500; }
+.siglip-ranking li.same b { background: var(--sage-dark); }
+.siglip-ranking > li > img { width: 54px; height: 68px; object-fit: cover; border-radius: 9px; background: var(--paper-deep); }
+.siglip-ranking strong { display: block; font-size: 12.5px; overflow-wrap: anywhere; }
+.siglip-ranking small { display: block; margin-bottom: 6px; font-size: 10.5px; color: var(--muted); }
+.siglip-ranking em { display: grid; justify-items: end; gap: 2px; font-style: normal; text-align: right; }
+.siglip-cos { font-family: var(--seg-mono); font-size: 14px; }
+.siglip-visual { font-family: var(--seg-mono); font-size: 10.5px; color: var(--muted); }
+.siglip-flag { padding: 2px 7px; border-radius: 99px; background: var(--sage-dark); color: var(--white); font-size: 9.5px; }
+.siglip-flag.soft { background: #e0a33a; }
+.siglip-bar { display: block; height: 5px; border-radius: 99px; background: var(--paper-deep); overflow: hidden; }
+.siglip-bar i { display: block; height: 100%; border-radius: 99px; background: var(--ink); }
+.siglip-ranking li.same .siglip-bar i { background: var(--sage-dark); }
+
+@media (max-width: 1180px) {
+  .siglip-controls { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 860px) {
+  .siglip-controls { grid-template-columns: 1fr; }
+  .siglip-summary:not(:empty) { grid-template-columns: 1fr; }
+  .siglip-ranking li { grid-template-columns: auto 46px 1fr auto; gap: 9px; }
+}
+
 @media (max-width: 1180px) {
   .refine-controls { grid-template-columns: 1fr 1fr; }
   .refine-stages { grid-template-columns: repeat(3, 1fr); }
