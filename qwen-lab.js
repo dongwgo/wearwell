@@ -34,13 +34,14 @@
   const localBase = cleanUrl(config.LOCAL_API_BASE) || "http://127.0.0.1:8787";
   // Qwen도 GPU에서 돈다. Refine Lab과 같은 이유로 Colab이 있으면 그쪽이 기본이다.
   const defaultEndpoint = colabBase || localBase;
-  const isLoopback = url => /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:|\/|$)/.test(url);
   const labelFor = url => url === colabBase ? `Colab GPU (${url})` : url === localBase ? `로컬 백엔드 (${url})` : url;
 
   function tokenFor(url) {
     if (colabBase && url === colabBase) return String(config.API_TOKEN || "");
     if (url === localBase) return String(config.LOCAL_API_TOKEN || "");
-    return String((isLoopback(url) ? config.LOCAL_API_TOKEN || config.API_TOKEN : config.API_TOKEN || config.LOCAL_API_TOKEN) || "");
+    // 직접 입력한 임의 주소로 저장된 API 토큰을 보내면 토큰이 외부 서버에 유출될 수 있다.
+    // 인증이 필요한 새 주소는 local-config.js에 먼저 등록해 신뢰할 주소임을 명시한다.
+    return "";
   }
   const authHeaders = () => {
     const token = tokenFor(endpoint);
@@ -140,7 +141,7 @@
       <button type="button" class="qwen-task${item.key === taskKey ? " on" : ""}" data-task="${escapeHtml(item.key)}">
         <b>${escapeHtml(item.title)}</b>
         <small>${escapeHtml(item.role)}</small>
-        <code>${escapeHtml(item.path)} · ${item.maxNewTokens} tok</code>
+        <code>${escapeHtml(item.path)} · ${escapeHtml(item.maxNewTokens)} tok</code>
       </button>`).join("");
     taskBox.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
       taskKey = button.dataset.task;
@@ -370,9 +371,9 @@
       </header>
       ${readout([
         ["모델", `<code>${escapeHtml(result.model || catalog.model)}</code> <i>${escapeHtml(result.quantization || "")}</i>`],
-        ["백엔드가 본 이미지", result.imageSize ? `${result.imageSize.width}×${result.imageSize.height}` : "—"],
-        ["생성", `${result.seconds ?? "?"}s${result.loadSeconds ? ` <i>· 콜드 적재 ${result.loadSeconds}s</i>` : ""}`],
-        ["출력 토큰", `${result.outputTokens ?? "?"} / ${budget}`, result.truncated ? "warn" : ""],
+        ["백엔드가 본 이미지", result.imageSize ? `${escapeHtml(result.imageSize.width)}×${escapeHtml(result.imageSize.height)}` : "—"],
+        ["생성", `${escapeHtml(result.seconds ?? "?")}s${result.loadSeconds ? ` <i>· 콜드 적재 ${escapeHtml(result.loadSeconds)}s</i>` : ""}`],
+        ["출력 토큰", `${escapeHtml(result.outputTokens ?? "?")} / ${escapeHtml(budget)}`, result.truncated ? "warn" : ""],
         ["파싱", result.truncated ? "예산에서 잘렸어요 — 필드가 비었을 수 있어요" : "코드펜스를 걷고 객체만 취함", result.truncated ? "warn" : "ok"],
       ])}
       <div class="qwen-panes">
