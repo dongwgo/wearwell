@@ -330,6 +330,9 @@ Seg Lab이 "옷을 어디까지 잡았나", Refine Lab이 "그 조각을 어떻�
 탭: [`qwen-lab.js`](qwen-lab.js), 프롬프트: `QwenVLMEngine`([`backend/app.py`](backend/app.py)),
 모델 세 개의 역할 분담: [`docs/models.md`](docs/models.md)
 
+이 탭에서 보는 JSON이 실제로 어디에 쓰이는지(필드별 소비처와 매칭 가중치):
+[`docs/vlm-json-usage.md`](docs/vlm-json-usage.md)
+
 ## 개발 검증
 
 ```bash
