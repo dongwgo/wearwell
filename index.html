@@ -151,7 +151,7 @@
         </div>
         <label class="drop-zone seg-lab-drop" id="segLabDropZone">
           <input id="segLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
-          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>원본 해상도로 추론하고, 결과 이미지만 줄여서 보내요</small>
+          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V 붙여넣기</small>
         </label>
         <div class="seg-lab-run">
           <figure class="seg-lab-source" id="segLabSource" hidden><img alt="비교할 원본 사진" /><figcaption></figcaption></figure>
@@ -219,7 +219,7 @@
 
         <label class="drop-zone seg-lab-drop" id="refineLabDropZone">
           <input id="refineLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
-          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>분리한 옷마다 FLUX를 한 번씩 돌리므로 시간이 걸려요</small>
+          <span class="upload-icon">↥</span><strong>전신샷 한 장을 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V 붙여넣기</small>
         </label>
 
         <div class="seg-lab-run">
@@ -270,7 +270,7 @@
 
         <label class="drop-zone seg-lab-drop" id="qwenLabDropZone">
           <input id="qwenLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
-          <span class="upload-icon">↥</span><strong>사진 한 장을 놓아주세요</strong><small>옷 한 벌, 룩북, 전신샷, 착장 결과 — 고른 일에 맞는 사진일수록 잘 보여요</small>
+          <span class="upload-icon">↥</span><strong>사진 한 장을 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V 붙여넣기</small>
         </label>
 
         <div class="seg-lab-run">
@@ -322,7 +322,7 @@
           </div>
           <label class="full-body-upload" id="fullBodyUpload" hidden>
             <input id="fullBodyInput" type="file" accept="image/jpeg,image/png,image/webp" />
-            <span id="fullBodyPreview"><b>+</b><strong>전신사진 선택</strong><small>머리부터 발끝까지 보이는 정면 사진이 좋아요</small></span>
+            <span id="fullBodyPreview"><b>+</b><strong>전신사진 선택</strong><small>클릭하거나 Ctrl+V로 붙여넣을 수 있어요</small></span>
           </label>
           <div class="avatar-generator-card" id="avatarGeneratorCard">
             <div class="avatar-preview" id="avatarPreview"><span>내 아바타가<br />여기에 만들어져요</span></div>
@@ -354,7 +354,7 @@
       <p class="eyebrow">내 옷장에 추가</p><h2>가지고 있는 옷을<br /><em>사진으로 올려주세요.</em></h2>
       <label class="drop-zone" id="dropZone">
         <input id="fileInput" type="file" accept="image/*" multiple />
-        <span class="upload-icon">↥</span><strong>옷 사진을 여기에 놓아주세요</strong><small>또는 눌러서 사진 선택 · JPG, PNG, WEBP</small>
+        <span class="upload-icon">↥</span><strong>옷 사진을 여기에 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V 붙여넣기</small>
       </label>
       <div class="upload-preview" id="uploadPreview"></div>
       <div class="dialog-footer"><span>한 장에 옷 하나씩 찍으면 더 정확해요</span><button class="primary-button" id="addUploads" disabled>내 옷장에 추가</button></div>
@@ -366,7 +366,7 @@
       <h2>입고 있는 옷을<br /><em>자동으로 분리해 담을게요.</em></h2>
       <label class="drop-zone" id="segmentDropZone">
         <input id="segmentFileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
-        <span class="upload-icon">↥</span><strong>전신샷을 여기에 놓아주세요</strong><small>정면 전신샷 · 최대 6장</small>
+        <span class="upload-icon">↥</span><strong>전신샷을 여기에 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V · 최대 6장</small>
       </label>
       <div class="upload-preview" id="segmentPreview"></div>
       <div class="dialog-footer"><span id="segmentDialogHint">먼저 옷을 찾은 뒤, 옷마다 FLUX 변환 여부와 카테고리를 고를 수 있어요</span><button class="primary-button" id="addSegmentPhotos" disabled>옷 찾기</button></div>
@@ -378,7 +378,7 @@
       <p>전신 또는 상·하의가 보이는 사진이 좋아요. 얼굴 클로즈업 사진은 의류 비교 정확도가 낮아요.</p>
       <label class="drop-zone" id="lookbookDropZone">
         <input id="lookbookFileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
-        <span class="upload-icon">↥</span><strong>룩북 사진을 여기에 놓아주세요</strong><small>JPG, PNG, WEBP · 한 번에 최대 4장</small>
+        <span class="upload-icon">↥</span><strong>룩북 사진을 여기에 놓아주세요</strong><small>클릭 · 드래그 · Ctrl+V · 최대 4장</small>
       </label>
       <div class="upload-preview lookbook-upload-preview" id="lookbookPreview"></div>
       <div class="dialog-footer"><span>업로드 후 Qwen과 SigLIP이 개별 의류를 분석해요</span><button class="primary-button" id="addLookbooks" disabled>룩북 분석 후 추가</button></div>

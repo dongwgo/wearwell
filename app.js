@@ -126,6 +126,54 @@ function showToast(message) {
   showToast.timeout = setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+function createClipboardImageManager() {
+  const targets = [];
+
+  const clipboardImages = event => {
+    const items = [...(event.clipboardData?.items || [])]
+      .filter(item => item.kind === "file" && item.type.startsWith("image/"))
+      .map(item => item.getAsFile())
+      .filter(Boolean);
+    if (items.length) return items;
+    return [...(event.clipboardData?.files || [])].filter(file => file.type.startsWith("image/"));
+  };
+
+  document.addEventListener("paste", async event => {
+    const files = clipboardImages(event);
+    if (!files.length) return;
+    const active = target => target.element?.isConnected && target.isActive();
+    const openModal = document.querySelector("dialog[open]");
+    // 모달이 떠 있으면 배경 화면의 Lab으로 이미지가 들어가지 않게 모달 내부만 본다.
+    const candidates = openModal ? targets.filter(target => openModal.contains(target.element)) : targets;
+    const directTarget = candidates.find(target => active(target) && target.element.contains(event.target));
+    const target = directTarget || candidates.find(active);
+    if (!target) return;
+
+    event.preventDefault();
+    const selected = target.multiple ? files : files.slice(0, 1);
+    try {
+      await target.onFiles(selected);
+      target.element.classList.add("drag");
+      setTimeout(() => target.element.classList.remove("drag"), 280);
+      showToast(`클립보드 이미지 ${selected.length}장을 불러왔어요`);
+    } catch (error) {
+      console.error("Clipboard image upload failed", error);
+      showToast("클립보드 이미지를 읽지 못했어요");
+    }
+  });
+
+  return {
+    register({ element, isActive, multiple = false, onFiles }) {
+      if (element && typeof isActive === "function" && typeof onFiles === "function") {
+        targets.push({ element, isActive, multiple, onFiles });
+      }
+    },
+  };
+}
+
+// app.js 다음에 로드되는 개발용 Lab도 같은 붙여넣기 처리기를 사용한다.
+window.WearwellClipboard = createClipboardImageManager();
+
 function openDialog(dialog) { if (!dialog.open) dialog.showModal(); }
 function closeDialogs() { $$('dialog[open]').forEach(dialog => dialog.close()); }
 function genderLabel() { return selectedGender === "men" ? "남성" : "여성"; }
@@ -412,6 +460,27 @@ async function resizeBodyPhoto(file) {
   canvas.width = Math.round(image.width * scale); canvas.height = Math.round(image.height * scale);
   canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL("image/jpeg", .88);
+}
+
+async function handleFullBodyUpload(file) {
+  if (!file) return;
+  const revision = ++bodyPhotoRevision;
+  $("#avatarEngineStatus").textContent = "새 전신사진을 불러오고 있어요…";
+  try {
+    const resizedPhoto = await resizeBodyPhoto(file);
+    if (revision !== bodyPhotoRevision) return;
+    fullBodyPhoto = resizedPhoto;
+    avatarImage = null; avatarMeasurements = null;
+    localStorage.removeItem("오늘옷-avatar");
+    $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
+    $("#profileAvatar").classList.remove("has-image");
+    $("#profileAvatar").style.backgroundImage = "";
+    $("#fullBodyPreview").innerHTML = `<img src="${fullBodyPhoto}" alt="선택한 전신사진" /><span><strong>전신사진 선택 완료</strong><small>사진을 누르면 언제든 바꿀 수 있어요</small></span>`;
+    $("#avatarEngineStatus").textContent = "이 사진을 아바타 기준으로 사용할 수 있어요";
+  } catch (error) {
+    $("#avatarEngineStatus").textContent = "사진을 읽지 못했어요. 다른 사진을 선택해주세요";
+    showToast("전신사진을 읽지 못했어요");
+  }
 }
 
 function setBodyInputMethod(method) {
@@ -1937,27 +2006,7 @@ function initEvents() {
     setBodyInputMethod(button.dataset.bodyMethod);
   }));
   $("#fullBodyInput").addEventListener("click", event => { event.currentTarget.value = ""; });
-  $("#fullBodyInput").addEventListener("change", async event => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const revision = ++bodyPhotoRevision;
-    $("#avatarEngineStatus").textContent = "새 전신사진을 불러오고 있어요…";
-    try {
-      const resizedPhoto = await resizeBodyPhoto(file);
-      if (revision !== bodyPhotoRevision) return;
-      fullBodyPhoto = resizedPhoto;
-      avatarImage = null; avatarMeasurements = null;
-      localStorage.removeItem("오늘옷-avatar");
-      $("#avatarPreview").innerHTML = "<span>내 아바타가<br />여기에 만들어져요</span>";
-      $("#profileAvatar").classList.remove("has-image");
-      $("#profileAvatar").style.backgroundImage = "";
-      $("#fullBodyPreview").innerHTML = `<img src="${fullBodyPhoto}" alt="선택한 전신사진" /><span><strong>전신사진 선택 완료</strong><small>사진을 누르면 언제든 바꿀 수 있어요</small></span>`;
-      $("#avatarEngineStatus").textContent = "이 사진을 아바타 기준으로 사용할 수 있어요";
-    } catch (error) {
-      $("#avatarEngineStatus").textContent = "사진을 읽지 못했어요. 다른 사진을 선택해주세요";
-      showToast("전신사진을 읽지 못했어요");
-    }
-  });
+  $("#fullBodyInput").addEventListener("change", event => handleFullBodyUpload(event.target.files?.[0]));
   $("#generateAvatar").addEventListener("click", generateAvatar);
   $("#generateAvatarViews")?.addEventListener("click", generateAvatarViews);
   avatarViewer = createRotatableView($("#avatarPreview"), "내 체형 아바타",
@@ -1998,6 +2047,29 @@ function initEvents() {
   ["dragenter", "dragover"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.add("drag"); }));
   ["dragleave", "drop"].forEach(type => segmentDropZone.addEventListener(type, event => { event.preventDefault(); segmentDropZone.classList.remove("drag"); }));
   segmentDropZone.addEventListener("drop", event => handleSegmentUploads(event.dataTransfer.files));
+  window.WearwellClipboard.register({
+    element: dropZone,
+    isActive: () => $("#uploadDialog").open,
+    multiple: true,
+    onFiles: handleUploads,
+  });
+  window.WearwellClipboard.register({
+    element: lookbookDropZone,
+    isActive: () => $("#lookbookUploadDialog").open,
+    multiple: true,
+    onFiles: handleLookbookUploads,
+  });
+  window.WearwellClipboard.register({
+    element: segmentDropZone,
+    isActive: () => $("#segmentDialog").open,
+    multiple: true,
+    onFiles: handleSegmentUploads,
+  });
+  window.WearwellClipboard.register({
+    element: $("#fullBodyUpload"),
+    isActive: () => $("#preferenceDialog").open && !$("#fullBodyUpload").hidden,
+    onFiles: files => handleFullBodyUpload(files[0]),
+  });
   $$('dialog').forEach(dialog => dialog.addEventListener("click", event => {
     const rect = dialog.getBoundingClientRect();
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();

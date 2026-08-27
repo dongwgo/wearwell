@@ -69,6 +69,14 @@ const expression = `
   document.querySelector('#nextPreferences').click();
   document.querySelector('#finishPreferences').click();
   const wardrobeCount = document.querySelector('#wardrobeCount').textContent;
+  document.querySelector('#uploadButton').click();
+  const clipboard = new DataTransfer();
+  clipboard.items.add(new File([new Uint8Array([137, 80, 78, 71])], 'clipboard.png', { type: 'image/png' }));
+  const paste = new Event('paste', { bubbles: true, cancelable: true });
+  Object.defineProperty(paste, 'clipboardData', { value: clipboard });
+  document.dispatchEvent(paste);
+  const clipboardUploadReady = uploadFiles.length === 1 && document.querySelectorAll('#uploadPreview .upload-thumb').length === 1;
+  document.querySelector('#uploadDialog').close();
   document.querySelector('#wardrobeGrid [data-item-id]').click();
   const matchDialogOpened = document.querySelector('#itemMatchDialog').open;
   const matchOptions = document.querySelectorAll('.match-option').length;
@@ -128,6 +136,7 @@ const expression = `
     profile: JSON.parse(localStorage.getItem('오늘옷-profile')),
     look: document.querySelector('#lookTitle').textContent,
     wardrobeCount,
+    clipboardUploadReady,
     dialogOpen: document.querySelector('#preferenceDialog').open,
     matchDialogOpened,
     matchOptions,
@@ -169,7 +178,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
+if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.clipboardUploadReady || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
 console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 2벌 ↔ 서로 다른 내 옷 ${value.duplicateCategoryUniqueItems}벌 / 미분석 추천 ${value.unanalyzedTotal}벌`);

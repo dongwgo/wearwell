@@ -318,6 +318,11 @@
     dropZone.classList.remove("drag");
   }));
   dropZone.addEventListener("drop", event => pickFile(event.dataTransfer.files[0]));
+  window.WearwellClipboard?.register({
+    element: dropZone,
+    isActive: () => $("#seglabView").classList.contains("active"),
+    onFiles: files => pickFile(files[0]),
+  });
   runButton.addEventListener("click", run);
 
   loadRegistry();
