@@ -125,6 +125,15 @@ FLUX의 몫이다. 그래서 두 단계가 모두 필요하다.
   *"About 18% of this garment on its lower left side was covered by the model's left arm…"*
   어디가 왜 비었는지 말해 주지 않으면 모델은 평평한 색면을 무지 패널로, 파먹힌 실루엣을
   원래 디자인으로 읽는다
+- **성별과 원본 라벨이 프롬프트에 들어간다.** 빼면 모델이 상품컷 기본값인 여성복 재단으로
+  그린다 — 실측으로 남성 하의 3벌이 전부 하이웨이스트 큐롯·테이퍼드로 돌아왔다.
+  두 가지를 고친다:
+  - 카테고리 대신 **세그멘테이션 라벨**로 옷 이름을 만든다. `하의`는 카테고리 이름이
+    "pants **or skirt**"라 모델이 둘 중 하나를 고르게 된다. 세그멘테이션은 이미 `Pants`라고
+    말하고 있으므로 그걸 쓴다(`garment_noun`). `Skirt+Pants`처럼 합쳐져 확정할 수 없으면
+    카테고리로 돌아간다 — 치마일 수도 있는 걸 바지라고 단정하면 반대로 틀린다
+  - `gender`가 오면 재단을 한 문장으로 못 박는다(`GENDER_CUT`). 없으면 최소한
+    "레퍼런스와 다른 재단으로 바꾸지 말라"고만 건다
 - 시드 고정(`seed`, 기본 42)으로 재현성 확보, `steps` 지정 가능 (1–50)
 - GPU 없으면: `refine-passthrough-fallback` — 정규화본을 그대로 768×768 리사이즈해 반환
   (구멍은 남지만 4단계까진 GPU 없이 검증 가능). **이 경로에서는 `steps`가 무시된다** —
@@ -177,6 +186,7 @@ klein은 **4스텝 증류 모델**이다. 수십 스텝 걸리던 디노이징 �
   "model": null,                       // 세그멘테이션 모델 key (null=b3 기본값)
   "categories": [],                    // 비우면 통과한 카테고리 전부
   "includeRejected": false,
+  "gender": "men",                     // men | women | null (null이면 중립 지시만)
   "repair": {                          // RepairOptions
     "close": true, "closeScale": 0.012,
     "fillHoles": true,

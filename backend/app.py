@@ -253,6 +253,9 @@ class ClosetRefineRequest(BaseModel):
     categoryOverrides: dict[str, str] = Field(default_factory=dict)
     # 걸러진 후보까지 파이프라인에 태운다. 왜 걸러졌는지를 생성 결과로 확인할 때 쓴다.
     includeRejected: bool = False
+    # 입고 있던 사람의 성별. 프롬프트에 넣지 않으면 모델이 상품컷 기본값인 여성복
+    # 재단으로 그려서, 남자 바지가 하이웨이스트 큐롯으로 돌아온다.
+    gender: Literal["men", "women"] | None = None
     repair: RepairOptions = Field(default_factory=RepairOptions)
     generate: bool = True
     seed: int = 42
@@ -324,6 +327,31 @@ class FluxImageEngine:
         "신발": "pair of shoes",
         "가방": "bag",
         "액세서리": "fashion accessory",
+    }
+    # 세그멘테이션 라벨 -> 프롬프트에 쓸 옷 이름.
+    #
+    # 카테고리만 쓰면 하의가 "pants or skirt"가 된다. 둘 중 뭘 그릴지 모델이 고르게
+    # 되고, 상품컷 학습 분포가 여성복 쪽으로 기울어 있어서 남자 바지가 치마·큐롯으로
+    # 나온다(실측: 남성 하의 3벌 전부). 세그멘테이션은 이미 Pants인지 Skirt인지
+    # 알고 있으므로 그 라벨을 그대로 쓴다.
+    SEGMENT_LABEL_NOUNS = {
+        "Pants": "pair of trousers",
+        "Skirt": "skirt",
+        "Dress": "dress",
+        "Upper-clothes": "upper-body garment (top)",
+        "Left-shoe": "pair of shoes",
+        "Right-shoe": "pair of shoes",
+        "Bag": "bag",
+        "Scarf": "scarf",
+        "Belt": "belt",
+    }
+    # 성별을 말해 주지 않으면 모델이 여성복 쪽 기본값으로 그린다. 다만 참조에 없는
+    # 디테일을 만들어내지 않도록 "레퍼런스에 있는 경우"라는 단서를 반드시 붙인다.
+    GENDER_CUT = {
+        "men": " This is menswear: keep a men's cut with straight side seams and broad square shoulders, and do not "
+               "give it a nipped waist, a high elasticated waistband or a cropped culotte hem unless the reference "
+               "clearly shows one.",
+        "women": " This is womenswear: keep the women's cut exactly as the reference shows it.",
     }
     def __init__(self, pipeline_factory=None) -> None:
         self.pipe = None
@@ -598,9 +626,22 @@ class FluxImageEngine:
             engine += f"+lora:{self.lora_name}"
         return results, engine, ordered
 
+    @classmethod
+    def garment_noun(cls, category: str, label: str | None, gender: str | None) -> str:
+        """프롬프트에 쓸 옷 이름. 세그멘테이션 라벨이 카테고리보다 구체적이면 그쪽을 쓴다.
+
+        라벨은 카테고리로 합쳐지면서 `Skirt+Pants`처럼 붙어 올 수 있다. 서로 다른
+        옷을 가리키면 무엇인지 확정할 수 없으므로 카테고리 이름으로 돌아간다 —
+        치마일 수도 있는 걸 바지라고 단정하면 반대 방향으로 틀린다.
+        """
+        nouns = {cls.SEGMENT_LABEL_NOUNS[part] for part in str(label or "").split("+") if part in cls.SEGMENT_LABEL_NOUNS}
+        noun = nouns.pop() if len(nouns) == 1 else cls.CLOSET_CATEGORY_LABELS.get(category, "garment")
+        return f"{'men' if gender == 'men' else 'women'}'s {noun}" if gender in ("men", "women") else noun
+
     def refine_garment(
         self, garment: Image.Image, category: str, name: str, seed: int,
-        steps: int | None = None, hint: str = "",
+        steps: int | None = None, hint: str = "", gender: str | None = None,
+        label: str | None = None,
     ):
         """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
 
@@ -616,7 +657,7 @@ class FluxImageEngine:
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
             prompt = (
-                f"Reference image 1 is a {self.CLOSET_CATEGORY_LABELS.get(category, 'garment')} named '{name}' that was "
+                f"Reference image 1 is a {self.garment_noun(category, label, gender)} named '{name}' that was "
                 "automatically cut out of a full-body photo, so its shape is damaged: the cutout has holes where arms, "
                 "hair, straps or other garments covered it, some pieces are detached, and the edges are ragged. "
                 "Redraw it as one clean e-commerce product photo of that same single item. Fill every hole, reconnect "
@@ -628,6 +669,8 @@ class FluxImageEngine:
                 "plain pure white background with soft even studio lighting and a subtle contact shadow. "
                 "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
                 "no text, no watermark, no collage, no split screen, no duplicated item."
+                # 성별을 모르면 최소한 "레퍼런스와 다른 성별의 재단으로 바꾸지 말라"고는 말해 둔다.
+                f"{self.GENDER_CUT.get(gender, ' Do not restyle the garment into a different cut than the reference shows.')}"
                 f"{hint}"
             )
             return self._run(prompt=prompt, seed=seed, images=[garment], size=REFINE_SIZE, steps=steps), self.engine_name
@@ -1073,6 +1116,8 @@ def refine_closet_photo(request: ClosetRefineRequest):
                         request.seed, request.steps,
                         # 2단계가 알아낸 것을 넘기지 않으면 모델은 메운 자리를 "원래 그런 디자인"으로 읽는다.
                         refine_service.generation_hint(item["diagnosis"]),
+                        # 성별과 원본 라벨을 넘겨야 "바지 아니면 치마"가 "바지"로 좁혀진다.
+                        request.gender, item.get("label"),
                     )
                     item["stages"]["closet"] = encode_image(closet)
                     item["generation"] = {

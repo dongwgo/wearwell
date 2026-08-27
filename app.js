@@ -1451,6 +1451,9 @@ async function commitSegmentedGarments() {
           name: batch.name,
           categories: selected.map(item => item.sourceCategory),
           categoryOverrides: Object.fromEntries(selected.map(item => [item.sourceCategory, item.category])),
+          // 성별을 빼면 FLUX가 상품컷 기본값인 여성복 재단으로 그린다 — 남자 바지가
+          // 하이웨이스트 큐롯이 되어 돌아온다. 고르지 않았으면 null로 보내 중립 지시만 건다.
+          gender: selectedGender || null,
           generate: true,
         });
         refinedBySource = new Map((refined.items || []).map(item => [item.sourceCategory || item.category, item]));
