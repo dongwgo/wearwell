@@ -538,6 +538,16 @@ def _kept_slots_clause(garments: list[GarmentLike]) -> str:
     )
 
 
+def quoted(name: str) -> str:
+    """이름이 있을 때만 따옴표로 붙인다.
+
+    프론트가 착장 지시문에서 색 단어를 빼면서 이름이 통째로 비는 옷이 생겼다
+    (카탈로그의 "화이트 팬츠 028"처럼 색과 번호뿐인 이름). 예전 `name or label`
+    폴백은 그런 옷에서 카테고리 라벨을 두 번 적어 넣었다.
+    """
+    return f" '{name}'" if name else ""
+
+
 def build_tryon_prompt(garments: list[GarmentLike]) -> str:
     """정렬이 끝난 착장 목록 -> FLUX.2 편집 지시문.
 
@@ -550,7 +560,7 @@ def build_tryon_prompt(garments: list[GarmentLike]) -> str:
         worn = resolve_spec(item.category, name)
         label = (worn.label if worn and worn.label else CATEGORY_SPECS[item.category].label)
         roles.append(
-            f"Reference image {index + 2} is the {label} '{name or label}', "
+            f"Reference image {index + 2} is the {label}{quoted(name)}, "
             f"{resolve_placement(item.category, name)}."
         )
 
@@ -626,7 +636,7 @@ def build_tryon_view_prompt(view: str, garments: list[GarmentLike]) -> str:
         worn = resolve_spec(item.category, name)
         label = worn.label if worn and worn.label else CATEGORY_SPECS[item.category].label
         roles.append(
-            f"Reference image {index + 2} is the same {label} '{name or label}' that the person is "
+            f"Reference image {index + 2} is the same {label}{quoted(name)} that the person is "
             f"already wearing, {resolve_placement(item.category, name)}."
         )
     parts = [

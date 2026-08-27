@@ -654,12 +654,18 @@ function orderGarmentsForTryon(items) {
 
 // 직접 고른 옷과 룩북 추천 옷 모두 실제 사진 분석값을 같은 짧은 의류 설명으로 정규화해
 // 동일한 모델 입력으로 전달한다. 백엔드 GarmentInput.name의 100자 제한도 지킨다.
-const TRYON_PROMPT_VERSION = "garment-spec-v2";
+//
+// 단, 색 이름은 여기에 넣지 않는다. 옷의 색은 참조 이미지가 이미 들고 있고
+// (tryon_prompt.py가 "same colour"를 따로 지시한다), FLUX.2 klein은 guidance 1.0으로
+// 돌아 텍스트가 참조 이미지를 눌러 버린다. 그래서 이름·분석값의 색이 한 번이라도
+// 틀리면 그 색이 그대로 그려진다 — 카탈로그 색이 핀 사진 전체의 대표색에서 나온 탓에
+// (scripts/enrich-pinterest-colors.mjs) 데님이 "화이트 팬츠"로 들어와 흰 바지가 됐다.
+// 색 판정을 고칠 때까지는 색 단어를 빼고 참조 이미지에 맡긴다.
+const TRYON_PROMPT_VERSION = "garment-spec-v3";
 function tryonGarmentDescriptor(item) {
   const analysis = item.analysis || window.WearwellVLM.seedGarmentAnalysis(item) || {};
   const details = [
     item.name,
-    item.color || analysis.primaryColor,
     analysis.subcategory,
     analysis.pattern,
     analysis.sleeveLength,
@@ -667,8 +673,11 @@ function tryonGarmentDescriptor(item) {
     analysis.fit,
     analysis.silhouette,
     analysis.neckline,
-  ].filter(Boolean).map(value => String(value).replace(/[|]/g, " ").trim());
-  return [...new Set(details)].join(" | ").slice(0, 96) || String(item.name || "garment").slice(0, 96);
+  ].map(value => stripColorWords(String(value ?? "").replace(/[|]/g, " "))).filter(Boolean);
+  // 색을 걷어내면 이름이 통째로 비는 옷이 있다("화이트 팬츠 028" 같은 카탈로그 이름).
+  // 원래 이름으로 되돌리면 색이 다시 들어가므로 빈 채로 보낸다. 백엔드는 이름이 없으면
+  // 카테고리 라벨("lower-body garment (pants or skirt)")로 지시문을 만든다.
+  return [...new Set(details)].join(" | ").slice(0, 96);
 }
 
 // 측면·후면을 나중에 만들 때 필요한 요청 정보. 착장이 성공해야 채워진다.
@@ -1061,6 +1070,30 @@ const colorRgb = {
 function knownColors(...values) {
   const text = values.flat(Infinity).filter(Boolean).join(" ").toLowerCase();
   return Object.keys(colorRgb).filter(color => text.includes(color.toLowerCase()));
+}
+
+// colorRgb에 없지만 옷 이름에 실제로 들어오는 색 표현. 카탈로그가 짓는 이름
+// (enrich-pinterest-colors.mjs)과 Qwen이 돌려주는 값에서 모은 것들이다.
+const EXTRA_COLOR_WORDS = [
+  "라이트 그레이", "다크 그레이", "다크 네이비", "다크네이비", "스카이 블루", "스카이블루",
+  "라이트 블루", "라이트블루", "오프 화이트", "오프화이트", "멀티컬러", "색상 미분류", "색상 다양",
+  "인디고", "머스타드", "와인", "흰색", "검정색", "검은색", "검정", "회색", "연회색", "진회색",
+  "남색", "청색", "갈색", "하늘색", "파란색", "빨간색", "노란색", "초록색", "보라색", "분홍색",
+  "white", "black", "gray", "grey", "ivory", "navy", "blue", "beige", "brown", "khaki", "olive",
+  "indigo", "cream", "silver", "charcoal", "burgundy", "mustard", "teal", "pink", "red", "green",
+  "purple", "yellow", "orange",
+];
+// 긴 이름을 먼저 지워야 "라이트 그레이"가 "라이트"만 남기고 잘리지 않는다.
+const COLOR_WORD_PATTERN = new RegExp(
+  [...Object.keys(colorRgb), ...EXTRA_COLOR_WORDS]
+    .sort((left, right) => right.length - left.length)
+    .map(word => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|"),
+  "gi"
+);
+
+function stripColorWords(value) {
+  return String(value ?? "").replace(COLOR_WORD_PATTERN, " ").replace(/\s{2,}/g, " ").trim();
 }
 
 function rgbColorSimilarity(left, right) {
