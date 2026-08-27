@@ -63,6 +63,7 @@ def test_health_describes_unified_flux_runtime(backend_app, monkeypatch: pytest.
     assert result["gpuConcurrency"] == 2
     assert result["imageWorkersLoaded"] == 0
     assert result["rateLimitPerMinute"] == 60
+    assert result["maxEmbeddingBatch"] == 32
 
 
 def test_default_gpu_gate_allows_two_parallel_requests(backend_app):
@@ -181,6 +182,42 @@ def test_embedding_route_returns_siglip_vector(backend_app, monkeypatch: pytest.
         "vector": [0.25, -0.5, 0.75],
     }
     assert calls == [(64, 96)]
+
+
+def test_embedding_batch_route_embeds_every_image_in_one_call(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """옷장 전체를 한 벌씩 부르면 분당 요청 제한에 먼저 걸린다 — 묶어 보낼 수 있어야 한다."""
+    from fastapi.testclient import TestClient
+
+    calls = []
+    monkeypatch.setattr(
+        backend_app.embedding_engine,
+        "embed_many",
+        lambda images: calls.append([image.size for image in images]) or [[0.6, 0.8]] * len(images),
+    )
+    response = TestClient(backend_app.app).post(
+        "/api/embeddings",
+        headers={"Authorization": "Bearer test-token"},
+        json={"images": [image_payload("white"), image_payload("black")]},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "model": "google/siglip-base-patch16-224",
+        "vectors": [[0.6, 0.8], [0.6, 0.8]],
+    }
+    assert calls == [[(64, 96), (64, 96)]]
+
+
+def test_embedding_batch_route_rejects_more_than_the_batch_limit(backend_app):
+    from fastapi.testclient import TestClient
+
+    response = TestClient(backend_app.app).post(
+        "/api/embeddings",
+        headers={"Authorization": "Bearer test-token"},
+        json={"images": [image_payload()] * (backend_app.MAX_EMBEDDING_BATCH + 1)},
+    )
+
+    assert response.status_code == 422
 
 
 def test_siglip_v5_pooling_output_is_unwrapped(backend_app):

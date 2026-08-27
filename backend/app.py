@@ -67,6 +67,8 @@ CORS_ORIGIN_REGEX = os.getenv(
     r"^http://(?:127\.0\.0\.1|localhost)(?::[1-9]\d{0,4})?$",
 )
 MAX_COMPARE_MODELS = 4
+# 옷장 한 벌씩 /api/embedding을 부르면 200벌에서 분당 요청 제한에 먼저 걸린다.
+MAX_EMBEDDING_BATCH = int(os.getenv("MAX_EMBEDDING_BATCH", "32"))
 # 옷 한 벌은 정사각에 가깝다. 아바타용 768x1152로 만들면 옷이 세로로 늘어난다.
 REFINE_SIZE = (
     int(os.getenv("REFINE_WIDTH", "768")),
@@ -218,6 +220,10 @@ class VLMImageRequest(BaseModel):
 
 class EmbeddingRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
+
+
+class EmbeddingBatchRequest(BaseModel):
+    images: list[str] = Field(min_length=1, max_length=MAX_EMBEDDING_BATCH)
 
 
 class PhotoAvatarRequest(BaseModel):
@@ -929,18 +935,25 @@ class SigLIPEmbeddingEngine:
         return self.model, self.processor
 
     def embed(self, image: Image.Image) -> list[float]:
+        return self.embed_many([image])[0]
+
+    def embed_many(self, images: list[Image.Image]) -> list[list[float]]:
+        """여러 장을 한 번의 forward로. 옷장 전체를 벡터로 만들 때 이 경로를 쓴다."""
         import torch
 
         model, processor = self._load()
-        inputs = processor(images=image.convert("RGB"), return_tensors="pt").to(self.device)
+        inputs = processor(
+            images=[image.convert("RGB") for image in images], return_tensors="pt"
+        ).to(self.device)
         with self._inference_lock, torch.inference_mode():
             if hasattr(model, "get_image_features"):
                 features = model.get_image_features(**inputs)
             else:
                 features = model(**inputs)
             features = self._feature_tensor(features)
+            # 정규화해서 돌려주므로 클라이언트의 코사인 유사도는 내적과 같다.
             features = torch.nn.functional.normalize(features.float(), dim=-1)
-        return features[0].detach().cpu().tolist()
+        return features.detach().cpu().tolist()
 
     @staticmethod
     def _feature_tensor(output):
@@ -1014,6 +1027,7 @@ def health():
         "gpuConcurrency": GPU_CONCURRENCY,
         "imageWorkersLoaded": len(image_engine.pipes),
         "rateLimitPerMinute": RATE_LIMIT_PER_MINUTE,
+        "maxEmbeddingBatch": MAX_EMBEDDING_BATCH,
         "resolution": f"{INFERENCE_SIZE[0]}x{INFERENCE_SIZE[1]}",
         "tryonSteps": TRYON_STEPS,
         "maxTryonGarments": MAX_TRYON_GARMENTS,
@@ -1415,6 +1429,22 @@ def create_embedding(request: EmbeddingRequest):
         raise HTTPException(status_code=422, detail=str(error)) from error
     except Exception as error:
         logging.exception("SigLIP embedding failed")
+        raise HTTPException(status_code=500, detail="SigLIP embedding failed") from error
+    finally:
+        INFERENCE_GATE.release()
+
+
+@app.post("/api/embeddings")
+def create_embeddings(request: EmbeddingBatchRequest):
+    """옷장 여러 벌을 한 요청으로. 한 벌씩 부르면 분당 요청 제한에 먼저 걸린다."""
+    acquire_inference_slot()
+    try:
+        images = [decode_image(image) for image in request.images]
+        return {"model": SIGLIP_MODEL, "vectors": embedding_engine.embed_many(images)}
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        logging.exception("SigLIP batch embedding failed")
         raise HTTPException(status_code=500, detail="SigLIP embedding failed") from error
     finally:
         INFERENCE_GATE.release()
