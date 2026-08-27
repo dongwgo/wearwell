@@ -102,7 +102,7 @@ def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypat
 
     calls = []
 
-    def analyze(image, prompt, max_new_tokens):
+    def analyze(image, prompt, max_new_tokens, debug=False):
         calls.append((image.size, prompt, max_new_tokens))
         return {"pieces": [{"pieceId": "piece-1", "colors": ["white"]}], "engine": "Qwen3-VL-8B-Instruct"}
 
@@ -120,6 +120,44 @@ def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypat
     assert all(call[0] == (64, 96) for call in calls)
     assert len({call[1] for call in calls}) == 3
     assert "bbox" in backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
+
+
+def test_vlm_debug_echoes_the_prompt_and_raw_text_only_when_asked(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """Qwen Lab은 프롬프트와 생성 원문을 봐야 하지만, 앱 호출은 그 무게를 지면 안 된다."""
+    from fastapi.testclient import TestClient
+
+    def analyze(image, prompt, max_new_tokens, debug=False):
+        result = {"category": "상의"}
+        if debug:
+            result["rawText"] = '{"category": "상의"}'
+        return result
+
+    monkeypatch.setattr(backend_app.vlm_engine, "analyze", analyze)
+    client = TestClient(backend_app.app)
+    auth = {"Authorization": "Bearer test-token"}
+
+    plain = client.post("/api/vlm/garment", headers=auth, json={"image": image_payload(), "name": "셔츠"}).json()
+    debug = client.post("/api/vlm/garment", headers=auth, json={"image": image_payload(), "name": "셔츠", "debug": True}).json()
+
+    assert "prompt" not in plain and "rawText" not in plain
+    assert "셔츠" in debug["prompt"] and debug["prompt"].startswith(backend_app.QwenVLMEngine.GARMENT_PROMPT)
+    assert debug["maxNewTokens"] == 640
+    assert debug["rawText"] == '{"category": "상의"}'
+
+
+def test_vlm_prompts_route_lists_every_task_with_its_prompt(backend_app):
+    """랩이 프롬프트를 자기 쪽에 복사해 두면 백엔드를 고칠 때 조용히 어긋난다."""
+    from fastapi.testclient import TestClient
+
+    # GET이라 토큰 없이도 읽힌다 — 적재도 추론도 하지 않는 상수 응답이다.
+    payload = TestClient(backend_app.app).get("/api/vlm/prompts").json()
+
+    assert payload["model"] == "Qwen/Qwen3-VL-8B-Instruct"
+    tasks = {task["key"]: task for task in payload["tasks"]}
+    assert set(tasks) == {"garment", "lookbook", "body", "tryon-judge"}
+    assert tasks["lookbook"]["prompt"] == backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
+    assert tasks["lookbook"]["path"] == "/api/vlm/lookbook"
+    assert all(task["role"] and task["maxNewTokens"] > 0 for task in tasks.values())
 
 
 def test_embedding_route_returns_siglip_vector(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -710,16 +748,25 @@ def test_refine_route_applies_category_override_to_generation(backend_app, monke
 
 
 def test_bottoms_are_never_described_as_maybe_a_skirt(backend_app):
+    """카테고리만 쓰면 하의가 "pants or skirt"가 된다.
+
+    둘 중 뭘 그릴지 모델이 고르게 되고, 상품컷 학습 분포가 여성복으로 기울어 있어
+    남자 바지가 하이웨이스트 큐롯으로 돌아온다(실측: 남성 하의 3벌 전부).
+    세그멘테이션은 이미 Pants라고 말해 주고 있다.
+    """
     noun = backend_app.FluxImageEngine.garment_noun
 
     assert noun("하의", "Pants", "men") == "men's pair of trousers"
     assert "skirt" not in noun("하의", "Pants", "men")
     assert noun("하의", "Skirt", "women") == "women's skirt"
+    # 라벨이 합쳐져 무엇인지 확정할 수 없으면 카테고리로 돌아간다 — 치마일 수도
+    # 있는 걸 바지라고 단정하면 반대 방향으로 틀린다.
     assert noun("하의", "Skirt+Pants", "men") == "men's lower-body garment (pants or skirt)"
     assert noun("상의", None, None) == "upper-body garment (top)"
 
 
 def test_generation_prompt_carries_the_wearers_gender(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """성별을 프롬프트에 넣지 않으면 남자 옷이 여자 옷 재단으로 나온다."""
     monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
     captured = {}
     monkeypatch.setattr(
@@ -733,10 +780,12 @@ def test_generation_prompt_carries_the_wearers_gender(backend_app, monkeypatch: 
 
     assert "men's pair of trousers" in captured["prompt"]
     assert "This is menswear" in captured["prompt"]
+    # 참조에 없는 디테일을 지어내게 하면 안 된다 — 금지는 조건부여야 한다.
     assert "unless the reference clearly shows one" in captured["prompt"]
 
 
 def test_generation_without_a_gender_still_forbids_restyling(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """온보딩에서 성별을 고르지 않았을 수 있다. 그때도 재단을 바꾸지는 말아야 한다."""
     monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
     captured = {}
     monkeypatch.setattr(
@@ -968,7 +1017,7 @@ def test_tryon_judge_route_scores_a_result_image(backend_app, monkeypatch: pytes
 
     seen = {}
 
-    def fake_analyze(image, prompt, max_new_tokens):
+    def fake_analyze(image, prompt, max_new_tokens, debug=False):
         seen["prompt"] = prompt
         return {"layering_ok": True, "items_present": ["셔츠"], "identity_ok": True}
 

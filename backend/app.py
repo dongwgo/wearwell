@@ -211,6 +211,9 @@ class VLMImageRequest(BaseModel):
     name: str = Field(default="이미지", max_length=120)
     category: str | None = Field(default=None, max_length=30)
     gender: Literal["women", "men"] | None = None
+    # Qwen Lab처럼 "무엇을 물어봤고 무엇이 그대로 돌아왔는가"를 봐야 하는 호출자용.
+    # 앱은 파싱된 JSON만 쓰므로 기본은 꺼 둔다 — 프롬프트와 원문은 응답을 두 배로 만든다.
+    debug: bool = False
 
 
 class EmbeddingRequest(BaseModel):
@@ -226,6 +229,7 @@ class TryOnJudgeRequest(BaseModel):
     image: str = Field(min_length=1, max_length=8_000_000)
     # 입히기로 한 아이템 목록을 사람이 읽는 문장으로. 심판은 이 목록과 사진만 본다.
     manifest: str = Field(min_length=1, max_length=2_000)
+    debug: bool = False
 
 
 class SegmentationRequest(BaseModel):
@@ -266,8 +270,8 @@ class ClosetRefineRequest(BaseModel):
     categoryOverrides: dict[str, str] = Field(default_factory=dict)
     # 걸러진 후보까지 파이프라인에 태운다. 왜 걸러졌는지를 생성 결과로 확인할 때 쓴다.
     includeRejected: bool = False
-    # 입고 있던 사람의 성별. 없으면 레퍼런스와 다른 재단으로 바꾸지 말라는
-    # 중립 지시만 사용한다.
+    # 입고 있던 사람의 성별. 프롬프트에 넣지 않으면 모델이 상품컷 기본값인 여성복
+    # 재단으로 그려서, 남자 바지가 하이웨이스트 큐롯으로 돌아온다.
     gender: Literal["men", "women"] | None = None
     repair: RepairOptions = Field(default_factory=RepairOptions)
     generate: bool = True
@@ -341,8 +345,12 @@ class FluxImageEngine:
         "가방": "bag",
         "액세서리": "fashion accessory",
     }
-    # 카테고리보다 구체적인 세그멘테이션 원본 라벨을 FLUX 프롬프트에 쓴다.
-    # 특히 "하의"만 쓰면 pants or skirt 중 하나를 모델이 임의로 고를 수 있다.
+    # 세그멘테이션 라벨 -> 프롬프트에 쓸 옷 이름.
+    #
+    # 카테고리만 쓰면 하의가 "pants or skirt"가 된다. 둘 중 뭘 그릴지 모델이 고르게
+    # 되고, 상품컷 학습 분포가 여성복 쪽으로 기울어 있어서 남자 바지가 치마·큐롯으로
+    # 나온다(실측: 남성 하의 3벌 전부). 세그멘테이션은 이미 Pants인지 Skirt인지
+    # 알고 있으므로 그 라벨을 그대로 쓴다.
     SEGMENT_LABEL_NOUNS = {
         "Pants": "pair of trousers",
         "Skirt": "skirt",
@@ -354,6 +362,8 @@ class FluxImageEngine:
         "Scarf": "scarf",
         "Belt": "belt",
     }
+    # 성별을 말해 주지 않으면 모델이 여성복 쪽 기본값으로 그린다. 다만 참조에 없는
+    # 디테일을 만들어내지 않도록 "레퍼런스에 있는 경우"라는 단서를 반드시 붙인다.
     GENDER_CUT = {
         "men": " This is menswear: keep a men's cut with straight side seams and broad square shoulders, and do not "
                "give it a nipped waist, a high elasticated waistband or a cropped culotte hem unless the reference "
@@ -646,7 +656,11 @@ class FluxImageEngine:
 
     @classmethod
     def garment_noun(cls, category: str, label: str | None, gender: str | None) -> str:
-        """세그멘테이션 라벨이 구체적이면 그 이름을, 모호하면 카테고리를 쓴다."""
+        """프롬프트에 쓸 옷 이름. 구체적인 라벨이 하나일 때만 그 이름을 쓴다.
+
+        `Skirt+Pants`처럼 서로 다른 옷 라벨이 합쳐져 오면 무엇인지 확정할 수
+        없으므로 카테고리 이름으로 돌아간다.
+        """
         nouns = {
             cls.SEGMENT_LABEL_NOUNS[part]
             for part in str(label or "").split("+")
@@ -686,6 +700,7 @@ class FluxImageEngine:
                 "plain pure white background with soft even studio lighting and a subtle contact shadow. "
                 "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
                 "no text, no watermark, no collage, no split screen, no duplicated item."
+                # 성별을 모르면 최소한 "레퍼런스와 다른 성별의 재단으로 바꾸지 말라"고는 말해 둔다.
                 f"{self.GENDER_CUT.get(gender, ' Do not restyle the garment into a different cut than the reference shows.')}"
                 f"{hint}"
             )
@@ -831,10 +846,12 @@ class QwenVLMEngine:
             raise ValueError("VLM response must be a JSON object")
         return result
 
-    def analyze(self, image: Image.Image, prompt: str, max_new_tokens: int) -> dict:
+    def analyze(self, image: Image.Image, prompt: str, max_new_tokens: int, debug: bool = False) -> dict:
         import torch
 
+        started = time.monotonic()
         model, processor = self._load()
+        loaded = time.monotonic()
         messages = [{
             "role": "user",
             "content": [
@@ -860,7 +877,16 @@ class QwenVLMEngine:
             "engine": "Qwen3-VL-8B-Instruct",
             "model": VLM_MODEL,
             "quantization": "nf4" if VLM_LOAD_IN_4BIT else self.dtype,
+            "seconds": round(time.monotonic() - loaded, 1),
+            "loadSeconds": round(loaded - started, 1),
         })
+        if debug:
+            # 모델이 실제로 뱉은 문자열. 파싱된 JSON만 보면 왜 필드가 비었는지
+            # ("확인 어려움"인지, 코드펜스에 잘렸는지, 토큰 예산에서 끊겼는지) 알 수 없다.
+            result["rawText"] = text
+            result["outputTokens"] = int(len(trimmed[0]))
+            result["truncated"] = len(trimmed[0]) >= max_new_tokens
+            result["imageSize"] = {"width": image.width, "height": image.height}
         return result
 
     @property
@@ -1199,6 +1225,7 @@ def refine_closet_photo(request: ClosetRefineRequest):
             generate_started = time.perf_counter()
             closet, engine = image_engine.refine_garment(
                 normalized, category, f"{request.name} {category}", request.seed, request.steps,
+                # 진단과 원본 라벨, 성별을 함께 넘겨야 가려진 바지가 다른 재단으로 바뀌지 않는다.
                 refine_service.generation_hint(item["diagnosis"]),
                 request.gender, item.get("label"),
             )
@@ -1359,10 +1386,16 @@ def generate_tryon(request: TryOnRequest):
         INFERENCE_GATE.release()
 
 
-def run_vlm_request(request: VLMImageRequest, prompt: str, max_new_tokens: int) -> dict:
+def run_vlm_request(request: VLMImageRequest, prompt: str, max_new_tokens: int, debug: bool = False) -> dict:
     acquire_inference_slot()
     try:
-        return vlm_engine.analyze(decode_image(request.image), prompt, max_new_tokens)
+        result = vlm_engine.analyze(decode_image(request.image), prompt, max_new_tokens, debug=debug)
+        if debug:
+            # 랩이 프롬프트를 자기 쪽에 복사해 두면 백엔드를 고칠 때마다 조용히 어긋난다.
+            # 실제로 보낸 문자열을 그대로 돌려주는 편이 유일한 정본이다.
+            result["prompt"] = prompt
+            result["maxNewTokens"] = max_new_tokens
+        return result
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except Exception as error:
@@ -1387,28 +1420,92 @@ def create_embedding(request: EmbeddingRequest):
         INFERENCE_GATE.release()
 
 
+def garment_prompt(name: str, category: str | None) -> str:
+    return QwenVLMEngine.GARMENT_PROMPT + (
+        f"\n사용자 레이블: name={name}, category={category or '미지정'}. 레이블은 참고만 하고 사진을 우선해."
+    )
+
+
+def body_prompt(gender: str | None) -> str:
+    return QwenVLMEngine.BODY_PROMPT + f"\n사용자가 선택한 성별은 {gender or '미지정'}이야."
+
+
+# Qwen이 앱에서 맡은 네 가지 일. 태스크마다 프롬프트도 토큰 예산도 다르고,
+# 이 표가 Qwen Lab의 목록이 된다 — 랩이 목록을 따로 들고 있으면 여기에 태스크를
+# 하나 더해도 랩에는 나타나지 않는다.
+VLM_TASKS = {
+    "garment": {
+        "title": "옷 한 벌 분석",
+        "role": "옷장에 넣을 사진 한 장에서 카테고리·색·소재·핏·디테일을 뽑아 JSON으로 만든다. 옷장 검색과 추천이 이 필드를 읽는다.",
+        "maxNewTokens": 640,
+        "path": "/api/vlm/garment",
+    },
+    "lookbook": {
+        "title": "룩북 분해",
+        "role": "한 사람이 입은 착장을 옷 단위로 쪼갠다. 아우터 안의 셔츠까지 별도 항목으로 내고 bbox(0~1000)로 위치까지 준다.",
+        "maxNewTokens": 900,
+        "path": "/api/vlm/lookbook",
+    },
+    "body": {
+        "title": "체형 특징",
+        "role": "전신사진에서 보이는 체형·비율·어깨선만 말한다. 키·몸무게 숫자는 추측하지 않는다.",
+        "maxNewTokens": 320,
+        "path": "/api/vlm/body",
+    },
+    "tryon-judge": {
+        "title": "착장 결과 심판",
+        "role": "합성된 착장 사진을 채점한다. 정답 이미지가 없어 픽셀 지표로는 잴 수 없는 '레이어 순서가 맞나'를 VLM 이진 판정으로 대신한다.",
+        "maxNewTokens": 700,
+        "path": "/api/vlm/tryon-judge",
+    },
+}
+
+
+@app.get("/api/vlm/prompts")
+def list_vlm_prompts():
+    """태스크별 프롬프트 본문. Qwen Lab이 실행 전에도 무엇을 물어보는지 띄운다.
+
+    적재도 추론도 하지 않는 상수 응답이다. garment·body는 요청값이 뒤에 한 줄
+    붙으므로 여기 것은 그 앞부분이고, 실제로 보낸 문자열은 debug 응답의 prompt에 온다.
+    """
+    prompts = {
+        "garment": QwenVLMEngine.GARMENT_PROMPT,
+        "lookbook": QwenVLMEngine.LOOKBOOK_PROMPT,
+        "body": QwenVLMEngine.BODY_PROMPT,
+        "tryon-judge": QwenVLMEngine.TRYON_JUDGE_PROMPT,
+    }
+    return {
+        "model": VLM_MODEL,
+        "quantization": "nf4" if VLM_LOAD_IN_4BIT else "none",
+        "maxPixels": VLM_MAX_PIXELS,
+        "tasks": [{"key": key, **meta, "prompt": prompts[key]} for key, meta in VLM_TASKS.items()],
+    }
+
+
 @app.post("/api/vlm/garment")
 def analyze_garment(request: VLMImageRequest):
-    context = f"\n사용자 레이블: name={request.name}, category={request.category or '미지정'}. 레이블은 참고만 하고 사진을 우선해."
-    return run_vlm_request(request, QwenVLMEngine.GARMENT_PROMPT + context, 640)
+    prompt = garment_prompt(request.name, request.category)
+    return run_vlm_request(request, prompt, VLM_TASKS["garment"]["maxNewTokens"], request.debug)
 
 
 @app.post("/api/vlm/lookbook")
 def analyze_lookbook(request: VLMImageRequest):
-    return run_vlm_request(request, QwenVLMEngine.LOOKBOOK_PROMPT, 900)
+    return run_vlm_request(request, QwenVLMEngine.LOOKBOOK_PROMPT, VLM_TASKS["lookbook"]["maxNewTokens"], request.debug)
 
 
 @app.post("/api/vlm/body")
 def analyze_body(request: VLMImageRequest):
-    context = f"\n사용자가 선택한 성별은 {request.gender or '미지정'}이야."
-    return run_vlm_request(request, QwenVLMEngine.BODY_PROMPT + context, 320)
+    return run_vlm_request(request, body_prompt(request.gender), VLM_TASKS["body"]["maxNewTokens"], request.debug)
 
 
 @app.post("/api/vlm/tryon-judge")
 def judge_tryon(request: TryOnJudgeRequest):
     """착장 결과 자동 채점. scripts/eval_tryon.py가 개선 전/후 수치를 낼 때 쓴다."""
     prompt = QwenVLMEngine.TRYON_JUDGE_PROMPT.format(manifest=request.manifest)
-    return run_vlm_request(VLMImageRequest(image=request.image, name="tryon-judge"), prompt, 700)
+    return run_vlm_request(
+        VLMImageRequest(image=request.image, name="tryon-judge"),
+        prompt, VLM_TASKS["tryon-judge"]["maxNewTokens"], request.debug,
+    )
 
 
 @app.post("/api/warmup")

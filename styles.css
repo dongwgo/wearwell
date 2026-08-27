@@ -612,6 +612,66 @@ dialog { border-radius: 28px; }
 .refine-note { margin: 0; font-size: 10.5px; color: var(--muted); }
 .refine-error { margin: 0; font-size: 11px; color: var(--clay); overflow-wrap: anywhere; }
 
+/* ── 개발용 Qwen3-VL 탭 (qwen-lab.js) ────────────────────────────
+   여기서 읽는 건 사진이 아니라 긴 문자열 둘(프롬프트·생성 원문)이라 단이 리팔이 아니라 좌우다. */
+.qwen-controls { grid-template-columns: minmax(200px, 250px) minmax(300px, 1.2fr) minmax(230px, .9fr); }
+.qwen-tasks { display: grid; gap: 7px; }
+.qwen-task { display: grid; gap: 3px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); text-align: left; cursor: pointer; }
+.qwen-task.on { border-color: var(--sage-dark); background: #f2f8f5; }
+.qwen-task b { font-size: 12.5px; }
+.qwen-task small { font-size: 10.5px; color: var(--muted); line-height: 1.45; }
+.qwen-task code { font-family: var(--seg-mono); font-size: 9.5px; color: var(--muted); }
+.qwen-inputs { display: grid; gap: 9px; }
+.qwen-input { display: grid; gap: 4px; }
+.qwen-input b { font-family: var(--seg-mono); font-size: 11px; color: var(--muted); font-weight: 500; }
+.qwen-input input, .qwen-input select, .qwen-input textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--white); font-family: var(--seg-mono); font-size: 11.5px; resize: vertical; }
+.qwen-input small { font-size: 10px; color: var(--muted); }
+.qwen-note { margin: 9px 0 0; font-size: 10.5px; color: var(--muted); }
+.qwen-note mark { background: #fdf0c9; padding: 0 3px; border-radius: 3px; }
+.qwen-empty { margin: 0; font-size: 11px; color: var(--muted); }
+
+.qwen-runs { display: grid; gap: 16px; }
+.qwen-run { padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
+.qwen-run header { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-bottom: 11px; }
+.qwen-run .seg-chip { --chip: var(--sage-dark); }
+.qwen-role { flex: 1 1 240px; font-size: 11px; color: var(--muted); }
+.qwen-run > .refine-readout { display: flex; flex-wrap: wrap; gap: 6px 18px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
+.qwen-run > .refine-readout > div { justify-content: flex-start; gap: 6px; }
+
+.qwen-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.qwen-panes h4 { margin: 0 0 7px; font-size: 11.5px; font-weight: 600; }
+.qwen-panes section > h4 + h4, .qwen-panes .qwen-raw + h4 { margin-top: 13px; }
+.qwen-prompt, .qwen-raw { margin: 0; max-height: 320px; overflow: auto; padding: 11px 12px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); font-family: var(--seg-mono); font-size: 10.5px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.qwen-prompt mark { background: #fdf0c9; }
+.qwen-raw { background: #1f2124; color: #e8e6e1; border-color: #1f2124; }
+
+.qwen-fields { margin: 0; display: grid; gap: 3px; }
+.qwen-fields > div { display: grid; grid-template-columns: minmax(96px, 30%) 1fr; gap: 9px; padding: 5px 8px; border-radius: 7px; background: var(--paper); font-size: 11px; }
+.qwen-fields dt { color: var(--muted); font-family: var(--seg-mono); font-size: 10.5px; overflow-wrap: anywhere; }
+.qwen-fields dd { margin: 0; overflow-wrap: anywhere; }
+.qwen-fields .unsure dd { color: var(--clay); }
+
+.qwen-pieces { display: grid; grid-template-columns: minmax(180px, 280px) 1fr; gap: 16px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.qwen-boxes { position: relative; margin: 0; }
+.qwen-boxes img { width: 100%; border-radius: 11px; background: var(--paper-deep); display: block; }
+.qwen-boxes > div { position: absolute; inset: 0; }
+.qwen-box { position: absolute; border: 2px solid var(--clay); border-radius: 4px; }
+.qwen-box i { position: absolute; left: -2px; top: -2px; padding: 1px 5px; border-radius: 4px 0 4px 0; background: var(--clay); color: var(--white); font-style: normal; font-family: var(--seg-mono); font-size: 9px; }
+.qwen-piece-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
+.qwen-piece-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 9px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
+.qwen-piece-list b { width: 18px; height: 18px; border-radius: 50%; background: var(--clay); color: var(--white); display: grid; place-items: center; font-size: 10px; font-weight: 500; }
+.qwen-piece-list strong { display: block; font-size: 12px; }
+.qwen-piece-list small { display: block; font-size: 10.5px; color: var(--muted); }
+.qwen-piece-list em { font-style: normal; font-family: var(--seg-mono); font-size: 10.5px; color: var(--muted); }
+
+@media (max-width: 1180px) {
+  .qwen-controls { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 860px) {
+  .qwen-controls { grid-template-columns: 1fr; }
+  .qwen-panes, .qwen-pieces { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 1180px) {
   .refine-controls { grid-template-columns: 1fr 1fr; }
   .refine-stages { grid-template-columns: repeat(3, 1fr); }
