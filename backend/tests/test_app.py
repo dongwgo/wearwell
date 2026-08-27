@@ -102,7 +102,7 @@ def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypat
 
     calls = []
 
-    def analyze(image, prompt, max_new_tokens):
+    def analyze(image, prompt, max_new_tokens, debug=False):
         calls.append((image.size, prompt, max_new_tokens))
         return {"pieces": [{"pieceId": "piece-1", "colors": ["white"]}], "engine": "Qwen3-VL-8B-Instruct"}
 
@@ -120,6 +120,44 @@ def test_vlm_routes_decode_image_and_use_distinct_prompts(backend_app, monkeypat
     assert all(call[0] == (64, 96) for call in calls)
     assert len({call[1] for call in calls}) == 3
     assert "bbox" in backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
+
+
+def test_vlm_debug_echoes_the_prompt_and_raw_text_only_when_asked(backend_app, monkeypatch: pytest.MonkeyPatch):
+    """Qwen Lab은 프롬프트와 생성 원문을 봐야 하지만, 앱 호출은 그 무게를 지면 안 된다."""
+    from fastapi.testclient import TestClient
+
+    def analyze(image, prompt, max_new_tokens, debug=False):
+        result = {"category": "상의"}
+        if debug:
+            result["rawText"] = '{"category": "상의"}'
+        return result
+
+    monkeypatch.setattr(backend_app.vlm_engine, "analyze", analyze)
+    client = TestClient(backend_app.app)
+    auth = {"Authorization": "Bearer test-token"}
+
+    plain = client.post("/api/vlm/garment", headers=auth, json={"image": image_payload(), "name": "셔츠"}).json()
+    debug = client.post("/api/vlm/garment", headers=auth, json={"image": image_payload(), "name": "셔츠", "debug": True}).json()
+
+    assert "prompt" not in plain and "rawText" not in plain
+    assert "셔츠" in debug["prompt"] and debug["prompt"].startswith(backend_app.QwenVLMEngine.GARMENT_PROMPT)
+    assert debug["maxNewTokens"] == 640
+    assert debug["rawText"] == '{"category": "상의"}'
+
+
+def test_vlm_prompts_route_lists_every_task_with_its_prompt(backend_app):
+    """랩이 프롬프트를 자기 쪽에 복사해 두면 백엔드를 고칠 때 조용히 어긋난다."""
+    from fastapi.testclient import TestClient
+
+    # GET이라 토큰 없이도 읽힌다 — 적재도 추론도 하지 않는 상수 응답이다.
+    payload = TestClient(backend_app.app).get("/api/vlm/prompts").json()
+
+    assert payload["model"] == "Qwen/Qwen3-VL-8B-Instruct"
+    tasks = {task["key"]: task for task in payload["tasks"]}
+    assert set(tasks) == {"garment", "lookbook", "body", "tryon-judge"}
+    assert tasks["lookbook"]["prompt"] == backend_app.QwenVLMEngine.LOOKBOOK_PROMPT
+    assert tasks["lookbook"]["path"] == "/api/vlm/lookbook"
+    assert all(task["role"] and task["maxNewTokens"] > 0 for task in tasks.values())
 
 
 def test_embedding_route_returns_siglip_vector(backend_app, monkeypatch: pytest.MonkeyPatch):
@@ -952,7 +990,7 @@ def test_tryon_judge_route_scores_a_result_image(backend_app, monkeypatch: pytes
 
     seen = {}
 
-    def fake_analyze(image, prompt, max_new_tokens):
+    def fake_analyze(image, prompt, max_new_tokens, debug=False):
         seen["prompt"] = prompt
         return {"layering_ok": True, "items_present": ["셔츠"], "identity_ok": True}
 

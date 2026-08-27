@@ -21,6 +21,7 @@
         <button class="nav-link" data-view="discover">코디 추천</button>
         <button class="nav-link nav-dev" data-view="seglab" id="segLabNavLink" hidden>Seg Lab</button>
         <button class="nav-link nav-dev" data-view="refinelab" id="refineLabNavLink" hidden>Refine Lab</button>
+        <button class="nav-link nav-dev" data-view="qwenlab" id="qwenLabNavLink" hidden>Qwen Lab</button>
       </nav>
       <div class="top-actions">
         <button class="weather-pill" id="weatherButton" aria-label="Weather details">
@@ -230,6 +231,56 @@
         <div class="refine-summary" id="refineLabSummary"></div>
         <div class="refine-results" id="refineLabResults"></div>
       </section>
+
+      <!-- 개발용 Qwen3-VL 탭. 사진 한 장에 프롬프트를 붙여 보내고 무엇이 돌아오는지만 본다. qwen-lab.js가 노출한다. -->
+      <section class="view seg-lab qwen-lab" id="qwenlabView">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">개발용 · Qwen3-VL이 맡은 일</p>
+            <h1>사진을 읽어<br /><em>앱이 쓸 수 있는 말로 바꿔요.</em></h1>
+            <p class="lede">Qwen은 픽셀을 그리지 않아요. 사진을 보고 정해진 스키마의 한국어 JSON을 채워 넣는 일만 해요. 무엇을 물어봤고(프롬프트) 무엇이 그대로 돌아왔는지(원문)를 나란히 보여줘요.</p>
+          </div>
+          <div class="seg-lab-health" id="qwenLabHealth"><span class="seg-dot"></span><small>백엔드 확인 중…</small></div>
+        </div>
+
+        <ol class="refine-flow">
+          <li><b>1</b><strong>이미지</strong><small id="qwenFlowImage">사진 한 장</small></li>
+          <li><b>2</b><strong>프롬프트</strong><small id="qwenFlowPrompt">스키마를 문장으로 못 박음</small></li>
+          <li><b>3</b><strong>Qwen3-VL 생성</strong><small id="qwenFlowGenerate">greedy · 샘플링 없음</small></li>
+          <li><b>4</b><strong>JSON 파싱</strong><small id="qwenFlowParse">코드펜스 걷어내고 객체만</small></li>
+          <li><b>5</b><strong>앱이 쓰는 곳</strong><small id="qwenFlowUse">옷장 · 추천 · 채점</small></li>
+        </ol>
+
+        <div class="seg-lab-controls qwen-controls">
+          <div class="seg-lab-field">
+            <span>백엔드</span>
+            <div class="refine-presets" id="qwenLabPresets"></div>
+            <input id="qwenLabEndpoint" type="url" spellcheck="false" placeholder="http://127.0.0.1:8787" />
+          </div>
+          <div class="seg-lab-field">
+            <span>Qwen에게 시킬 일</span>
+            <div class="qwen-tasks" id="qwenLabTasks"></div>
+          </div>
+          <div class="seg-lab-field">
+            <span>프롬프트에 함께 붙는 값</span>
+            <div class="qwen-inputs" id="qwenLabInputs"></div>
+            <p class="qwen-note" id="qwenLabInputNote">이 값들은 프롬프트 끝에 한 줄로 붙어요. 사진과 어긋나면 무엇이 이겼는지 결과에서 확인하세요.</p>
+          </div>
+        </div>
+
+        <label class="drop-zone seg-lab-drop" id="qwenLabDropZone">
+          <input id="qwenLabFileInput" type="file" accept="image/jpeg,image/png,image/webp" />
+          <span class="upload-icon">↥</span><strong>사진 한 장을 놓아주세요</strong><small>옷 한 벌, 룩북, 전신샷, 착장 결과 — 고른 일에 맞는 사진일수록 잘 보여요</small>
+        </label>
+
+        <div class="seg-lab-run">
+          <figure class="seg-lab-source" id="qwenLabSource" hidden><img alt="분석할 원본 사진" /><figcaption></figcaption></figure>
+          <button class="primary-button" id="qwenLabRun" disabled>Qwen에게 물어보기</button>
+        </div>
+
+        <div class="seg-lab-status" id="qwenLabStatus" hidden></div>
+        <div class="qwen-runs" id="qwenLabRuns"></div>
+      </section>
     </main>
 
     <dialog id="preferenceDialog" class="preference-dialog">
@@ -366,5 +417,6 @@
     <script src="app.js"></script>
     <script src="seg-lab.js"></script>
     <script src="refine-lab.js"></script>
+    <script src="qwen-lab.js"></script>
   </body>
 </html>
