@@ -1158,6 +1158,21 @@ function garmentSimilarity(item, requirement, lookId = null) {
   return garmentSimilarityDetail(item, requirement, lookId).total;
 }
 
+// 룩북 항목이 "같은 옷"인지 가르는 서명. 카테고리만으로 접으면 셔츠 위 티셔츠 같은
+// 레이어드 착장의 이너가 사라지므로, 색·형태 설명까지 같을 때만 중복으로 본다.
+function lookPieceSignature(piece, fallbackItem = null) {
+  const list = value => (Array.isArray(value) ? value : [value])
+    .filter(Boolean).map(entry => String(entry).trim().toLowerCase()).sort().join(",");
+  return [
+    String(piece.category || fallbackItem?.category || "item").trim().toLowerCase(),
+    list(piece.colors),
+    list(piece.details),
+    list(piece.subcategory),
+    list(piece.sleeveLength),
+    list(piece.length),
+  ].join("|");
+}
+
 function buildInfluencerMatch(look, variation = 0) {
   if (!look.analysisReady || !Array.isArray(look.pieces) || !look.pieces.length) {
     return { matches: [], pieces: [], fulfilled: 0, total: 0, similarity: 0, colorSimilarity: 0, score: 0, weatherHits: 0, analyzed: false };
@@ -1207,26 +1222,25 @@ function buildInfluencerMatch(look, variation = 0) {
   let matches = Array(look.pieces.length).fill(null);
   best.matches.forEach(match => { matches[match.requirementIndex] = match; });
 
-  // 동일 품목(상의/하의/아우터/신발) 요구가 중복 검출될 수 있다.
-  // 여러 후보를 가상 착장에 넘기지 않고, 품목별 유사도 최고 1개만 유지한다.
-  const winnerByCategory = new Map();
+  // 세그멘테이션이 한 벌을 두 번 잡으면 같은 설명의 요구가 중복 생성된다. 그런 중복만
+  // 유사도 최고 1개로 접고, 셔츠+티셔츠처럼 설명이 다른 레이어드 착장은 그대로 둔다.
+  const winnerBySignature = new Map();
   matches.forEach((match, index) => {
     if (!match) return;
-    const key = String(match.requirement.category || match.item.category || `piece-${index}`);
-    const existing = winnerByCategory.get(key);
-    if (!existing || match.similarity > existing.match.similarity) winnerByCategory.set(key, { index, match });
+    const key = lookPieceSignature(match.requirement, match.item);
+    const existing = winnerBySignature.get(key);
+    if (!existing || match.similarity > existing.match.similarity) winnerBySignature.set(key, { index, match });
   });
   matches.forEach((match, index) => {
     if (!match) return;
-    const key = String(match.requirement.category || match.item.category || `piece-${index}`);
-    if (winnerByCategory.get(key)?.index !== index) matches[index] = null;
+    if (winnerBySignature.get(lookPieceSignature(match.requirement, match.item))?.index !== index) matches[index] = null;
   });
 
   const selectedMatches = matches.filter(Boolean);
   // matches는 룩북 원본 항목의 위치와 맞춰 카드에 표시해야 하므로 배열을 압축하지 않는다.
-  // 실제 가상 착장에는 아래 pieces처럼 품목별 최고 유사도 상품만 전달한다.
+  // 실제 가상 착장에는 아래 pieces처럼 중복을 접고 남은 상품만 전달한다.
   const fulfilled = selectedMatches.length;
-  const uniqueTotal = new Set(look.pieces.map(piece => String(piece.category || piece.label || "item"))).size;
+  const uniqueTotal = new Set(look.pieces.map(piece => lookPieceSignature(piece))).size;
   const similarity = fulfilled ? selectedMatches.reduce((sum, match) => sum + match.similarity, 0) / fulfilled : 0;
   const colorSimilarity = fulfilled ? selectedMatches.reduce((sum, match) => sum + match.detail.color, 0) / fulfilled : 0;
   const weatherHits = look.weather.filter(tag => todayWeather.tags.includes(tag)).length;
@@ -1234,7 +1248,7 @@ function buildInfluencerMatch(look, variation = 0) {
     matches,
     pieces: matches.filter(Boolean).map(match => match.item),
     fulfilled,
-    // 같은 품목이 여러 번 검출돼도 최상위 1개만 쓰므로, 표시 분모도 고유 품목 수를 쓴다.
+    // 같은 옷이 여러 번 검출돼도 최상위 1개만 쓰므로, 표시 분모도 중복을 접은 수를 쓴다.
     total: uniqueTotal,
     similarity,
     colorSimilarity,
