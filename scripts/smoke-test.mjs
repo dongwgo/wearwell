@@ -162,6 +162,18 @@ const expression = `
     duplicateCategoryUniqueItems: new Set(duplicateCategoryMatch.matches.filter(Boolean).map(entry => entry.item.id)).size,
     unanalyzedTotal: unanalyzedMatch.total,
     photoAvatarReady,
+    // 업로드한 옷 이름이 파일명이 아니라 추출된 특징에서 나오는지.
+    featureNameProbe: {
+      full: garmentFeatureName({ category: '하의', analysis: { primaryColor: '인디고', pattern: '무지', length: '롱', fit: '와이드', material: '데님', subcategory: '데님 팬츠' } }),
+      sparse: garmentFeatureName({ category: '상의', analysis: { primaryColor: '색상 미분류', pattern: '확인 어려움', sleeveLength: '확인 어려움', fit: '레귤러', material: '혼방', subcategory: '확인 어려움' } }),
+    },
+    renamedFromFeatures: (() => {
+      const item = { category: '상의', name: '6951158 17871220354703 big', nameSource: 'auto', analysis: { primaryColor: '화이트', pattern: '무지', sleeveLength: '긴팔', fit: '오버', material: '코튼', subcategory: '셔츠' } };
+      applyGarmentFeatureName(item);
+      const manual = { ...item, name: '내가 지은 이름', nameSource: undefined };
+      applyGarmentFeatureName(manual);
+      return { auto: item.name, source: item.nameSource, manualKept: manual.name };
+    })(),
     segmentChoices: segmentCards.length,
     segmentRefineToggle: segmentBatches[0].items[0].refine,
     segmentCategoryChange: segmentBatches[0].items[0].category
@@ -178,7 +190,7 @@ if (process.env.SCREENSHOT) {
 await send("Browser.close");
 chromeProcess.kill();
 
-if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.clipboardUploadReady || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
+if (!value?.profile || value.profile.gender !== "men" || value.profile.influencerLooks?.length !== 2 || value.dialogOpen || value.wardrobeCount !== "200" || !value.clipboardUploadReady || !value.matchDialogOpened || value.matchOptions !== 2 || value.trendCards < 1 || value.closetMatches !== value.trendCards || !value.avatarReady || value.xssTriggered || !value.safeNameRendered || !value.photoMethodAvailable || value.comparisonPanes !== 2 || value.feedPhotos !== 100 || !value.photoAvatarReady || value.similarityProbe.exact <= value.similarityProbe.wrong || value.similarityProbe.exact <= value.similarityProbe.unknown || value.similarityProbe.unknown >= .56 || value.referenceProbe.exact < .98 || value.referenceProbe.wrongCategory !== 0 || value.referenceProbe.mixedVisual !== .5 || value.garmentFormProbe.shortSleeve <= 0 || value.garmentFormProbe.longSleeve !== 0 || !value.feedbackStored || !value.lookbookUploadReady || value.distinctSimilarityScores < 2 || value.oneToOnePieces < 2 || value.oneToOneMatches !== value.oneToOnePieces || value.oneToOneUniqueItems !== value.oneToOnePieces || value.duplicateCategoryMatches !== 2 || value.duplicateCategoryUniqueItems !== 2 || value.unanalyzedTotal !== 0 || value.featureNameProbe.full !== "인디고 롱 와이드 데님 팬츠" || value.featureNameProbe.sparse !== "" || value.renamedFromFeatures.auto !== "화이트 긴팔 오버 코튼 셔츠" || value.renamedFromFeatures.source !== "feature" || value.renamedFromFeatures.manualKept !== "내가 지은 이름" || value.segmentChoices !== 2 || value.segmentRefineToggle !== false || value.segmentCategoryChange !== "아우터") {
   throw new Error(`Smoke test failed: ${JSON.stringify(value)}`);
 }
 console.log(`Smoke test passed: 룩북 ${value.oneToOnePieces}벌 ↔ 내 옷 ${value.oneToOneUniqueItems}벌 1:1 / 동일 카테고리 2벌 ↔ 서로 다른 내 옷 ${value.duplicateCategoryUniqueItems}벌 / 미분석 추천 ${value.unanalyzedTotal}벌`);

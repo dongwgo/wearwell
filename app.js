@@ -1354,11 +1354,57 @@ async function persistGarment(item) {
     await window.WearwellDB.putGarment({
       id: item.id, image: item.userAdded ? item.image : undefined, userAdded: Boolean(item.userAdded),
       gender: item.gender, category: item.category, name: item.name, color: item.color,
+      // 분석 전에 새로고침해도 나중에 특징 기반 상품명으로 바꿀 수 있도록 이름 출처를 함께 남긴다.
+      nameSource: item.nameSource, sourceFileName: item.sourceFileName,
       analysis: item.analysis, referenceLookIds: item.referenceLookIds || [], updatedAt: new Date().toISOString()
     });
   } catch (error) {
     console.warn("옷 분석 저장 실패", error);
   }
+}
+
+// 업로드한 옷의 이름을 파일명 대신 분석된 특징으로 짓는다. 파일명은 "6951158_big"처럼
+// 의미가 없는 경우가 많은데, seedGarmentAnalysis가 이름에서 소재·핏을 읽어내므로
+// 그런 이름은 색상 미분류와 잘못된 시드 분석으로 그대로 이어진다.
+// 기존 상품명과 같은 어순(색 → 패턴 → 기장 → 핏 → 소재 → 품목)으로 맞춘다.
+const GARMENT_NAME_NOISE = new Set([
+  "확인 어려움", "색상 미분류", "기본", "보통", "무지", "레귤러", "의류", "단독", "없음", "기타"
+]);
+function garmentFeatureName(item, analysis = item.analysis) {
+  if (!analysis) return "";
+  const clean = value => String(value ?? "").trim();
+  const tokens = [];
+  const push = token => {
+    if (!token || GARMENT_NAME_NOISE.has(token)) return;
+    // "데님"과 "데님 팬츠"가 함께 나오면 겹쳐 쓰지 않고 더 구체적인 쪽만 남긴다.
+    const overlap = tokens.findIndex(existing => existing.includes(token) || token.includes(existing));
+    if (overlap === -1) tokens.push(token);
+    else if (token.length > tokens[overlap].length) tokens[overlap] = token;
+  };
+  for (const value of [
+    analysis.primaryColor,
+    analysis.pattern,
+    item.category === "하의" ? analysis.length : analysis.sleeveLength,
+    analysis.fit,
+    analysis.material,
+  ]) push(clean(value));
+  // 품목은 이름의 끝을 맡으므로 마지막에 붙인다. 못 읽었으면 카테고리로 대신한다.
+  const piece = clean(analysis.subcategory);
+  const named = !GARMENT_NAME_NOISE.has(piece) && piece;
+  // 색·소재만 남으면 파일명보다 나을 게 없으므로 이름을 바꾸지 않는다.
+  if (tokens.length < 2) return "";
+  push(named || clean(item.category));
+  return tokens.join(" ").slice(0, 40);
+}
+
+// 사용자가 직접 지은 이름은 건드리지 않는다. 파일명·세그멘테이션 라벨에서 임시로
+// 붙인 이름(nameSource: "auto")만 분석 결과가 나왔을 때 상품명으로 바꾼다.
+function applyGarmentFeatureName(item) {
+  if (item.nameSource !== "auto") return;
+  const name = garmentFeatureName(item);
+  if (!name) return;
+  item.name = name;
+  item.nameSource = "feature";
 }
 
 async function analyzeGarment(item, reopen = false) {
@@ -1370,6 +1416,7 @@ async function analyzeGarment(item, reopen = false) {
     if (["상의", "하의", "아우터", "원피스", "신발", "가방", "액세서리"].includes(detectedCategory)) item.category = detectedCategory;
     const detectedColor = String(item.analysis?.primaryColor || "").trim();
     if (detectedColor && !detectedColor.includes("확인 어려움")) item.color = detectedColor;
+    applyGarmentFeatureName(item);
     try {
       item.analysis.visualEmbedding = await window.WearwellVLM.embedImage(item.image);
       item.analysis.visualEmbeddingEngine = window.WearwellVLM.getEmbeddingEngine?.() || "unknown";
@@ -1791,8 +1838,15 @@ async function addUploadsToWardrobe() {
     else if (/dress|원피스/.test(lower)) category = "원피스";
     else if (/shoe|boot|sneaker|loafer|신발/.test(lower)) category = "신발";
     else if (/bag|tote|가방/.test(lower)) category = "가방";
-    const item = { id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category, name: file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ") || "새로 추가한 옷", color: "색상 미분류", worn: 0, userAdded: true, referenceLookIds: [] };
-    item.analysis = window.WearwellVLM.seedGarmentAnalysis(item);
+    // 파일명은 카테고리 추측에만 쓰고 이름으로는 남기지 않는다. 분석이 끝나면
+    // applyGarmentFeatureName이 특징으로 지은 상품명으로 바꿔 준다.
+    const item = {
+      id: `upload-${Date.now()}-${index}`, image: await fileToDataUrl(file), gender: selectedGender, category,
+      name: `새로 추가한 ${category}`, nameSource: "auto", sourceFileName: file.name,
+      color: "색상 미분류", worn: 0, userAdded: true, referenceLookIds: []
+    };
+    // 시드 분석은 이름에서 소재·핏을 읽으므로, 임시 이름 대신 파일명을 넘겨 힌트를 살린다.
+    item.analysis = window.WearwellVLM.seedGarmentAnalysis({ ...item, name: file.name });
     wardrobe.unshift(item);
     added.push(item);
     await persistGarment(item);
@@ -1925,7 +1979,9 @@ async function commitSegmentedGarments() {
         image: refined?.stages?.closet || refined?.stages?.normalized || detected.image,
         gender: selectedGender || "all",
         category: detected.category,
+        // 검출 라벨은 임시 이름일 뿐이다. 아래 analyzeGarment가 특징으로 상품명을 짓는다.
         name: detected.category === detected.sourceCategory ? detected.name : `${batch.name} - ${detected.category}`,
+        nameSource: "auto",
         color: "색상 미분류",
         worn: 0,
         userAdded: true,
@@ -1948,6 +2004,11 @@ async function commitSegmentedGarments() {
   renderCategoryFilters();
   renderWardrobe();
   showToast(added.length ? `옷 ${added.length}벌을 저장했어요${refineFailures ? ` · ${refineFailures}벌은 분리본으로 저장` : ""}` : "분리할 옷을 찾지 못했어요");
+  // 전신샷에서 분리한 옷도 업로드와 똑같이 분석해야 색과 상품명이 채워진다.
+  // 분리 결과를 먼저 보여 주고 분석은 뒤에서 이어 간다.
+  (async () => {
+    for (const item of added) await analyzeGarment(item);
+  })();
 }
 
 async function addSegmentPhotosToWardrobe() {
