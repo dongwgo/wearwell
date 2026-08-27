@@ -266,6 +266,9 @@ class ClosetRefineRequest(BaseModel):
     categoryOverrides: dict[str, str] = Field(default_factory=dict)
     # 걸러진 후보까지 파이프라인에 태운다. 왜 걸러졌는지를 생성 결과로 확인할 때 쓴다.
     includeRejected: bool = False
+    # 입고 있던 사람의 성별. 없으면 레퍼런스와 다른 재단으로 바꾸지 말라는
+    # 중립 지시만 사용한다.
+    gender: Literal["men", "women"] | None = None
     repair: RepairOptions = Field(default_factory=RepairOptions)
     generate: bool = True
     seed: int = 42
@@ -337,6 +340,25 @@ class FluxImageEngine:
         "신발": "pair of shoes",
         "가방": "bag",
         "액세서리": "fashion accessory",
+    }
+    # 카테고리보다 구체적인 세그멘테이션 원본 라벨을 FLUX 프롬프트에 쓴다.
+    # 특히 "하의"만 쓰면 pants or skirt 중 하나를 모델이 임의로 고를 수 있다.
+    SEGMENT_LABEL_NOUNS = {
+        "Pants": "pair of trousers",
+        "Skirt": "skirt",
+        "Dress": "dress",
+        "Upper-clothes": "upper-body garment (top)",
+        "Left-shoe": "pair of shoes",
+        "Right-shoe": "pair of shoes",
+        "Bag": "bag",
+        "Scarf": "scarf",
+        "Belt": "belt",
+    }
+    GENDER_CUT = {
+        "men": " This is menswear: keep a men's cut with straight side seams and broad square shoulders, and do not "
+               "give it a nipped waist, a high elasticated waistband or a cropped culotte hem unless the reference "
+               "clearly shows one.",
+        "women": " This is womenswear: keep the women's cut exactly as the reference shows it.",
     }
     def __init__(self, pipeline_factory=None) -> None:
         self.pipe = None
@@ -622,9 +644,21 @@ class FluxImageEngine:
         )
         return image, f"{self.engine_name}+photo-avatar"
 
+    @classmethod
+    def garment_noun(cls, category: str, label: str | None, gender: str | None) -> str:
+        """세그멘테이션 라벨이 구체적이면 그 이름을, 모호하면 카테고리를 쓴다."""
+        nouns = {
+            cls.SEGMENT_LABEL_NOUNS[part]
+            for part in str(label or "").split("+")
+            if part in cls.SEGMENT_LABEL_NOUNS
+        }
+        noun = nouns.pop() if len(nouns) == 1 else cls.CLOSET_CATEGORY_LABELS.get(category, "garment")
+        return f"{'men' if gender == 'men' else 'women'}'s {noun}" if gender in ("men", "women") else noun
+
     def refine_garment(
         self, garment: Image.Image, category: str, name: str, seed: int,
-        steps: int | None = None, hint: str = "",
+        steps: int | None = None, hint: str = "", gender: str | None = None,
+        label: str | None = None,
     ):
         """세그멘테이션으로 오려낸 옷 -> 옷장에 넣을 상품컷.
 
@@ -640,7 +674,7 @@ class FluxImageEngine:
         has_cuda, _ = cuda_info()
         if has_cuda and os.getenv("ONEULOUT_GPU", "1") == "1":
             prompt = (
-                f"Reference image 1 is a {self.CLOSET_CATEGORY_LABELS.get(category, 'garment')} named '{name}' that was "
+                f"Reference image 1 is a {self.garment_noun(category, label, gender)} named '{name}' that was "
                 "automatically cut out of a full-body photo, so its shape is damaged: the cutout has holes where arms, "
                 "hair, straps or other garments covered it, some pieces are detached, and the edges are ragged. "
                 "Redraw it as one clean e-commerce product photo of that same single item. Fill every hole, reconnect "
@@ -652,6 +686,7 @@ class FluxImageEngine:
                 "plain pure white background with soft even studio lighting and a subtle contact shadow. "
                 "No person, no skin, no face, no hands, no visible mannequin, no hanger, no props, no background scene, "
                 "no text, no watermark, no collage, no split screen, no duplicated item."
+                f"{self.GENDER_CUT.get(gender, ' Do not restyle the garment into a different cut than the reference shows.')}"
                 f"{hint}"
             )
             return self._run(prompt=prompt, seed=seed, images=[garment], size=REFINE_SIZE, steps=steps), self.engine_name
@@ -1165,6 +1200,7 @@ def refine_closet_photo(request: ClosetRefineRequest):
             closet, engine = image_engine.refine_garment(
                 normalized, category, f"{request.name} {category}", request.seed, request.steps,
                 refine_service.generation_hint(item["diagnosis"]),
+                request.gender, item.get("label"),
             )
             return item, closet, engine, round(time.perf_counter() - generate_started, 2)
 

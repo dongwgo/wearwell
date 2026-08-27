@@ -511,7 +511,7 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     monkeypatch.setattr(
         backend_app.image_engine,
         "refine_garment",
-        lambda garment, category, name, seed, steps, hint="": calls.append((garment.size, category, name, seed, steps, hint))
+        lambda garment, category, name, seed, steps, hint="", gender=None, label=None: calls.append((garment.size, category, name, seed, steps, hint, gender, label))
         or (Image.new("RGB", (768, 768), "white"), "stub-flux"),
     )
 
@@ -694,7 +694,7 @@ def test_refine_route_applies_category_override_to_generation(backend_app, monke
     monkeypatch.setattr(
         backend_app.image_engine,
         "refine_garment",
-        lambda garment, category, name, seed, steps, hint="": calls.append((category, name))
+        lambda garment, category, name, seed, steps, hint="", gender=None, label=None: calls.append((category, name))
         or (Image.new("RGB", (32, 32), "white"), "stub-flux"),
     )
 
@@ -707,6 +707,79 @@ def test_refine_route_applies_category_override_to_generation(backend_app, monke
     assert payload["items"][0]["sourceCategory"] == "상의"
     assert payload["items"][0]["category"] == "아우터"
     assert calls == [("아우터", "full-body photo 아우터")]
+
+
+def test_bottoms_are_never_described_as_maybe_a_skirt(backend_app):
+    noun = backend_app.FluxImageEngine.garment_noun
+
+    assert noun("하의", "Pants", "men") == "men's pair of trousers"
+    assert "skirt" not in noun("하의", "Pants", "men")
+    assert noun("하의", "Skirt", "women") == "women's skirt"
+    assert noun("하의", "Skirt+Pants", "men") == "men's lower-body garment (pants or skirt)"
+    assert noun("상의", None, None) == "upper-body garment (top)"
+
+
+def test_generation_prompt_carries_the_wearers_gender(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    captured = {}
+    monkeypatch.setattr(
+        backend_app.image_engine, "_run",
+        lambda **kwargs: captured.update(kwargs) or Image.new("RGB", (8, 8)),
+    )
+
+    backend_app.image_engine.refine_garment(
+        Image.new("RGB", (768, 768)), "하의", "스냅 하의", 7, None, "", "men", "Pants",
+    )
+
+    assert "men's pair of trousers" in captured["prompt"]
+    assert "This is menswear" in captured["prompt"]
+    assert "unless the reference clearly shows one" in captured["prompt"]
+
+
+def test_generation_without_a_gender_still_forbids_restyling(backend_app, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(backend_app, "cuda_info", lambda: (True, "NVIDIA L4"))
+    captured = {}
+    monkeypatch.setattr(
+        backend_app.image_engine, "_run",
+        lambda **kwargs: captured.update(kwargs) or Image.new("RGB", (8, 8)),
+    )
+
+    backend_app.image_engine.refine_garment(Image.new("RGB", (768, 768)), "하의", "스냅 하의", 7)
+
+    assert "menswear" not in captured["prompt"] and "womenswear" not in captured["prompt"]
+    assert "Do not restyle the garment into a different cut" in captured["prompt"]
+
+
+def test_refine_route_passes_gender_and_label_to_generation(backend_app, monkeypatch: pytest.MonkeyPatch):
+    from fastapi.testclient import TestClient
+
+    install_segment_stub(monkeypatch)
+    calls = []
+    monkeypatch.setattr(
+        backend_app.image_engine, "refine_garment",
+        lambda garment, category, name, seed, steps, hint="", gender=None, label=None:
+        calls.append((gender, label)) or (Image.new("RGB", (32, 32), "white"), "stub-flux"),
+    )
+
+    TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "gender": "men"},
+    )
+
+    assert calls == [("men", "Upper-clothes")]
+
+
+def test_refine_route_rejects_an_unknown_gender(backend_app):
+    from fastapi.testclient import TestClient
+
+    response = TestClient(backend_app.app).post(
+        "/api/closet/refine",
+        headers={"Authorization": "Bearer test-token"},
+        json={"image": image_payload(), "gender": "남성"},
+    )
+
+    assert response.status_code == 422
 
 
 def test_garment_generation_uses_a_square_canvas(backend_app, monkeypatch: pytest.MonkeyPatch):
