@@ -11,6 +11,7 @@ transformers+torch는 첫 요청 때만 불러와 캐싱한다 — 모델 로딩
 쓰지 않은 것부터 내린다.
 """
 
+import colorsys
 import io
 import os
 import threading
@@ -196,6 +197,42 @@ def _measure(mask, confidence, img_shape):
     }
 
 
+def _garment_color(img_np, mask):
+    """배경이나 다른 옷이 아닌 마스크 안 픽셀만으로 의류 대표색을 구한다."""
+    import numpy as np
+
+    pixels = img_np[mask]
+    if not len(pixels):
+        return "색상 미분류"
+    if len(pixels) > 50000:
+        pixels = pixels[:: max(1, len(pixels) // 50000)]
+    quantized = (pixels // 24).astype(np.int16)
+    keys = quantized[:, 0] * 121 + quantized[:, 1] * 11 + quantized[:, 2]
+    key = int(np.bincount(keys).argmax())
+    r, g, b = np.median(pixels[keys == key], axis=0) / 255.0
+    h, s, v = colorsys.rgb_to_hsv(float(r), float(g), float(b))
+    hue = h * 360
+    if s < 0.12:
+        return "블랙" if v < 0.20 else "화이트" if v > 0.84 else "라이트 그레이" if v > 0.62 else "그레이"
+    if v < 0.22:
+        return "네이비" if 190 <= hue < 260 else "블랙"
+    if hue < 15 or hue >= 345:
+        return "브라운" if v < 0.62 or s < 0.45 else "레드"
+    if hue < 45:
+        return "브라운" if v < 0.62 else "베이지"
+    if hue < 75:
+        return "베이지"
+    if hue < 165:
+        return "그린"
+    if hue < 195:
+        return "민트"
+    if hue < 255:
+        return "네이비" if v < 0.48 else "블루"
+    if hue < 300:
+        return "퍼플"
+    return "핑크"
+
+
 def _reject_reason(stats, thresholds):
     """품질 필터에 걸린 이유를 사람이 읽을 수 있게. 통과하면 None."""
     # 소수점 둘째 자리까지 쓴다 — 한 자리면 경계에서 걸린 값이 "1.2% < 기준 1.2%"로
@@ -251,6 +288,7 @@ def segment(image_bytes: bytes, model_key: str | None = None) -> list[dict]:
         results.append({
             "category": category,
             "label": "+".join(labels[category]),
+            "color": _garment_color(img_np, mask),
             "pixelCount": stats["pixelCount"],
             "fillRatio": round(stats["fillRatio"], 3),
             "confidence": round(stats["confidence"], 3),
@@ -331,6 +369,7 @@ def analyze(image_bytes: bytes, model_key: str) -> dict:
         items.append({
             "category": category,
             "label": "+".join(labels[category]),
+            "color": _garment_color(img_np, mask),
             "accepted": reason is None,
             "rejectReason": reason,
             "pixelCount": stats["pixelCount"],

@@ -2098,7 +2098,9 @@ async function commitSegmentedGarments() {
         // 검출 라벨은 임시 이름일 뿐이다. 아래 analyzeGarment가 특징으로 상품명을 짓는다.
         name: detected.category === detected.sourceCategory ? detected.name : `${batch.name} - ${detected.category}`,
         nameSource: "auto",
-        color: "색상 미분류",
+        // 전신 사진 전체가 아니라 검출 마스크 안에서 계산한 색. Qwen 정밀 분석이
+        // 끝나면 더 구체적인 색 이름으로 다시 갱신된다.
+        color: detected.color || "색상 미분류",
         worn: 0,
         userAdded: true,
         referenceLookIds: [],

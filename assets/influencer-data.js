@@ -3,7 +3,7 @@
   {
     "id": "pinterest-trend-001",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -89,7 +89,7 @@
   {
     "id": "pinterest-trend-002",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -191,7 +191,7 @@
   {
     "id": "pinterest-trend-003",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -277,7 +277,7 @@
   {
     "id": "pinterest-trend-004",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -363,7 +363,7 @@
   {
     "id": "pinterest-trend-005",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -449,7 +449,7 @@
   {
     "id": "pinterest-trend-006",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -535,7 +535,7 @@
   {
     "id": "pinterest-trend-007",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -637,7 +637,7 @@
   {
     "id": "pinterest-trend-008",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -723,7 +723,7 @@
   {
     "id": "pinterest-trend-009",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -809,7 +809,7 @@
   {
     "id": "pinterest-trend-010",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -895,7 +895,7 @@
   {
     "id": "pinterest-trend-011",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -965,7 +965,7 @@
   {
     "id": "pinterest-trend-012",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1035,7 +1035,7 @@
   {
     "id": "pinterest-trend-013",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1137,7 +1137,7 @@
   {
     "id": "pinterest-trend-014",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1255,7 +1255,7 @@
   {
     "id": "pinterest-trend-015",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1341,7 +1341,7 @@
   {
     "id": "pinterest-trend-016",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1427,7 +1427,7 @@
   {
     "id": "pinterest-trend-017",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1513,7 +1513,7 @@
   {
     "id": "pinterest-trend-018",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1599,7 +1599,7 @@
   {
     "id": "pinterest-trend-019",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1685,7 +1685,7 @@
   {
     "id": "pinterest-trend-020",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1771,7 +1771,7 @@
   {
     "id": "pinterest-trend-021",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1857,7 +1857,7 @@
   {
     "id": "pinterest-trend-022",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -1927,7 +1927,7 @@
   {
     "id": "pinterest-trend-023",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2029,7 +2029,7 @@
   {
     "id": "pinterest-trend-024",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2115,7 +2115,7 @@
   {
     "id": "pinterest-trend-025",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2201,7 +2201,7 @@
   {
     "id": "pinterest-trend-026",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2287,7 +2287,7 @@
   {
     "id": "pinterest-trend-027",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2389,7 +2389,7 @@
   {
     "id": "pinterest-trend-028",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2491,7 +2491,7 @@
   {
     "id": "pinterest-trend-029",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2577,7 +2577,7 @@
   {
     "id": "pinterest-trend-030",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2647,7 +2647,7 @@
   {
     "id": "pinterest-trend-031",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2733,7 +2733,7 @@
   {
     "id": "pinterest-trend-032",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2819,7 +2819,7 @@
   {
     "id": "pinterest-trend-033",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2889,7 +2889,7 @@
   {
     "id": "pinterest-trend-034",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -2959,7 +2959,7 @@
   {
     "id": "pinterest-trend-035",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3045,7 +3045,7 @@
   {
     "id": "pinterest-trend-036",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3131,7 +3131,7 @@
   {
     "id": "pinterest-trend-037",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3201,7 +3201,7 @@
   {
     "id": "pinterest-trend-038",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3287,7 +3287,7 @@
   {
     "id": "pinterest-trend-039",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3373,7 +3373,7 @@
   {
     "id": "pinterest-trend-040",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3475,7 +3475,7 @@
   {
     "id": "pinterest-trend-041",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3545,7 +3545,7 @@
   {
     "id": "pinterest-trend-042",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3631,7 +3631,7 @@
   {
     "id": "pinterest-trend-043",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3701,7 +3701,7 @@
   {
     "id": "pinterest-trend-044",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3787,7 +3787,7 @@
   {
     "id": "pinterest-trend-045",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3873,7 +3873,7 @@
   {
     "id": "pinterest-trend-046",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -3959,7 +3959,7 @@
   {
     "id": "pinterest-trend-047",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4013,7 +4013,7 @@
   {
     "id": "pinterest-trend-048",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4083,7 +4083,7 @@
   {
     "id": "pinterest-trend-049",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4185,7 +4185,7 @@
   {
     "id": "pinterest-trend-050",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4255,7 +4255,7 @@
   {
     "id": "pinterest-trend-051",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4373,7 +4373,7 @@
   {
     "id": "pinterest-trend-052",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4459,7 +4459,7 @@
   {
     "id": "pinterest-trend-053",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4545,7 +4545,7 @@
   {
     "id": "pinterest-trend-054",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4631,7 +4631,7 @@
   {
     "id": "pinterest-trend-055",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4717,7 +4717,7 @@
   {
     "id": "pinterest-trend-056",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4803,7 +4803,7 @@
   {
     "id": "pinterest-trend-057",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4889,7 +4889,7 @@
   {
     "id": "pinterest-trend-058",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -4991,7 +4991,7 @@
   {
     "id": "pinterest-trend-059",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5077,7 +5077,7 @@
   {
     "id": "pinterest-trend-060",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5179,7 +5179,7 @@
   {
     "id": "pinterest-trend-061",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5281,7 +5281,7 @@
   {
     "id": "pinterest-trend-062",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5335,7 +5335,7 @@
   {
     "id": "pinterest-trend-063",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5437,7 +5437,7 @@
   {
     "id": "pinterest-trend-064",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5523,7 +5523,7 @@
   {
     "id": "pinterest-trend-065",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5593,7 +5593,7 @@
   {
     "id": "pinterest-trend-066",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5679,7 +5679,7 @@
   {
     "id": "pinterest-trend-067",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5765,7 +5765,7 @@
   {
     "id": "pinterest-trend-068",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5851,7 +5851,7 @@
   {
     "id": "pinterest-trend-069",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -5921,7 +5921,7 @@
   {
     "id": "pinterest-trend-070",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6023,7 +6023,7 @@
   {
     "id": "pinterest-trend-071",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6093,7 +6093,7 @@
   {
     "id": "pinterest-trend-072",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6147,7 +6147,7 @@
   {
     "id": "pinterest-trend-073",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6233,7 +6233,7 @@
   {
     "id": "pinterest-trend-074",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6319,7 +6319,7 @@
   {
     "id": "pinterest-trend-075",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6421,7 +6421,7 @@
   {
     "id": "pinterest-trend-076",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6507,7 +6507,7 @@
   {
     "id": "pinterest-trend-077",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6577,7 +6577,7 @@
   {
     "id": "pinterest-trend-078",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6663,7 +6663,7 @@
   {
     "id": "pinterest-trend-079",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6765,7 +6765,7 @@
   {
     "id": "pinterest-trend-080",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6835,7 +6835,7 @@
   {
     "id": "pinterest-trend-081",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6905,7 +6905,7 @@
   {
     "id": "pinterest-trend-082",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -6975,7 +6975,7 @@
   {
     "id": "pinterest-trend-083",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7061,7 +7061,7 @@
   {
     "id": "pinterest-trend-084",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7147,7 +7147,7 @@
   {
     "id": "pinterest-trend-085",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7249,7 +7249,7 @@
   {
     "id": "pinterest-trend-086",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7319,7 +7319,7 @@
   {
     "id": "pinterest-trend-087",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7405,7 +7405,7 @@
   {
     "id": "pinterest-trend-088",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7475,7 +7475,7 @@
   {
     "id": "pinterest-trend-089",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7561,7 +7561,7 @@
   {
     "id": "pinterest-trend-090",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7631,7 +7631,7 @@
   {
     "id": "pinterest-trend-091",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7701,7 +7701,7 @@
   {
     "id": "pinterest-trend-092",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7803,7 +7803,7 @@
   {
     "id": "pinterest-trend-093",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7889,7 +7889,7 @@
   {
     "id": "pinterest-trend-094",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -7975,7 +7975,7 @@
   {
     "id": "pinterest-trend-095",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -8045,7 +8045,7 @@
   {
     "id": "pinterest-trend-096",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -8115,7 +8115,7 @@
   {
     "id": "pinterest-trend-097",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -8169,7 +8169,7 @@
   {
     "id": "pinterest-trend-098",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -8239,7 +8239,7 @@
   {
     "id": "pinterest-trend-099",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",
@@ -8309,7 +8309,7 @@
   {
     "id": "pinterest-trend-100",
     "gender": "men",
-    "creator": "Pinterest 남성패션",
+    "creator": "스타일 레퍼런스",
     "creatorHandle": "@pinterest",
     "creatorUrl": "https://kr.pinterest.com/",
     "credit": "Pinterest 공개 Pin",

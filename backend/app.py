@@ -1114,6 +1114,7 @@ def segment_closet_photo(request: SegmentationRequest):
                     "id": f"segment-{int(time.time() * 1000)}-{index}",
                     "name": f"{request.name} - {item['category']}",
                     "category": item["category"],
+                    "color": item.get("color", "색상 미분류"),
                     "image": encode_png(item["png_bytes"]),
                     "label": item["label"],
                     "confidence": item["confidence"],
@@ -1452,6 +1453,9 @@ def create_embeddings(request: EmbeddingBatchRequest):
 
 def garment_prompt(name: str, category: str | None) -> str:
     return QwenVLMEngine.GARMENT_PROMPT + (
+        "\n판정 기준: 가방은 물건을 넣어 들거나 메는 수납 용품(백팩·토트·크로스백·클러치)만 뜻해. "
+        "벨트·모자·안경·시계·목도리·장갑·주얼리는 액세서리이고, 조끼·베스트·민소매 옷은 상의 또는 아우터야. "
+        "primaryColor는 흰/투명 배경, 피부와 그림자를 제외하고 아이템 본체에서 가장 넓은 색으로 정해."
         f"\n사용자 레이블: name={name}, category={category or '미지정'}. 레이블은 참고만 하고 사진을 우선해."
     )
 

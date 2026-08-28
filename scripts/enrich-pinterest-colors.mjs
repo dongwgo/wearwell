@@ -40,7 +40,7 @@ for (const item of wardrobe) {
     : item.category === "신발" ? "슈즈"
     : item.category === "가방" ? "가방"
     : item.category === "액세서리" ? "액세서리" : item.category;
-  item.name = `Pinterest 남성패션 · ${item.color} ${type} ${String(item.rank).padStart(3, "0")}`;
+  item.name = `${item.color} ${type} ${String(item.rank).padStart(3, "0")}`;
 }
 await writeFile("assets/lookbook-data.js", `window.MUSINSA_RANKING = ${JSON.stringify(wardrobe, null, 2)};\n`);
 

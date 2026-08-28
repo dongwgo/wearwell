@@ -41,8 +41,11 @@ QUALITY_THRESHOLDS = {
     "하의": {"minArea": 0.012, "minFill": 0.25, "minConfidence": 0.55},
     "원피스": {"minArea": 0.02, "minFill": 0.25, "minConfidence": 0.55},
     "신발": {"minArea": 0.004, "minFill": 0.08, "minConfidence": 0.5},
-    "가방": {"minArea": 0.004, "minFill": 0.08, "minConfidence": 0.5},
-    "액세서리": {"minArea": 0.003, "minFill": 0.08, "minConfidence": 0.5},
+    # 크로스백·벨트는 전신 사진에서 실제 면적이 0.05% 안팎까지 작아진다. 몸통 옷과
+    # 같은 0.3~0.4% 면적선을 쓰면 확신도 높은 Bag/Belt도 전부 사라지므로, 작은 품목은
+    # 면적보다 모델 확신도와 채움 비율로 품질을 가른다.
+    "가방": {"minArea": 0.0005, "minFill": 0.045, "minConfidence": 0.5},
+    "액세서리": {"minArea": 0.0003, "minFill": 0.045, "minConfidence": 0.5},
 }
 
 # ATR(18 클래스) 라벨 -> 옷장 카테고리.

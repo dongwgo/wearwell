@@ -54,8 +54,8 @@ for index, row in enumerate(selected, 1):
         "id": f"pinterest-{source['id']}-{item['category']}",
         "image": f"assets/lookbook/{filename}", "gender": "men", "rankingGender": "men",
         "category": item["category"], "subcategory": item["label"],
-        "name": f"Pinterest 남성패션 · {item['category']} {index:03d}", "brand": "Pinterest inspiration",
-        "color": "색상 미분류", "rank": index, "sourceRank": index, "price": 0,
+        "name": f"{item['category']} {index:03d}",
+        "color": item["color"], "rank": index, "sourceRank": index, "price": 0,
         "sourceUrl": source["sourceUrl"], "sourceImageUrl": source["imageUrl"],
         "worn": 0, "userAdded": False,
         "segmentation": {"model": "sayeed99/segformer_b3_clothes", "label": item["label"], "confidence": item["confidence"], "areaRatio": item["areaRatio"], "fillRatio": item["fillRatio"]},
@@ -81,11 +81,11 @@ for index, source_path in enumerate(trend_files, 1):
     source = BY_FILE[source_path.name]
     accepted = [item for item in result["items"] if item["accepted"]]
     pieces = [{
-        "category": item["category"], "label": item["label"], "colors": ["색상 미분류"],
+        "category": item["category"], "label": item["label"], "colors": [item["color"]],
         "materials": ["소재 미분류"], "fits": ["핏 미분류"], "details": [item["label"]],
     } for item in accepted]
     trend_records.append({
-        "id": f"pinterest-trend-{index:03d}", "gender": "men", "creator": "Pinterest 남성패션",
+        "id": f"pinterest-trend-{index:03d}", "gender": "men", "creator": "스타일 레퍼런스",
         "creatorHandle": "@pinterest", "creatorUrl": "https://kr.pinterest.com/", "credit": "Pinterest 공개 Pin",
         "sourceTitle": source["title"], "sourceUrl": source["sourceUrl"],
         "image": f"assets/influencers/look-{index:03d}.{source_path.suffix.lstrip('.')}",
