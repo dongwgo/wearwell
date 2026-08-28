@@ -564,8 +564,8 @@ def stub_refine_analysis(category: str = "상의"):
 def install_segment_stub(monkeypatch: pytest.MonkeyPatch, build=stub_refine_analysis):
     """analyze()만 갈아끼운다.
 
-    호출마다 새 분석 결과를 만든다 — 라우트가 응답을 만들면서 analyze()가 준 dict를
-    비워 쓰기 때문에(마스크와 크롭 바이트) 같은 dict를 두 번 주면 두 번째 호출이 깨진다.
+    호출마다 새 분석 결과를 만든다. 라우트는 캐시 원본을 보존해야 하지만 테스트 간
+    데이터 공유도 피해야 각 테스트가 독립적이다.
     refine_service는 진짜 모듈이라 먼저 적재해 둔다 — stub으로 덮은 뒤에 처음
     import하면 refine_service가 shrink를 못 찾는다.
     """
@@ -619,6 +619,14 @@ def test_refine_route_returns_every_pipeline_stage_for_each_garment(backend_app,
     assert payload["overlay"].startswith("data:image/png;base64,")
     # 같은 그림을 두 번 싣지 않는다 — analyze()가 만든 크롭은 버리고 스테이지 크롭만 쓴다.
     assert "png_bytes" not in item
+    # 단, 응답 복사본에서만 빼야 한다. 캐시 원본까지 비우면 다음 /segment 요청이
+    # 캐시에 적중하는 순간 KeyError("png_bytes")로 422를 반환한다.
+    cached_items = [
+        cached_item
+        for analysis in backend_app.SEGMENTATION_CACHE.values()
+        for cached_item in analysis["items"]
+    ]
+    assert cached_items and all("png_bytes" in cached_item for cached_item in cached_items)
 
 
 def test_refine_route_reports_and_fills_what_the_arm_covered(backend_app, monkeypatch: pytest.MonkeyPatch):

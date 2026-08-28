@@ -1211,7 +1211,11 @@ def refine_closet_photo(request: ClosetRefineRequest):
 
         items = []
         generation_jobs = []
-        for item in wanted[:MAX_REFINE_ITEMS]:
+        for cached_item in wanted[:MAX_REFINE_ITEMS]:
+            # segmentation_analysis()의 반환값은 다음 /segment·/refine 요청이 함께 쓰는
+            # 캐시 원본이다. 응답용 필드를 붙이거나 png_bytes를 빼기 전에 얕은 복사해
+            # 두어야 다음 캐시 적중에서 KeyError("png_bytes")가 나지 않는다.
+            item = cached_item.copy()
             source_category = item["category"]
             target_category = request.categoryOverrides.get(source_category, source_category)
             item["sourceCategory"] = source_category
